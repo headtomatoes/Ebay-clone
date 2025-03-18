@@ -60,11 +60,3 @@
 2. **GitHub Learning Lab**: [https://lab.github.com/](https://lab.github.com/)
 3. **YouTube: Git & GitHub Crash Course**: [https://www.youtube.com/watch?v=RGOj5yH7evk](https://www.youtube.com/watch?v=RGOj5yH7evk)
 
-
-### Collaboration Tips
-
-1. **Daily Stand-ups**: 15-minute meetings to discuss progress and blockers
-2. **Code Reviews**: Establish a pull request process for quality control
-3. **Technical Documentation**: Document API endpoints and component specs
-4. **Shared Development Standards**: Agree on coding conventions upfront
-5. **Regular Integration**: Merge code frequently to catch integration issues early
