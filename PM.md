@@ -1,0 +1,13 @@
+- **Time limitation**
+    - 3 weeks sprints
+    - Daily meeting to track progress 1st 3 weeks
+    - 3 days / meeting in the week 4 => 5
+- **Timeline Breakdown** 
+    - Week 1 (11/4 => 18/4): Core features and authentication
+    - Week 2 (19/4 => 26/4): Auction mechanism and transaction processing
+    - Week 3 (27/4 => 3/5): UI polish and additional features
+    - Week 4 (4/5 => 11/5): Testing and bug fixes
+    - Week 5 (12/5 => 19/4): Report & Presentation
+- **Feature Prioritization**
+    - Use MoSCoW method (Must have, Should have, Could have, Won't have)
+    - Ensure core auction functionality works before adding nice-to-haves
