@@ -3,114 +3,49 @@
 ## Project Overview
 This project is an eBay-inspired auction and e-commerce web application developed as a course project. The platform allows users to list items, place bids, participate in auctions, and make direct purchases.
 
-## Core Features
-- User authentication and profile management
-- Product listing and search functionality
-- Real-time auction system with bidding
-- Secure payment processing
-- User ratings and reviews
-- Admin dashboard for platform management
+**Core MVP Features:**
 
-## Technology Stack
+1. User Registration & Login (JWT Auth)
+2. Sellers can list Products (Direct Buy or Auction)
+3. Users can browse/search Products
+4. Users can view Product Details
+5. Users can place Bids on Auctions (Real-time updates)
+6. Users can directly buy "Direct Buy" items
+7. Basic indication of won/purchased items (no full checkout/payment processing)
+8. (Stretch Goal) Basic Feedback system after a transaction.
 
-### Frontend
-- **Framework**: React.js
-- **UI Library**: Material-UI (or Tailwind/Bootstrap)
-- **State Management**: Context API
-- **Testing**: Jest for component testing
+**Technology Reminder:**
 
-### Backend
-- **Framework**: Spring Boot
-- **API Design**: RESTful API
-- **Authentication**: JWT tokens
-- **Security**: Spring Security with BCrypt password hashing
-- **Real-time Communication**: WebSockets
+- **Frontend:** React, Context API, Tailwind CSS
+- **Backend:** Spring Boot, Spring Security (JWT, BCrypt), REST API, WebSockets, JPA
+- **Database:** MySQL (using the schema we defined earlier)
+- **Testing:** Jest, JUnit, Postman
+- **Version Control:** Git/GitHub
 
-### Database
-- **DBMS**: MySQL
-- **ORM**: Spring Data JPA
-- **Migration Tool**: Liquibase (optional)
-
-### Testing
-- **Frontend**: Jest
-- **Backend**: JUnit
-- **API Testing**: Insomnia
-
-### Version Control
-- **System**: Git
-- **Platform**: GitHub
-
-## Project Structure
+## Project Structure (to be modified)
 
 ```
-ebay-clone/
-├── frontend/                # React frontend application
-│   ├── public/              # Static files
-│   ├── src/                 # Source files
-│   │   ├── components/      # Reusable UI components
-│   │   ├── pages/           # Page components
-│   │   ├── context/         # React Context for state management
-│   │   ├── services/        # API service integration
-│   │   └── utils/           # Utility functions
-│   └── tests/               # Frontend tests
-├── backend/                 # Spring Boot backend application
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/        # Java source code
-│   │   │   │   ├── controllers/  # REST controllers
-│   │   │   │   ├── models/       # Entity classes
-│   │   │   │   ├── repositories/ # JPA repositories
-│   │   │   │   ├── services/     # Business logic
-│   │   │   │   ├── security/     # Security configuration
-│   │   │   │   └── websocket/    # WebSocket handlers
-│   │   │   └── resources/   # Application properties and static resources
-│   │   └── test/            # Backend tests
-├── docs/                    # Documentation
-└── README.md                # This file
+ebay-clone-project/
+├── .gitignore          
+├── README.md           
+├── backend/            
+└── frontend/           
+    
 ```
 
 ## Getting Started
 
 ### Prerequisites
 - Node.js and npm (v14+ recommended)
-- Java JDK 11+
+- Maven (for Java backend)
+- Java JDK 21+
 - MySQL Server
 - Git
+- Postman (for API testing)
+- Docker (optional, for containerization)
+- IntelliJ IDEA (for Java development)
+- Visual Studio Code (for JavaScript development)
 
-### Installation and Setup
-
-#### Frontend
-```bash
-# Navigate to frontend directory
-cd frontend
-
-# Install dependencies
-npm install
-
-# Start development server
-npm start
-```
-
-#### Backend
-```bash
-# Navigate to backend directory
-cd backend
-
-# Build the project
-./mvnw clean install
-
-# Run the application
-./mvnw spring-boot:run
-```
-
-#### Database
-```bash
-# Create MySQL database
-mysql -u root -p
-CREATE DATABASE ebay_clone;
-```
-
-Update `application.properties` with your database credentials.
 
 ## Development Workflow
 
@@ -134,29 +69,10 @@ Update `application.properties` with your database credentials.
 ## Team Organization
 
 ### Team Members
-- [Member 1] - Frontend Developer
-- [Member 2] - Backend Developer
-- [Member 3] - Full-stack Developer (Security Focus)
-- [Member 4] - DevOps & Integration Specialist
-
-## Project Timeline
-- Week 1: Core features and authentication
-- Week 2: Auction mechanism and transaction processing
-- Week 3: UI polish and additional features
-- Week 4: Testing and bug fixes
-
-## Learning Resources
-
-### Frontend
-- [React Documentation](https://reactjs.org/docs/getting-started.html)
-- [Material-UI Documentation](https://mui.com/getting-started/usage/)
-
-### Backend
-- [Spring Boot Guides](https://spring.io/guides)
-- [Baeldung Spring Boot Tutorials](https://www.baeldung.com/spring-boot)
-
-### Full Learning Resource List
-See our [Learning Resources Document](./docs/learning-resources.md) for a comprehensive list of free learning materials for all technologies used in this project.
+- [Nguyễn Quốc Trung] - Frontend Developer
+- [Lê Hưng] - Backend Developer (Database focus)
+- [Đàm Nguyễn Trọng Lễ] - Full-stack Developer (WebSocket focus)
+- [Lê Nhật Anh] - Backend Developer (Security focus)
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
