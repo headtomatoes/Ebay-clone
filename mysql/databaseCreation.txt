@@ -1,0 +1,162 @@
+-- Drop & Create Database
+DROP DATABASE IF EXISTS Ebay;
+CREATE DATABASE Ebay;
+USE Ebay;
+
+-- Drop tables in reverse order of foreign key dependency
+DROP TABLE IF EXISTS bids;
+DROP TABLE IF EXISTS auctions;
+DROP TABLE IF EXISTS reviews;
+DROP TABLE IF EXISTS shipping;
+DROP TABLE IF EXISTS shipping_addresses;
+DROP TABLE IF EXISTS payments;
+DROP TABLE IF EXISTS order_items;
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS cart_items;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS users;
+
+-- Users Table
+CREATE TABLE users (
+    user_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50),
+    password_hash VARCHAR(255), -- NULL for Google users
+    email VARCHAR(100) UNIQUE NOT NULL,
+    google_id VARCHAR(100), -- For Google-authenticated users
+    address VARCHAR(500),
+    phone_number VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Roles Table
+CREATE TABLE roles (
+    role_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    role_name VARCHAR(50) UNIQUE NOT NULL
+);
+
+-- User-Roles Mapping Table
+CREATE TABLE user_roles (
+    user_id BIGINT,
+    role_id BIGINT,
+    PRIMARY KEY (user_id, role_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (role_id) REFERENCES roles(role_id)
+);
+
+-- Categories Table
+CREATE TABLE categories (
+    category_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) UNIQUE NOT NULL,
+    description TEXT
+);
+
+-- Products Table
+CREATE TABLE products (
+    product_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    seller_id BIGINT,
+    category_id BIGINT,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    price DECIMAL(10,2) NOT NULL,
+    stock_quantity INT NOT NULL,
+    image_url TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (seller_id) REFERENCES users(user_id),
+    FOREIGN KEY (category_id) REFERENCES categories(category_id)
+);
+
+-- Cart Items Table
+CREATE TABLE cart_items (
+    cart_item_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT,
+    product_id BIGINT,
+    quantity INT NOT NULL,
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id),
+    UNIQUE (user_id, product_id)
+);
+
+-- Orders Table
+CREATE TABLE orders (
+    order_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    customer_id BIGINT,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('PENDING', 'SHIPPED', 'DELIVERED', 'CANCELLED') DEFAULT 'PENDING',
+    total_amount DECIMAL(10,2) NOT NULL DEFAULT 0,
+    FOREIGN KEY (customer_id) REFERENCES users(user_id)
+);
+
+-- Order Items Table
+CREATE TABLE order_items (
+    order_item_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    order_id BIGINT,
+    product_id BIGINT,
+    quantity INT NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+
+-- Payments Table
+CREATE TABLE payments (
+    payment_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    order_id BIGINT,
+    provider ENUM('STRIPE', 'PAYPAL', 'COD') NOT NULL, -- COD stands for "CASH ON DELIVERY"
+    payment_method VARCHAR(50), -- e.g., 'CARD', 'BANK', 'CASH'
+    amount DECIMAL(10,2),
+    payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id)
+);
+
+
+
+-- Shipping Table
+CREATE TABLE shipping (
+    shipping_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    order_id BIGINT,
+    user_id BIGINT,
+    shipped_date TIMESTAMP,
+    delivery_date TIMESTAMP,
+    status ENUM('PENDING', 'SHIPPED', 'IN_TRANSIT', 'DELIVERED', 'FAILED') DEFAULT 'PENDING',
+    FOREIGN KEY (order_id) REFERENCES orders(order_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+-- Reviews Table
+CREATE TABLE reviews (
+    review_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    product_id BIGINT,
+    user_id BIGINT,
+    rating INT CHECK (rating BETWEEN 1 AND 5),
+    comment TEXT,
+    review_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(product_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+-- Auctions Table
+CREATE TABLE auctions (
+    auction_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    product_id BIGINT UNIQUE, -- one to one relationship with product
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+    starting_price DECIMAL(10,2) NOT NULL,
+    current_price DECIMAL(10,2),
+    winner_id BIGINT,
+    status ENUM('ACTIVE', 'ENDED', 'CANCELLED') DEFAULT 'ACTIVE',
+    FOREIGN KEY (product_id) REFERENCES products(product_id),
+    FOREIGN KEY (winner_id) REFERENCES users(user_id)
+);
+
+-- Bids Table
+CREATE TABLE bids (
+    bid_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    auction_id BIGINT,
+    bidder_id BIGINT,
+    bid_amount DECIMAL(10,2) NOT NULL,
+    bid_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (auction_id) REFERENCES auctions(auction_id),
+    FOREIGN KEY (bidder_id) REFERENCES users(user_id)
+);

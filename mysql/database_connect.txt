@@ -1,0 +1,5 @@
+---- for docker connection
+-- run docker-compose.yml first, then go to mySQL workbench
+port: 3307
+user: wad
+password: 0987654321q
