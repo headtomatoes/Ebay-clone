@@ -28,7 +28,7 @@ public class User {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
-    private Long user_id;
+    private Long userId;
 
     @Column(name = "username", nullable = false, length = 50, unique = true)
     private String username;
@@ -83,7 +83,7 @@ public class User {
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
         User user = (User) o;
-        return getUser_id() != null && Objects.equals(getUser_id(), user.getUser_id());
+        return getUserId() != null && Objects.equals(getUserId(), user.getUserId());
     }
 
     @Override

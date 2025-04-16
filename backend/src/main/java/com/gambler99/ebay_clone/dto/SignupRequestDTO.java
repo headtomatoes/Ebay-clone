@@ -8,12 +8,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class SignupRequestDTO {
-    // take username, email, password
-    // need to add validation
 
     @NotBlank(message = "Username is required")
     @Size(min = 3, max = 20, message = "Username must be between 3 and 20 characters")
@@ -31,4 +31,8 @@ public class SignupRequestDTO {
                     "one uppercase letter, one special character, and no whitespace"
         )
     private String password;
+
+    public Set<String> getRoles() {
+        return Set.of();
+    }
 }
