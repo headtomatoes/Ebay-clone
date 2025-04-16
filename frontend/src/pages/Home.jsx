@@ -1,3 +1,17 @@
+import Header from '../components/Header';
+import MainBanner from '../components/MainBanner';
+import PopularCategories from '../components/PopularCategories';
+import MoneyBackBanner from '../components/MoneyBackBanner';
+import Footer from '../components/Footer';
+
 export default function Home() {
-  return <h1>Home Page</h1>;
+  return (
+    <>
+      <Header />
+      <MainBanner />
+      <PopularCategories />
+      <MoneyBackBanner />
+      <Footer />
+    </>
+  );
 }
