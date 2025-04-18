@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { mockLogin } from '../services/mockLogin';
 
 export default function LoginForm() {
-  const [formData, setFormData] = useState({
-    username: '',
-    password: ''
-  });
-
+  const [formData, setFormData] = useState({ username: '', password: '' });
   const [errors, setErrors] = useState({});
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
+  // Handle input change
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -15,28 +18,62 @@ export default function LoginForm() {
     });
   };
 
+  // Validate form fields
   const validate = () => {
     const newErrors = {};
-
-    if (!formData.username.trim()) {
-      newErrors.username = 'Username is required';
-    }
-
-    if (!formData.password.trim()) {
-      newErrors.password = 'Password is required';
-    }
-
+    if (!formData.username.trim()) newErrors.username = 'Username is required';
+    if (!formData.password.trim()) newErrors.password = 'Password is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validate()) {
-      alert('Login success!');
-      console.log('Logging in with:', formData);
-    }
-  };
+//   const handleSubmit = async (e) => {
+//       e.preventDefault();
+//       if (!validate()) return;
+//
+//       try {
+//         //const res = await axios.post('http://localhost:8080/api/auth/login', formData);
+//         //const { token, user } = res.data;
+//         const { token, user } = mockLogin(formData.username); //fake data
+//
+//
+//         login(token, user);
+//
+//         // Redirect
+//         if (user.roles.includes('ROLE_ADMIN')) {
+//           navigate('/admin');
+//         } else if (user.roles.includes('ROLE_USER')) {
+//           navigate('/profile');
+//         } else {
+//           navigate('/');
+//         }
+//       } catch (err) {
+//         console.error('Login failed:', err.response?.data || err.message);
+//         alert('Login failed');
+//       }
+//     };
+
+    // Handle form submit
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      if (!validate()) return;
+
+      // Use mockLogin to simulate authentication
+      const result = mockLogin(formData.username, formData.password);
+
+      if (!result) {
+        alert('error');
+        return;
+      }
+
+      const { token, user } = result;
+      login(token, user);
+
+      // Redirect to home page after login
+      // Role-based content will be shown in Home based on user.roles
+      navigate('/');
+    };
+
 
   return (
     <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>

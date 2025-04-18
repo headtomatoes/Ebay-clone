@@ -11,6 +11,7 @@ export default function RegisterPage() {
       </p>
 
       <RegisterForm />
+
     </div>
   );
 }

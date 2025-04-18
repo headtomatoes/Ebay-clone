@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { mockRegister } from '../services/mockRegister';
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -8,7 +11,10 @@ export default function RegisterForm() {
   });
 
   const [errors, setErrors] = useState({});
+  const { login } = useAuth(); // login() from AuthContext
+  const navigate = useNavigate();
 
+  // Handle input changes
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -16,6 +22,7 @@ export default function RegisterForm() {
     });
   };
 
+  // Validate form fields
   const validate = () => {
     const newErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -38,12 +45,22 @@ export default function RegisterForm() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (validate()) {
-      alert('Register success!');
-      console.log('Registering with:', formData);
+    if (!validate()) return;
+
+    // Simulate registration using mock function
+    const result = mockRegister(formData.username, formData.email, formData.password);
+
+    if (!result) {
+      alert('Username already exists!');
+      return;
     }
+
+    // Auto-login after successful registration
+    login(result.token, result.user);
+    navigate('/'); //homepage
   };
 
   return (
