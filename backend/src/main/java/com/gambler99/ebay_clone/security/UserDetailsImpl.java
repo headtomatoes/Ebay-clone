@@ -29,6 +29,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @JsonIgnore     // Prevents password from being serialized
     private final String password;
+
     // Collection of GrantedAuthority objects representing the user's roles
     private final Collection<? extends GrantedAuthority> authorities;
 

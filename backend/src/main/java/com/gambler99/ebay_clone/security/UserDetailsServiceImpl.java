@@ -11,9 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-
-    @Autowired
     private UserRepository userRepository;
+
+    @Autowired // Constructor-based dependency injection
+    public UserDetailsServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     @Transactional  // Ensures LAZY loading works properly

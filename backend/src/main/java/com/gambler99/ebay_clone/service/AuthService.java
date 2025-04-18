@@ -6,6 +6,9 @@ import com.gambler99.ebay_clone.dto.MessageResponseDTO;
 import com.gambler99.ebay_clone.dto.SignupRequestDTO;
 import com.gambler99.ebay_clone.entity.Role;
 import com.gambler99.ebay_clone.entity.User;
+import com.gambler99.ebay_clone.exception.EmailAlreadyExistsException;
+import com.gambler99.ebay_clone.exception.RoleNotFoundException;
+import com.gambler99.ebay_clone.exception.UsernameAlreadyExistsException;
 import com.gambler99.ebay_clone.repository.RoleRepository;
 import com.gambler99.ebay_clone.repository.UserRepository;
 
@@ -45,16 +48,19 @@ public class AuthService {
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+
     @Transactional
-    public MessageResponseDTO registerUser(SignupRequestDTO signupRequest) {
-        // Check if username exists using the UserRepository
-        if(userRepository.existsByUsername(signupRequest.getUsername())) {
-            return new MessageResponseDTO("Error: Username is already taken!");
+    public void registerUser(SignupRequestDTO signupRequest) {
+        // Check if username exists
+        if (userRepository.existsByUsername(signupRequest.getUsername())) {
+            // Throw specific exception
+            throw new UsernameAlreadyExistsException("Error: Username is already taken!");
         }
 
-        // Check if email exists using the UserRepository
-        if(userRepository.existsByEmail(signupRequest.getEmail())) {
-            return new MessageResponseDTO("Error: Email is already in use!");
+        // Check if email exists
+        if (userRepository.existsByEmail(signupRequest.getEmail())) {
+            // Throw specific exception
+            throw new EmailAlreadyExistsException("Error: Email is already in use!");
         }
 
         // Create a new User object and set its properties
@@ -68,16 +74,17 @@ public class AuthService {
         Set<String> strRoles = signupRequest.getRoles();
         Set<Role> roles = new HashSet<>();
 
+        final String DEFAULT_ROLE_NAME = "ROLE_BUYER";
+
         if (strRoles == null || strRoles.isEmpty()) {
-            // If no roles specified, assign default BUYER role
-            Role buyerRole = roleRepository.findByRoleName("BUYER")
-                    .orElseThrow(() -> new RuntimeException("Error: Default BUYER role not found."));
+            Role buyerRole = roleRepository.findByRoleName(DEFAULT_ROLE_NAME)
+                    .orElseThrow(() -> new RoleNotFoundException("Error: Default role " + DEFAULT_ROLE_NAME + " not found."));
             roles.add(buyerRole);
         } else {
-            // Process requested roles
-            strRoles.forEach(roleName -> {
-                Role role = roleRepository.findByRoleName(roleName)
-                        .orElseThrow(() -> new RuntimeException("Error: Role " + roleName + " not found."));
+            strRoles.forEach(roleNameInput -> {
+                String roleNameToFind = roleNameInput.startsWith("ROLE_") ? roleNameInput : "ROLE_" + roleNameInput;
+                Role role = roleRepository.findByRoleName(roleNameToFind)
+                        .orElseThrow(() -> new RoleNotFoundException("Error: Role " + roleNameToFind + " not found."));
                 roles.add(role);
             });
         }
@@ -85,7 +92,6 @@ public class AuthService {
         user.setRoles(roles);
         userRepository.save(user);
 
-        return new MessageResponseDTO("User registered successfully!");
     }
 
     public JwtResponseDTO authenticateUser(LoginRequestDTO loginRequest) {
