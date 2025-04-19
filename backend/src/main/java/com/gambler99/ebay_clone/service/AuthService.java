@@ -39,7 +39,6 @@ public class AuthService {
     @Autowired
     private RoleRepository roleRepository;
 
-    // wait for those to be implemented by the team
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -50,28 +49,28 @@ public class AuthService {
     private JwtTokenProvider jwtTokenProvider;
 
     @Transactional
-    public void registerUser(SignupRequestDTO signupRequest) {
+    public void registerUser(SignupRequestDTO signupRequestDTO) {
         // Check if username exists
-        if (userRepository.existsByUsername(signupRequest.getUsername())) {
+        if (userRepository.existsByUsername(signupRequestDTO.getUsername())) {
             // Throw specific exception
             throw new UsernameAlreadyExistsException("Error: Username is already taken!");
         }
 
         // Check if email exists
-        if (userRepository.existsByEmail(signupRequest.getEmail())) {
+        if (userRepository.existsByEmail(signupRequestDTO.getEmail())) {
             // Throw specific exception
             throw new EmailAlreadyExistsException("Error: Email is already in use!");
         }
 
         // Create a new User object and set its properties
         User user = User.builder()
-                .username(signupRequest.getUsername())
-                .email(signupRequest.getEmail())
-                .passwordHash(passwordEncoder.encode(signupRequest.getPassword()))
+                .username(signupRequestDTO.getUsername())
+                .email(signupRequestDTO.getEmail())
+                .passwordHash(passwordEncoder.encode(signupRequestDTO.getPassword()))
                 .build();
 
         // Set roles for the user
-        Set<String> strRoles = signupRequest.getRoles();
+        Set<String> strRoles = signupRequestDTO.getRoles();
         Set<Role> roles = new HashSet<>();
 
         final String DEFAULT_ROLE_NAME = "ROLE_BUYER";
@@ -94,12 +93,12 @@ public class AuthService {
 
     }
 
-    public JwtResponseDTO authenticateUser(LoginRequestDTO loginRequest) {
+    public JwtResponseDTO authenticateUser(LoginRequestDTO loginRequestDTO) {
         // Authenticate user
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword()
+                        loginRequestDTO.getUsername(),
+                        loginRequestDTO.getPassword()
                 )
         );
 
