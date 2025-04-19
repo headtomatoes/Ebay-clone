@@ -219,3 +219,7 @@ CREATE TABLE bids (
 -- INSERT INTO user_roles (user_id, role_id) VALUES (1, 1), (1, 2), (1, 3); -- Admin has all roles
 -- INSERT INTO user_roles (user_id, role_id) VALUES (2, 2); -- seller1 is SELLER
 -- INSERT INTO user_roles (user_id, role_id) VALUES (3, 3); -- buyer1 is BUYER
+
+UPDATE roles SET role_name = 'ROLE_ADMIN' WHERE role_name = 'ADMIN';
+UPDATE roles SET role_name = 'ROLE_BUYER' WHERE role_name = 'BUYER';
+UPDATE roles SET role_name = 'ROLE_SELLER' WHERE role_name = 'SELLER';
