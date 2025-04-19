@@ -31,12 +31,27 @@ public class Role {
 
     @Override
     public boolean equals(Object o) {
+        // 1. Same object reference (identity check)
         if (this == o) return true;
-        // Use getClass() comparison for JPA proxies
-        if (o == null || getClass() != o.getClass()) return false;
+
+        // 2. Null check
+        if (o == null) return false;
+
+        // 3. Determine the effective class of the input object
+        Class<?> oEffectiveClass = o instanceof HibernateProxy
+                ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass()
+                : o.getClass();
+
+        // 4. Determine the effective class of the current object
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy
+                ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass()
+                : this.getClass();
+
+        // 5. Compare effective classes
+        if (thisEffectiveClass != oEffectiveClass) return false;
+
+        // 6. Cast to Role and compare business key
         Role role = (Role) o;
-        // Compare using the unique business key (roleName)
-        // Ensure roleName is non-null and correctly represents identity
         return Objects.equals(roleName, role.roleName);
     }
 

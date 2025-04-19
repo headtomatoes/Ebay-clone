@@ -32,21 +32,24 @@ import java.util.stream.Collectors;
 
 @Service
 public class AuthService {
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+    public AuthService(UserRepository userRepository,
+                       RoleRepository roleRepository,
+                       PasswordEncoder passwordEncoder,
+                       AuthenticationManager authenticationManager,
+                       JwtTokenProvider jwtTokenProvider) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
 
     @Transactional
     public void registerUser(SignupRequestDTO signupRequestDTO) {
@@ -115,6 +118,11 @@ public class AuthService {
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
+
+        // Check if principal is of expected type
+        if (!(authentication.getPrincipal() instanceof UserDetailsImpl)) {
+            throw new IllegalStateException("Unexpected principal type: " + authentication.getPrincipal().getClass());
+        }
 
         // Return JWT response with token, user details, and roles
         return new JwtResponseDTO(

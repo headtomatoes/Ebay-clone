@@ -17,13 +17,21 @@ import java.io.IOException;
 
 public class AuthTokenFilter extends OncePerRequestFilter {
     //= JWT Validation Filter
-    @Autowired
     private JwtTokenProvider jwtTokenProvider;
-
-    @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
+
+    public AuthTokenFilter(JwtTokenProvider jwtTokenProvider, UserDetailsServiceImpl userDetailsService) {
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.userDetailsService = userDetailsService;
+    }
+
+
+        private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
+
+    public AuthTokenFilter() {
+
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

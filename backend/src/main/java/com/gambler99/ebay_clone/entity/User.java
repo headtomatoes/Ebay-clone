@@ -85,8 +85,12 @@ public class User {
         return getUserId() != null && Objects.equals(getUserId(), user.getUserId());
     }
 
+//    @Override
+//    public final int hashCode() {
+//        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     @Override
-    public final int hashCode() {
-        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    public int hashCode() {
+        // Consistent with equals(): use username for hashCode
+        return Objects.hash(username);
     }
 }

@@ -58,9 +58,16 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST) // 400 Bad Request
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            String fieldName;
             String errorMessage = error.getDefaultMessage();
+
+            if (error instanceof FieldError fe) {
+                fieldName = fe.getField();
+            } else {                         // object-level constraint
+                fieldName = error.getObjectName();
+            }
+
             errors.put(fieldName, errorMessage);
         });
         log.warn("Validation errors: {}", errors);
