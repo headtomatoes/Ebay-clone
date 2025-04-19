@@ -11,7 +11,9 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users" ,
+
         //tl;dr: indexes are used to speed up the WHERE and JOIN clauses,
+
         //and these columns are likely to be frequently used search criteria
         indexes = {
             @Index(name = "idx_email" , columnList = "email"),
@@ -27,7 +29,9 @@ public class User {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
+
     private Long userId;
+
 
     @Column(name = "username", nullable = false, length = 50, unique = true)
     private String username;
@@ -82,6 +86,7 @@ public class User {
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
         User user = (User) o;
+
         return getUserId() != null && Objects.equals(getUserId(), user.getUserId());
     }
 
@@ -92,5 +97,7 @@ public class User {
     public int hashCode() {
         // Consistent with equals(): use username for hashCode
         return Objects.hash(username);
+
+
     }
 }

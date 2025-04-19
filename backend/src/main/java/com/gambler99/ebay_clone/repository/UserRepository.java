@@ -23,6 +23,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // Finds a User entity by its 'googleId' property. Returns Optional.
     Optional<User> findByGoogleId(String googleId);
 
-    // can add if needed
 
+    // can add if needed
 }

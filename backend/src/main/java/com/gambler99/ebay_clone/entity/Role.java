@@ -24,6 +24,7 @@ public class Role {
     @Column(name = "role_name", nullable = false, length = 50, unique = true)
     private String roleName;
 
+
     @ManyToMany (mappedBy = "roles")
     @ToString.Exclude
     @Builder.Default
@@ -71,4 +72,5 @@ public class Role {
                 ", roleName='" + roleName + '\'' +
                 '}';
     }
+
 }
