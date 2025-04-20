@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: ebay-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: mcfc1213
+      MYSQL_DATABASE: Ebay
+      MYSQL_USER: wad
+      MYSQL_PASSWORD: 0987654321q
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: always
+
+volumes:
+  mysql_data:

@@ -1,0 +1,9 @@
+host_name: mainline.proxy.rlwy.net
+
+user_name: root
+
+port: 11769
+
+password: JSbyEKAnAyjktHHjUiuhTFuNdetPxUrU
+
+mysql://root:JSbyEKAnAyjktHHjUiuhTFuNdetPxUrU@mainline.proxy.rlwy.net:11769/railway
