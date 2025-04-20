@@ -69,7 +69,4 @@ public class Product {
     @JoinColumn(name = "category_id", referencedColumnName = "category_id", foreignKey = @ForeignKey(name = "FK_CATEGORY"))
     private Category category; // Assuming a Category entity exists
 
-
-
-
 }

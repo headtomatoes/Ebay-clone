@@ -21,3 +21,4 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     // Optional: Search categories containing part of a name
     List<Category> findByNameContainingIgnoreCase(String namePart);
 }
+

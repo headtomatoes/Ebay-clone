@@ -10,12 +10,13 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Table (name = "categories",
-indexes = {
-
-        @Index(name = "idx_name", columnList = "name"),
-}
+@Table(name = "categories",
+        indexes = {
+                @Index(name = "idx_name", columnList = "name")
+        }
 )
+
+
 @Getter
 @Setter
 @Builder
