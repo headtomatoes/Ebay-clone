@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class categories {
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id", nullable = false)
@@ -36,7 +36,9 @@ public class categories {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_category_id", referencedColumnName = "category_id", foreignKey = @ForeignKey(name = "FK_PARENT_CATEGORY"))
-    private categories parentCategory;
+    private Category parentCategory;
 
 
 }
+
+

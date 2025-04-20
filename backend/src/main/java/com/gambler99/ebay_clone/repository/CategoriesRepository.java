@@ -1,18 +1,23 @@
 package com.gambler99.ebay_clone.repository;
 
-import com.gambler99.ebay_clone.entity.categories;
+import com.gambler99.ebay_clone.entity.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.Optional;
+import org.springframework.stereotype.Repository;
 
-public interface CategoriesRepository extends JpaRepository<categories, Long> {
+import java.util.List;
 
-/**
- * Finds a category by its unique name.
+@Repository
+public interface CategoriesRepository extends JpaRepository<Category, Long> {
 
- */
+    // Find all categories with a specific parent
+    List<Category> findByParentCategory(Category parentCategory);
 
-    Optional<categories> findByName(String name);
+    // Find categories that don't have a parent (i.e., top-level categories)
+    List<Category> findByParentCategoryIsNull();
 
-    /* Checks if a category with the given name exists.*/
-    boolean existsByName(String name);
+    // Find category by name
+    Category findByName(String name);
+
+    // Optional: Search categories containing part of a name
+    List<Category> findByNameContainingIgnoreCase(String namePart);
 }
