@@ -7,6 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null); // { id, username, email, roles }
+  const [loading, setLoading] = useState(true);
 
 // Check if user has a specific role
   const hasRole = (role) => {
@@ -38,6 +39,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("authUser");
   };
 
+
+
   // Auto-login on page refresh: restore session from localStorage
   useEffect(() => {
     const storedToken = localStorage.getItem("authToken");
@@ -48,6 +51,8 @@ export const AuthProvider = ({ children }) => {
       setToken(storedToken);
       setUser(JSON.parse(storedUser));
     }
+
+    setLoading(false);
   }, []);
 
 // Provide context values to children components
@@ -59,7 +64,8 @@ export const AuthProvider = ({ children }) => {
         user,
         login,
         logout,
-        hasRole
+        hasRole,
+        loading
       }}
     >
       {children}

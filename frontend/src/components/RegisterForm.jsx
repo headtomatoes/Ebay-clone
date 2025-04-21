@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { mockRegister } from '../services/mockRegister';
+//import { registerUser } from '../services/authService';
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -44,6 +45,26 @@ export default function RegisterForm() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
+//     // Handle form submission with real API
+//       const handleSubmit = async (e) => {
+//         e.preventDefault();
+//         if (!validate()) return;
+//
+//         try {
+//           // Call register API
+//           const { token, user } = await registerUser(formData);
+//
+//           // Auto-login after successful registration
+//           login(token, user);
+//
+//           // Redirect to homepage
+//           navigate('/');
+//         } catch (error) {
+//           console.error('Registration failed:', error.message || error);
+//           alert(error.message || 'Registration failed. Please try again.');
+//         }
+//       };
 
   // Handle form submission
   const handleSubmit = (e) => {

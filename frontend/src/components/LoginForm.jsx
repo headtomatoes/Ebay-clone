@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { mockLogin } from '../services/mockLogin';
+//import { loginUser } from '../services/authService;
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({ username: '', password: '' });
@@ -27,33 +28,27 @@ export default function LoginForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-//   const handleSubmit = async (e) => {
-//       e.preventDefault();
-//       if (!validate()) return;
+//     // Handle form submission with real API
+//       const handleSubmit = async (e) => {
+//         e.preventDefault();
+//         if (!validate()) return;
 //
-//       try {
-//         //const res = await axios.post('http://localhost:8080/api/auth/login', formData);
-//         //const { token, user } = res.data;
-//         const { token, user } = mockLogin(formData.username); //fake data
+//         try {
+//           // Send login request to backend
+//           const { token, user } = await loginUser(formData);
 //
+//           // Update AuthContext with token + user info
+//           login(token, user);
 //
-//         login(token, user);
-//
-//         // Redirect
-//         if (user.roles.includes('ROLE_ADMIN')) {
-//           navigate('/admin');
-//         } else if (user.roles.includes('ROLE_USER')) {
-//           navigate('/profile');
-//         } else {
+//           // Redirect to homepage
 //           navigate('/');
+//         } catch (err) {
+//           console.error('Login failed:', err.message || err);
+//           alert(err.message || 'Login failed. Please try again.');
 //         }
-//       } catch (err) {
-//         console.error('Login failed:', err.response?.data || err.message);
-//         alert('Login failed');
-//       }
-//     };
+//       };
 
-    // Handle form submit
+    // Handle form submit demo
     const handleSubmit = (e) => {
       e.preventDefault();
       if (!validate()) return;
