@@ -17,4 +17,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     /**
      * Finds all products that have a specific status (e.g., ACTIVE, INACTIVE, SOLD_OUT, DRAFT).*/
     List<Product> findByStatus(Product.ProductStatus status);
+
+    List<Product> findByCategoryCategoryId(Long categoryId);
+
+    List<Product> findBySeller_userId(Long sellerId);
+
+
 }
