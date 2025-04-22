@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Database creation -->
+
+
+    <!-- Include all table creation files -->
+    <include file="db/changelog/tables/001-create-users-table.xml"/>
+    <include file="db/changelog/tables/002-create-roles-table.xml"/>
+    <include file="db/changelog/tables/003-create-user_roles-table.xml"/>
+    <include file="db/changelog/tables/004-create-categories-table.xml"/>
+    <include file="db/changelog/tables/005-create-products-table.xml"/>
+    <include file="db/changelog/tables/006-create-cart_items-table.xml"/>
+    <include file="db/changelog/tables/007-create-orders-table.xml"/>
+    <include file="db/changelog/tables/008-create-order_items-table.xml"/>
+    <include file="db/changelog/tables/009-create-payments-table.xml"/>
+    <include file="db/changelog/tables/010-create-shipping-table.xml"/>
+    <include file="db/changelog/tables/011-create-reviews-table.xml"/>
+    <include file="db/changelog/tables/012-create-auctions-table.xml"/>
+    <include file="db/changelog/tables/013-create-bids-table.xml"/>
+
+    <!-- Include foreign key constraints -->
+    <include file="db/changelog/constraints/014-create-foreign-keys.xml"/>
+
+    <!-- Include indexes -->
+    <include file="db/changelog/indexes/015-create-indexes.xml"/>
+
+    <!-- Role name updates -->
+    <include file="db/changelog/updates/016-create-role-updates.xml"/>
+</databaseChangeLog>

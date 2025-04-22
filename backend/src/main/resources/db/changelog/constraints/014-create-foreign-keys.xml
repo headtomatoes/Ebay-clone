@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="14-add-foreign-keys" author="LE_HUNG">
+        <!-- Categories self-reference -->
+        <addForeignKeyConstraint baseTableName="categories" baseColumnNames="parent_category_id"
+                                 constraintName="fk_categories_parent"
+                                 referencedTableName="categories" referencedColumnNames="category_id"
+                                 onDelete="SET NULL" onUpdate="CASCADE"/>
+
+        <!-- User Roles references -->
+        <addForeignKeyConstraint baseTableName="user_roles" baseColumnNames="user_id"
+                                 constraintName="fk_user_roles_user"
+                                 referencedTableName="users" referencedColumnNames="user_id"
+                                 onDelete="CASCADE" onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="user_roles" baseColumnNames="role_id"
+                                 constraintName="fk_user_roles_role"
+                                 referencedTableName="roles" referencedColumnNames="role_id"
+                                 onDelete="CASCADE" onUpdate="CASCADE"/>
+
+        <!-- Products references -->
+        <addForeignKeyConstraint baseTableName="products" baseColumnNames="seller_id"
+                                 constraintName="fk_products_seller"
+                                 referencedTableName="users" referencedColumnNames="user_id"
+                                 onDelete="RESTRICT" onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="products" baseColumnNames="category_id"
+                                 constraintName="fk_products_category"
+                                 referencedTableName="categories" referencedColumnNames="category_id"
+                                 onDelete="RESTRICT" onUpdate="CASCADE"/>
+
+        <!-- Cart Items references -->
+        <addForeignKeyConstraint baseTableName="cart_items" baseColumnNames="user_id"
+                                 constraintName="fk_cart_items_user"
+                                 referencedTableName="users" referencedColumnNames="user_id"
+                                 onDelete="CASCADE" onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="cart_items" baseColumnNames="product_id"
+                                 constraintName="fk_cart_items_product"
+                                 referencedTableName="products" referencedColumnNames="product_id"
+                                 onDelete="CASCADE" onUpdate="CASCADE"/>
+
+        <!-- Orders references -->
+        <addForeignKeyConstraint baseTableName="orders" baseColumnNames="customer_id"
+                                 constraintName="fk_orders_customer"
+                                 referencedTableName="users" referencedColumnNames="user_id"
+                                 onDelete="RESTRICT" onUpdate="CASCADE"/>
+
+        <!-- Order Items references -->
+        <addForeignKeyConstraint baseTableName="order_items" baseColumnNames="order_id"
+                                 constraintName="fk_order_items_order"
+                                 referencedTableName="orders" referencedColumnNames="order_id"
+                                 onDelete="CASCADE" onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="order_items" baseColumnNames="product_id"
+                                 constraintName="fk_order_items_product"
+                                 referencedTableName="products" referencedColumnNames="product_id"
+                                 onDelete="RESTRICT" onUpdate="CASCADE"/>
+
+        <!-- Payments references -->
+        <addForeignKeyConstraint baseTableName="payments" baseColumnNames="order_id"
+                                 constraintName="fk_payments_order"
+                                 referencedTableName="orders" referencedColumnNames="order_id"
+                                 onDelete="RESTRICT" onUpdate="CASCADE"/>
+
+        <!-- Shipping references -->
+        <addForeignKeyConstraint baseTableName="shipping" baseColumnNames="order_id"
+                                 constraintName="fk_shipping_order"
+                                 referencedTableName="orders" referencedColumnNames="order_id"
+                                 onDelete="CASCADE" onUpdate="CASCADE"/>
+
+        <!-- Reviews references -->
+        <addForeignKeyConstraint baseTableName="reviews" baseColumnNames="product_id"
+                                 constraintName="fk_reviews_product"
+                                 referencedTableName="products" referencedColumnNames="product_id"
+                                 onDelete="CASCADE" onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="reviews" baseColumnNames="user_id"
+                                 constraintName="fk_reviews_user"
+                                 referencedTableName="users" referencedColumnNames="user_id"
+                                 onDelete="CASCADE" onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="reviews" baseColumnNames="order_id"
+                                 constraintName="fk_reviews_order"
+                                 referencedTableName="orders" referencedColumnNames="order_id"
+                                 onDelete="SET NULL" onUpdate="CASCADE"/>
+
+        <!-- Auctions references -->
+        <addForeignKeyConstraint baseTableName="auctions" baseColumnNames="product_id"
+                                 constraintName="fk_auctions_product"
+                                 referencedTableName="products" referencedColumnNames="product_id"
+                                 onDelete="CASCADE" onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="auctions" baseColumnNames="winner_id"
+                                 constraintName="fk_auctions_winner"
+                                 referencedTableName="users" referencedColumnNames="user_id"
+                                 onDelete="SET NULL" onUpdate="CASCADE"/>
+
+        <!-- Bids references -->
+        <addForeignKeyConstraint baseTableName="bids" baseColumnNames="auction_id"
+                                 constraintName="fk_bids_auction"
+                                 referencedTableName="auctions" referencedColumnNames="auction_id"
+                                 onDelete="CASCADE" onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="bids" baseColumnNames="bidder_id"
+                                 constraintName="fk_bids_bidder"
+                                 referencedTableName="users" referencedColumnNames="user_id"
+                                 onDelete="CASCADE" onUpdate="CASCADE"/>
+    </changeSet>
+</databaseChangeLog>
