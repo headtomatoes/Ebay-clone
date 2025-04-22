@@ -61,20 +61,50 @@ public class ProductController {
     }
 
     // Add other CRUD methods (getProductById, updateProduct, deleteProduct) here
-    // Example: Get product by ID
+    // --- READ (Single) ---
     @GetMapping("/{id}")
     public ResponseEntity<ProductDetailDTO> getProductById(@PathVariable Long id) {
-        // Fetch the product by ID using the ProductService
         ProductDetailDTO product = productService.getProductById(id);
-        return ResponseEntity.ok(product);
+        return ResponseEntity.ok(product); // Return 200 OK
     }
 
+    // --- READ (All/Filtered) ---
     @GetMapping
     public ResponseEntity<List<ProductSummaryDTO>> getAllProducts(
             @RequestParam(required = false) Long categoryId // Optional category filter
-    ){
-        // Fetch all products, optionally filtered by category ID
+    ) {
         List<ProductSummaryDTO> products = productService.getAllProducts(categoryId);
-        return ResponseEntity.ok(products);
+        return ResponseEntity.ok(products); // Return 200 OK
+    }
+
+    // --- UPDATE ---
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('SELLER')") // Ensure only sellers can attempt update
+    public ResponseEntity<ProductDetailDTO> updateProduct(
+            @PathVariable Long id,
+            @Valid @RequestBody ProductCreateDTO updateDTO,
+            @AuthenticationPrincipal UserDetailsImpl sellerDetails)
+    {
+        if (sellerDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        // Delegate update logic AND authorization check (is this user the owner?) to the service
+        ProductDetailDTO updatedProduct = productService.updateProduct(id, updateDTO, sellerDetails);
+        return ResponseEntity.ok(updatedProduct); // Return 200 OK with updated product
+    }
+
+    // --- DELETE ---
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('SELLER')") // Ensure only sellers can attempt delete
+    public ResponseEntity<Void> deleteProduct(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetailsImpl sellerDetails)
+    {
+        if (sellerDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        // Delegate delete logic AND authorization check (is this user the owner?) to the service
+        productService.deleteProduct(id, sellerDetails);
+        return ResponseEntity.noContent().build(); // Return 204 No Content
     }
 }

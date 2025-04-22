@@ -52,7 +52,7 @@ public class ProductServiceTest {
     @BeforeEach
     void setUp() {
         testSeller = User.builder().
-                userId(7L).
+                userId(10L).
                 username("seller").
                 passwordHash("$2a$10$4pwAhR4719FTFlLJIHVDl.RZ4rlktilsH5VNfhGk8gbRW45.fZtJy").
                 email("seller@test.com").
@@ -213,8 +213,8 @@ public class ProductServiceTest {
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("Test Product", result.get(0).name());
-        assertEquals("Test Category", result.get(0).categoryName());
+        assertEquals("Test Product", result.getFirst().name());
+        assertEquals("Test Category", result.getFirst().categoryName());
         verify(productRepository, times(1)).findByCategoryCategoryId(10L);
         verify(productRepository, never()).findAll();
     }

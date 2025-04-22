@@ -63,8 +63,9 @@ public class Product {
     }
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", columnDefinition = "ENUM('ACTIVE', 'INACTIVE', 'SOLD_OUT', 'DRAFT') DEFAULT 'DRAFT'")
-    private ProductStatus status;
+    @Column(name = "status", nullable = false, columnDefinition = "ENUM('ACTIVE','INACTIVE','SOLD_OUT','DRAFT')")
+    @Builder.Default
+    private ProductStatus status = ProductStatus.DRAFT;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

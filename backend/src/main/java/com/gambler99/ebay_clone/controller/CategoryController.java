@@ -27,4 +27,17 @@ public class CategoryController {
         // Return the list of categories with a 200 OK status
         return ResponseEntity.ok(categories);
     }
+
+    // Potential future endpoints for Category CRUD (if needed and authorized):
+    // @PostMapping @PreAuthorize("hasRole('ADMIN')")
+    // public ResponseEntity<CategoryDTO> createCategory(...) { ... }
+
+    // @GetMapping("/{id}")
+    // public ResponseEntity<CategoryDTO> getCategoryById(...) { ... }
+
+    // @PutMapping("/{id}") @PreAuthorize("hasRole('ADMIN')")
+    // public ResponseEntity<CategoryDTO> updateCategory(...) { ... }
+
+    // @DeleteMapping("/{id}") @PreAuthorize("hasRole('ADMIN')")
+    // public ResponseEntity<Void> deleteCategory(...) { ... }
 }

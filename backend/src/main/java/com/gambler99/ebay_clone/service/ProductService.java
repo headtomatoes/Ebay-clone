@@ -15,15 +15,16 @@ import com.gambler99.ebay_clone.security.UserDetailsImpl;
 
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor // Creates constructor for final fields (dependency injection)
+@RequiredArgsConstructor // Creates a constructor for final fields (dependency injection)
 public class ProductService {
 
     private final ProductRepository productRepository;
@@ -38,7 +39,7 @@ public class ProductService {
     public ProductDetailDTO createProduct(ProductCreateDTO createDTO, UserDetailsImpl sellerDetails){
         // 1. Find the Seller User entity
         // Extract seller from UserDetails by using userId
-        User seller = userRepository.findByUserId(
+        User seller = userRepository.findById(
                 sellerDetails.getUserId()).
                 orElseThrow(() -> new ResourceNotFoundException(
                         "Seller not found with UserId: "
@@ -82,6 +83,7 @@ public class ProductService {
         return mapToProductDetailDTO(product);
     }
 
+    @Transactional(readOnly = true)
     public List<ProductSummaryDTO> getAllProducts(Long categoryId /* accept null */){
         // If categoryId is null, fetch all products
         // If categoryId is not null, fetch products by category
@@ -102,13 +104,58 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
     // Update
-    public ProductDetailDTO updateProduct(Long id, ProductCreateDTO updateDTO, UserDetails sellerDetails){
+    @Transactional
+    public ProductDetailDTO updateProduct(Long productId, ProductCreateDTO updateDTO, UserDetailsImpl sellerDetails){
+        // 1. Find the existing product
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
 
-        return null;
+        // 2. Authorization Check: Verify the user updating is the seller
+        if (!Objects.equals(product.getSeller().getUserId(), sellerDetails.getUserId())) {
+            throw new AccessDeniedException("User is not authorized to update this product.");
+        }
+
+        // 3. Find the new Category entity (if categoryId is provided and different)
+        if (updateDTO.categoryId() != null && !Objects.equals(product.getCategory().getCategoryId(), updateDTO.categoryId())) {
+            Category newCategory = categoryRepository.findById(updateDTO.categoryId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Category not found with ID: " + updateDTO.categoryId()));
+            product.setCategory(newCategory); // Update category relationship
+        }
+
+        // 4. Update product fields from DTO
+        product.setName(updateDTO.name());
+        product.setDescription(updateDTO.description());
+        product.setPrice(updateDTO.price());
+        product.setStockQuantity(updateDTO.stock());
+        if (updateDTO.imageUrl() != null) { // Update image URL if provided
+            product.setImageUrl(updateDTO.imageUrl());
+        }
+        // Note: createdAt is usually not updated. updatedAt should be handled automatically by JPA auditing if configured (@LastModifiedDate).
+
+        // 5. Save the updated product (optional but good practice for clarity)
+        // Because the 'product' entity is managed within the @Transactional context,
+        // Hibernate will automatically detect changes and flush them to the DB on commit.
+        // However, explicitly calling save can sometimes be clearer or needed for certain cascade operations.
+        Product updatedProduct = productRepository.save(product);
+
+        // 6. Map the updated product to DTO and return
+        return mapToProductDetailDTO(updatedProduct);
     }
     // Delete
-    public void deleteProduct(Long id, UserDetails sellerDetails){
-        // Implement delete logic
+    @Transactional
+    public void deleteProduct(Long productId, UserDetailsImpl sellerDetails){
+        // 1. Find the existing product
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
+
+        // 2. Authorization Check: Verify the user deleting is the seller
+        if (!Objects.equals(product.getSeller().getUserId(), sellerDetails.getUserId())) {
+            throw new AccessDeniedException("User is not authorized to delete this product.");
+        }
+
+        // 3. Delete the product
+        productRepository.delete(product);
+        // Alternatively: productRepository.deleteById(productId); - less safe as it doesn't guarantee ownership check happened first.
     }
 
     // Helper method for mapping method

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Use a context like 'dev' or 'test' so this doesn't run in production -->
+    <!-- You can activate contexts via Spring profiles or environment variables -->
+    <changeSet id="seed-test-users-1" author="TRONG_LE" context="dev,test">
+        <comment>Load sample users from CSV</comment>
+        <loadData tableName="users"
+                  file="db/data/sample-users.csv"
+                  relativeToChangelogFile="false"
+                  quotchar="'"
+                  encoding="UTF-8">
+            <!-- Define column types explicitly where needed, esp. for dates/timestamps -->
+            <column name="user_id" type="NUMERIC"/>
+
+            <column name="created_at" type="TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+            <!-- Other columns usually inferred correctly -->
+        </loadData>
+    </changeSet>
+
+    <changeSet id="seed-test-categories-1" author="TRONG_LE" context="dev,test">
+        <comment>Load sample categories from CSV</comment>
+        <loadData tableName="categories"
+                  file="db/data/sample-categories.csv"
+                  relativeToChangelogFile="false"
+                  encoding="UTF-8">
+            <column name="category_id" type="NUMERIC"/>
+            <column name="created_at" type="TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </loadData>
+    </changeSet>
+
+    <changeSet id="seed-test-products-1" author="TRONG_LE" context="dev,test">
+        <comment>Load sample products from CSV</comment>
+        <!-- Add dependsOn if product creation depends on categories/users being present -->
+        <!-- <dependsOn changeSetId="seed-test-users-1"/> -->
+        <!-- <dependsOn changeSetId="seed-test-categories-1"/> -->
+        <loadData tableName="products"
+                  file="db/data/sample-products.csv"
+                  relativeToChangelogFile="false"
+                  encoding="UTF-8">
+            <column name="product_id" type="NUMERIC"/>
+            <column name="seller_id" type="NUMERIC"/>
+            <column name="category_id" type="NUMERIC"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="description" type="TEXT"/>
+            <column name="image_url" type="TEXT"/>
+            <column name="status" type="ENUM('ACTIVE', 'INACTIVE', 'SOLD_OUT', 'DRAFT')"/>
+            <!-- Note: ENUM type may need to be handled differently based on your DB -->
+            <column name="price" type="NUMERIC"/>
+            <column name="stock_quantity" type="NUMERIC"/>
+            <column name="created_at" type="TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+        </loadData>
+    </changeSet>
+
+    <changeSet id="seed-test-user-roles-1" author="TRONG_LE" context="dev,test">
+        <comment>Load sample user-role mappings from CSV</comment>
+        <!-- Add dependsOn if needed -->
+        <!-- <dependsOn changeSetId="seed-test-users-1"/> -->
+        <!-- You also depend on the *default roles* being inserted by an earlier script -->
+        <loadData tableName="user_roles"
+                  file="db/data/sample-user-roles.csv"
+                  relativeToChangelogFile="false"
+                  encoding="UTF-8">
+            <column name="user_id" type="NUMERIC"/>
+            <column name="role_id" type="NUMERIC"/>
+        </loadData>
+    </changeSet>
+
+</databaseChangeLog>
