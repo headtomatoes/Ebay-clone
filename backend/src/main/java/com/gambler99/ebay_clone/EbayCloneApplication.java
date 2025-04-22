@@ -7,6 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class EbayCloneApplication {
 
 	public static void main(String[] args) {
+		// to read .env file
+		EnvLoader.load();
+		
 		SpringApplication.run(EbayCloneApplication.class, args);
 	}
 

@@ -1,5 +1,30 @@
----- for docker connection
--- run docker-compose.yml first, then go to mySQL workbench
+---- for docker connection:
+
+-- first, run the docker to initiate container to host the mysql server:
+docker-compose down -v       # remove old container + volume
+docker-compose up --build    # rebuild + rerun with fresh DB
+
+-- once run docker-compose.yml first, then go to mySQL workbench and set-up
 port: 3307
+
 user: wad
-password: 0987654321q
+
+password (store as keychain): see password in .env file --> DB_PASSWORD=??
+
+
+
+-- for re-setup docker --> run the following command line:
+
+--delete database for docker: 
+docker-compose down
+
+--delete memory volume:
+docker volume rm $(docker volume ls -q --filter name=mysql_data)
+
+--check the container has been removed?
+docker volume ls
+
+-- go the docker-compose.yml file and run:
+docker-compose up --build
+
+
