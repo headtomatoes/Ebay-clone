@@ -76,7 +76,7 @@ public class AuthService {
         Set<String> strRoles = signupRequestDTO.getRoles();
         Set<Role> roles = new HashSet<>();
 
-        final String DEFAULT_ROLE_NAME = "ROLE_BUYER";
+        final String DEFAULT_ROLE_NAME = "ROLE_SELLER";
 
         if (strRoles == null || strRoles.isEmpty()) {
             Role buyerRole = roleRepository.findByRoleName(DEFAULT_ROLE_NAME)

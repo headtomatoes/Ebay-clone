@@ -13,8 +13,8 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor // this is needed for JPA to create an instance of the class
+@AllArgsConstructor // this is needed for @Builder to work
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

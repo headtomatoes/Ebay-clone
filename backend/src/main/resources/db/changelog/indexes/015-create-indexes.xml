@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="15-add-indexes" author="TRONG_LE">
+        <!-- Users table indexes -->
+        <createIndex indexName="idx_email" tableName="users">
+            <column name="email"/>
+        </createIndex>
+        <createIndex indexName="idx_google_id" tableName="users">
+            <column name="google_id"/>
+        </createIndex>
+
+        <!-- Categories table indexes -->
+        <createIndex indexName="idx_name" tableName="categories">
+            <column name="name"/>
+        </createIndex>
+
+        <!-- Products table indexes -->
+        <createIndex indexName="idx_seller_id" tableName="products">
+            <column name="seller_id"/>
+        </createIndex>
+        <createIndex indexName="idx_category_id" tableName="products">
+            <column name="category_id"/>
+        </createIndex>
+        <createIndex indexName="idx_status" tableName="products">
+            <column name="status"/>
+        </createIndex>
+        <createIndex indexName="idx_name" tableName="products">
+            <column name="name"/>
+        </createIndex>
+
+        <!-- Cart Items table indexes -->
+        <createIndex indexName="idx_user_id" tableName="cart_items">
+            <column name="user_id"/>
+        </createIndex>
+        <createIndex indexName="idx_product_id" tableName="cart_items">
+            <column name="product_id"/>
+        </createIndex>
+
+        <!-- Orders table indexes -->
+        <createIndex indexName="idx_customer_id" tableName="orders">
+            <column name="customer_id"/>
+        </createIndex>
+        <createIndex indexName="idx_status" tableName="orders">
+            <column name="status"/>
+        </createIndex>
+        <createIndex indexName="idx_order_date" tableName="orders">
+            <column name="order_date"/>
+        </createIndex>
+
+        <!-- Order Items table indexes -->
+        <createIndex indexName="idx_order_id" tableName="order_items">
+            <column name="order_id"/>
+        </createIndex>
+        <createIndex indexName="idx_product_id" tableName="order_items">
+            <column name="product_id"/>
+        </createIndex>
+
+        <!-- Payments table indexes -->
+        <createIndex indexName="idx_order_id" tableName="payments">
+            <column name="order_id"/>
+        </createIndex>
+        <createIndex indexName="idx_status" tableName="payments">
+            <column name="status"/>
+        </createIndex>
+        <createIndex indexName="idx_transaction_id" tableName="payments">
+            <column name="transaction_id"/>
+        </createIndex>
+
+        <!-- Shipping table indexes -->
+        <createIndex indexName="idx_order_id" tableName="shipping">
+            <column name="order_id"/>
+        </createIndex>
+        <createIndex indexName="idx_status" tableName="shipping">
+            <column name="status"/>
+        </createIndex>
+        <createIndex indexName="idx_tracking_number" tableName="shipping">
+            <column name="tracking_number"/>
+        </createIndex>
+
+        <!-- Reviews table indexes -->
+        <createIndex indexName="idx_product_id" tableName="reviews">
+            <column name="product_id"/>
+        </createIndex>
+        <createIndex indexName="idx_user_id" tableName="reviews">
+            <column name="user_id"/>
+        </createIndex>
+        <createIndex indexName="idx_order_id" tableName="reviews">
+            <column name="order_id"/>
+        </createIndex>
+
+        <!-- Auctions table indexes -->
+        <createIndex indexName="idx_product_id" tableName="auctions">
+            <column name="product_id"/>
+        </createIndex>
+        <createIndex indexName="idx_winner_id" tableName="auctions">
+            <column name="winner_id"/>
+        </createIndex>
+        <createIndex indexName="idx_status" tableName="auctions">
+            <column name="status"/>
+        </createIndex>
+        <createIndex indexName="idx_end_time" tableName="auctions">
+            <column name="end_time"/>
+        </createIndex>
+
+        <!-- Bids table indexes -->
+        <createIndex indexName="idx_auction_id" tableName="bids">
+            <column name="auction_id"/>
+        </createIndex>
+        <createIndex indexName="idx_bidder_id" tableName="bids">
+            <column name="bidder_id"/>
+        </createIndex>
+        <createIndex indexName="idx_auction_bid_amount" tableName="bids">
+            <column name="auction_id"/>
+            <column name="bid_amount" descending="true"/>
+        </createIndex>
+        <createIndex indexName="idx_bid_time" tableName="bids">
+            <column name="bid_time"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

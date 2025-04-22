@@ -1,0 +1,4 @@
+user_id,username,password_hash,email,google_id,address,phone_number,created_at,updated_at
+4,testbuyer, HASHED_PASSWORD_BUYER ,buyer@example.com,1,"123 Buyer St","555-1111",2024-01-01 10:00:00,2024-01-01 10:00:00
+5,testseller, HASHED_PASSWORD_SELLER ,seller@example.com,2,"456 Seller Ave","555-2222",2024-01-01 10:01:00,2024-01-01 10:01:00
+6,testadmin, HASHED_PASSWORD_ADMIN ,admin@example.com,3,"789 Admin Blvd","555-3333",2024-01-01 10:02:00,2024-01-01 10:02:00

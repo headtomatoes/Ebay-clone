@@ -20,27 +20,29 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor // this is needed for JPA to create an instance of the class
+@AllArgsConstructor // this is needed for @Builder to work
 
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id")
+    @Column(name = "product_id" , nullable = false)
     private Long productId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", referencedColumnName = "user_id", foreignKey = @ForeignKey(name = "FK_SELLER"))
-    private User seller; // Assuming a User entity exists
+    @ToString.Exclude
+    private User seller;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", referencedColumnName = "category_id", foreignKey = @ForeignKey(name = "FK_CATEGORY"))
-    private Category category; // Assuming a Category entity exists
+    @ToString.Exclude
+    private Category category;
 
 
     @Column(name = "name", nullable = false, length = 255)
     private String name;
-
+    @Lob // = for potential long ass descrption
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
@@ -54,12 +56,16 @@ public class Product {
     private String imageUrl;
 
     public enum ProductStatus {
-
+        ACTIVE,
+        INACTIVE,
+        SOLD_OUT,
+        DRAFT
     }
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", columnDefinition = "ENUM('ACTIVE', 'INACTIVE', 'SOLD_OUT', 'DRAFT') DEFAULT 'DRAFT'")
-    private ProductStatus status;
+    @Column(name = "status", nullable = false, columnDefinition = "ENUM('ACTIVE','INACTIVE','SOLD_OUT','DRAFT')")
+    @Builder.Default
+    private ProductStatus status = ProductStatus.DRAFT;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -67,7 +73,16 @@ public class Product {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
 
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 
 
 }

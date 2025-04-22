@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="16-update-role-names" author="TRONG_LE">
+        <update tableName="roles">
+            <column name="role_name" value="ROLE_ADMIN"/>
+            <where>role_name = 'ADMIN'</where>
+        </update>
+        <update tableName="roles">
+            <column name="role_name" value="ROLE_BUYER"/>
+            <where>role_name = 'BUYER'</where>
+        </update>
+        <update tableName="roles">
+            <column name="role_name" value="ROLE_SELLER"/>
+            <where>role_name = 'SELLER'</where>
+        </update>
+    </changeSet>
+</databaseChangeLog>
