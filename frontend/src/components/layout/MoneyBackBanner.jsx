@@ -1,5 +1,5 @@
 import React from 'react';
-import RegisterBanner from '../assets/ex_login.jpg';
+import RegisterBanner from '../../assets/images/ex_login.jpg';
 
 
 export default function MoneyBackBanner() {

@@ -1,42 +1,51 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 
 // Provider
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [token, setToken] = useState(null);
   const [user, setUser] = useState(null); // { id, username, email, roles }
+  const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
+
+// Check for existing token on mount
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    const storedUser = localStorage.getItem('user');
+
+    if (storedToken && storedUser) {
+      setToken(storedToken);
+      setUser(JSON.parse(storedUser));
+      setIsAuthenticated(true);
+    }
+
+    setLoading(false);
+  }, []);
 
 // Check if user has a specific role
   const hasRole = (role) => {
-    return user?.roles?.includes(role);
+    return user?.roles?.includes(role)|| false;
   };
 
   // Login function: saves token and user info to state and localStorage
   const login = (token, userData) => {
-    setIsAuthenticated(true);
-    setToken(token);
-    setUser({
-      id: userData.id,
-      username: userData.username,
-      email: userData.email,
-      roles: userData.roles || []
-    });
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(userData));
 
-    localStorage.setItem("authToken", token);
-    localStorage.setItem("authUser", JSON.stringify(userData));
+    setToken(token);
+    setUser(userData);
+    setIsAuthenticated(true);
   };
 
   // Logout function: clears session from state and localStorage
   const logout = () => {
-    setIsAuthenticated(false);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+
     setToken(null);
     setUser(null);
-
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("authUser");
+    setIsAuthenticated(false);
   };
 
 
@@ -57,21 +66,28 @@ export const AuthProvider = ({ children }) => {
 
 // Provide context values to children components
   return (
-    <AuthContext.Provider
-      value={{
-        isAuthenticated,
-        token,
-        user,
-        login,
-        logout,
-        hasRole,
-        loading
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+      <AuthContext.Provider
+          value={{
+            isAuthenticated,
+            user,
+            token,
+            login,
+            logout,
+            hasRole,
+            loading
+          }}
+      >
+        {children}
+      </AuthContext.Provider>
   );
 };
 
 // Custom hook to use the auth context in components
-export const useAuth = () => useContext(AuthContext);
+// Custom hook for using auth context
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};

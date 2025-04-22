@@ -1,16 +1,21 @@
 import React from 'react';
-import LoginForm from '../components/LoginForm';
+import { useLocation } from 'react-router-dom'; // Import useLocation
+import LoginForm from '../components/auth/LoginForm';
 
-export default function LoginPage() {
-  return (
-    <div style={{ padding: '40px', maxWidth: '400px', margin: '0 auto' }}>
-      <h2>Login</h2>
-      <p>
-        Don’t have an account?{' '}
-        <a href="/register" style={{ color: 'blue' }}>Register here</a>
-      </p>
+function LoginPage() {
+    const location = useLocation(); // Get location state
+    const message = location.state?.message; // Extract message if present
 
-      <LoginForm />
-    </div>
-  );
+    return (
+        <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+            <div className="w-full max-w-md space-y-8">
+                <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                    Sign in to your account
+                </h2>
+                {/* Pass the message down to the LoginForm */}
+                <LoginForm successMessage={message} />
+            </div>
+        </div>
+    );
 }
+export default LoginPage;

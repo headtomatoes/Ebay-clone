@@ -1,0 +1,97 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+// Removed useAuth import - we don't auto-login after register
+// Import the REAL registration function
+import { registerUser } from '../../services/AuthService'; // Adjust path
+
+export default function RegisterForm() {
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: ''
+  });
+  const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState(''); // State for backend errors
+  const [loading, setLoading] = useState(false); // Loading state
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    // ... same as LoginForm ...
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: '' });
+    setApiError('');
+  };
+
+  const validate = () => {
+    // ... same as before ...
+    const newErrors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.username.trim()) newErrors.username = 'Username is required';
+    if (!formData.email.trim()) newErrors.email = 'Email is required';
+    else if (!emailRegex.test(formData.email)) newErrors.email = 'Invalid email format';
+    if (!formData.password.trim()) newErrors.password = 'Password is required';
+    // Add password confirmation validation if needed
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // *** UPDATED handleSubmit ***
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setApiError('');
+    if (!validate()) return;
+
+    setLoading(true);
+
+    try {
+      // Prepare data for backend (matching SignupRequestDTO)
+      const userData = {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password
+        // Add roles if your DTO supports it, otherwise backend assigns default
+      };
+
+      // Call the REAL backend service
+      const response = await registerUser(userData);
+
+      // Registration successful! Redirect to login page with a success message.
+      // The success message can be displayed on the LoginForm component.
+      navigate('/login', {
+        state: { message: response.message || 'Registration successful! Please log in.' }
+      });
+
+    } catch (err) {
+      console.error('Registration failed:', err);
+      // Display specific error from backend if available
+      setApiError(err.message || 'Registration failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+      // Add display for apiError
+      // Add disabled state to button based on loading
+      <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
+        {apiError && (
+            <p style={{ color: 'red', marginBottom: '15px', textAlign: 'center' }}>{apiError}</p>
+        )}
+        {['username', 'email', 'password'].map((field) => (
+            <div key={field} style={{ marginBottom: '15px' }}>
+              {/* ... label and input ... */}
+              {errors[field] && (
+                  <p style={{ color: 'red', marginTop: '5px' }}>{errors[field]}</p>
+              )}
+            </div>
+        ))}
+        <button
+            type="submit"
+            disabled={loading}
+            style={{ /* ... styles ... */ opacity: loading ? 0.6 : 1 }}
+        >
+          {loading ? 'Signing Up...' : 'Sign Up'}
+        </button>
+      </form>
+  );
+}

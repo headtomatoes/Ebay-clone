@@ -1,7 +1,7 @@
 import React from 'react';
-import ebayLogo from '../assets/EBay_logo.svg';
+import ebayLogo from '../../assets/images/EBay_logo.svg';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext.jsx';
 
 export default function Header() {
   const { isAuthenticated, user, logout } = useAuth();

@@ -1,12 +1,13 @@
 import React from 'react';
-import Header from '../components/Header';
-import MainBanner from '../components/MainBanner';
-import PopularCategories from '../components/PopularCategories';
-import MoneyBackBanner from '../components/MoneyBackBanner';
-import Footer from '../components/Footer';
+import Header from '../components/layout/Header.jsx';
+import MainBanner from '../components/layout/MainBanner.jsx';
+import PopularCategories from '../components/layout/PopularCategories.jsx';
+import MoneyBackBanner from '../components/layout/MoneyBackBanner.jsx';
+import Footer from '../components/layout/Footer.jsx';
 import { useAuth } from '../contexts/AuthContext';
+import { Link } from 'react-router-dom';
 
-export default function Home() {
+export default function HomePage() {
   // Access authentication state and user info from context
   const { isAuthenticated, user, hasRole } = useAuth();
 
