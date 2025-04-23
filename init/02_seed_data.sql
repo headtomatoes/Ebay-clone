@@ -7,6 +7,7 @@ USE Ebay_clone_db;
 INSERT INTO users (username, password_hash, email, address, phone_number)
 VALUES 
 -- Admin
+-- ('admin_user', 'hashed_admin_pass', 'admin@example.com', '100 Admin Lane, Control City', '1000000000'),
 ('admin_user', '$2a$10$uKt59.nhaWSrLxOKDPBadOVDa7MzO876b4UtPRF3HhZNoVpr0lddS', 'admin@example.com', '100 Admin Lane, Control City', '1000000000'),
 -- Sellers
 -- ('seller_1', 'hashed_pass', 'seller1@example.com', '1 Seller Way, Sellertown', '1000000001'),
@@ -30,6 +31,7 @@ VALUES
 -- ('buyer_14', 'hashed_pass', 'buyer14@example.com', '14 Buyer Rd, Buyerville', '1000000024'),
 -- ('buyer_15', 'hashed_pass', 'buyer15@example.com', '15 Buyer Rd, Buyerville', '1000000025');
 
+-- seller
 ('seller_1', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'seller1@example.com', '1 Seller Way, Sellertown', '1000000001'),
 ('seller_2', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'seller2@example.com', '2 Seller Way, Sellertown', '1000000002'),
 ('seller_3', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'seller3@example.com', '3 Seller Way, Sellertown', '1000000003'),
