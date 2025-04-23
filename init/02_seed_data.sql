@@ -7,28 +7,50 @@ USE Ebay_clone_db;
 INSERT INTO users (username, password_hash, email, address, phone_number)
 VALUES 
 -- Admin
-('admin_user', 'hashed_admin_pass', 'admin@example.com', '100 Admin Lane, Control City', '1000000000'),
+('admin_user', '$2a$10$uKt59.nhaWSrLxOKDPBadOVDa7MzO876b4UtPRF3HhZNoVpr0lddS', 'admin@example.com', '100 Admin Lane, Control City', '1000000000'),
 -- Sellers
-('seller_1', 'hashed_pass', 'seller1@example.com', '1 Seller Way, Sellertown', '1000000001'),
-('seller_2', 'hashed_pass', 'seller2@example.com', '2 Seller Way, Sellertown', '1000000002'),
-('seller_3', 'hashed_pass', 'seller3@example.com', '3 Seller Way, Sellertown', '1000000003'),
-('seller_4', 'hashed_pass', 'seller4@example.com', '4 Seller Way, Sellertown', '1000000004'),
+-- ('seller_1', 'hashed_pass', 'seller1@example.com', '1 Seller Way, Sellertown', '1000000001'),
+-- ('seller_2', 'hashed_pass', 'seller2@example.com', '2 Seller Way, Sellertown', '1000000002'),
+-- ('seller_3', 'hashed_pass', 'seller3@example.com', '3 Seller Way, Sellertown', '1000000003'),
+-- ('seller_4', 'hashed_pass', 'seller4@example.com', '4 Seller Way, Sellertown', '1000000004'),
+-- -- Buyers
+-- ('buyer_1', 'hashed_pass', 'buyer1@example.com', '1 Buyer Rd, Buyerville', '1000000011'),
+-- ('buyer_2', 'hashed_pass', 'buyer2@example.com', '2 Buyer Rd, Buyerville', '1000000012'),
+-- ('buyer_3', 'hashed_pass', 'buyer3@example.com', '3 Buyer Rd, Buyerville', '1000000013'),
+-- ('buyer_4', 'hashed_pass', 'buyer4@example.com', '4 Buyer Rd, Buyerville', '1000000014'),
+-- ('buyer_5', 'hashed_pass', 'buyer5@example.com', '5 Buyer Rd, Buyerville', '1000000015'),
+-- ('buyer_6', 'hashed_pass', 'buyer6@example.com', '6 Buyer Rd, Buyerville', '1000000016'),
+-- ('buyer_7', 'hashed_pass', 'buyer7@example.com', '7 Buyer Rd, Buyerville', '1000000017'),
+-- ('buyer_8', 'hashed_pass', 'buyer8@example.com', '8 Buyer Rd, Buyerville', '1000000018'),
+-- ('buyer_9', 'hashed_pass', 'buyer9@example.com', '9 Buyer Rd, Buyerville', '1000000019'),
+-- ('buyer_10', 'hashed_pass', 'buyer10@example.com', '10 Buyer Rd, Buyerville', '1000000020'),
+-- ('buyer_11', 'hashed_pass', 'buyer11@example.com', '11 Buyer Rd, Buyerville', '1000000021'),
+-- ('buyer_12', 'hashed_pass', 'buyer12@example.com', '12 Buyer Rd, Buyerville', '1000000022'),
+-- ('buyer_13', 'hashed_pass', 'buyer13@example.com', '13 Buyer Rd, Buyerville', '1000000023'),
+-- ('buyer_14', 'hashed_pass', 'buyer14@example.com', '14 Buyer Rd, Buyerville', '1000000024'),
+-- ('buyer_15', 'hashed_pass', 'buyer15@example.com', '15 Buyer Rd, Buyerville', '1000000025');
+
+('seller_1', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'seller1@example.com', '1 Seller Way, Sellertown', '1000000001'),
+('seller_2', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'seller2@example.com', '2 Seller Way, Sellertown', '1000000002'),
+('seller_3', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'seller3@example.com', '3 Seller Way, Sellertown', '1000000003'),
+('seller_4', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'seller4@example.com', '4 Seller Way, Sellertown', '1000000004'),
 -- Buyers
-('buyer_1', 'hashed_pass', 'buyer1@example.com', '1 Buyer Rd, Buyerville', '1000000011'),
-('buyer_2', 'hashed_pass', 'buyer2@example.com', '2 Buyer Rd, Buyerville', '1000000012'),
-('buyer_3', 'hashed_pass', 'buyer3@example.com', '3 Buyer Rd, Buyerville', '1000000013'),
-('buyer_4', 'hashed_pass', 'buyer4@example.com', '4 Buyer Rd, Buyerville', '1000000014'),
-('buyer_5', 'hashed_pass', 'buyer5@example.com', '5 Buyer Rd, Buyerville', '1000000015'),
-('buyer_6', 'hashed_pass', 'buyer6@example.com', '6 Buyer Rd, Buyerville', '1000000016'),
-('buyer_7', 'hashed_pass', 'buyer7@example.com', '7 Buyer Rd, Buyerville', '1000000017'),
-('buyer_8', 'hashed_pass', 'buyer8@example.com', '8 Buyer Rd, Buyerville', '1000000018'),
-('buyer_9', 'hashed_pass', 'buyer9@example.com', '9 Buyer Rd, Buyerville', '1000000019'),
-('buyer_10', 'hashed_pass', 'buyer10@example.com', '10 Buyer Rd, Buyerville', '1000000020'),
-('buyer_11', 'hashed_pass', 'buyer11@example.com', '11 Buyer Rd, Buyerville', '1000000021'),
-('buyer_12', 'hashed_pass', 'buyer12@example.com', '12 Buyer Rd, Buyerville', '1000000022'),
-('buyer_13', 'hashed_pass', 'buyer13@example.com', '13 Buyer Rd, Buyerville', '1000000023'),
-('buyer_14', 'hashed_pass', 'buyer14@example.com', '14 Buyer Rd, Buyerville', '1000000024'),
-('buyer_15', 'hashed_pass', 'buyer15@example.com', '15 Buyer Rd, Buyerville', '1000000025');
+('buyer_1', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer1@example.com', '1 Buyer Rd, Buyerville', '1000000011'),
+('buyer_2', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer2@example.com', '2 Buyer Rd, Buyerville', '1000000012'),
+('buyer_3', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer3@example.com', '3 Buyer Rd, Buyerville', '1000000013'),
+('buyer_4', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer4@example.com', '4 Buyer Rd, Buyerville', '1000000014'),
+('buyer_5', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer5@example.com', '5 Buyer Rd, Buyerville', '1000000015'),
+('buyer_6', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer6@example.com', '6 Buyer Rd, Buyerville', '1000000016'),
+('buyer_7', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer7@example.com', '7 Buyer Rd, Buyerville', '1000000017'),
+('buyer_8', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer8@example.com', '8 Buyer Rd, Buyerville', '1000000018'),
+('buyer_9', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer9@example.com', '9 Buyer Rd, Buyerville', '1000000019'),
+('buyer_10', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer10@example.com', '10 Buyer Rd, Buyerville', '1000000020'),
+('buyer_11', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer11@example.com', '11 Buyer Rd, Buyerville', '1000000021'),
+('buyer_12', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer12@example.com', '12 Buyer Rd, Buyerville', '1000000022'),
+('buyer_13', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer13@example.com', '13 Buyer Rd, Buyerville', '1000000023'),
+('buyer_14', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer14@example.com', '14 Buyer Rd, Buyerville', '1000000024'),
+('buyer_15', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer15@example.com', '15 Buyer Rd, Buyerville', '1000000025');
+
 
 -- INSERT ROLE TABLE:
 INSERT INTO roles (role_name) VALUES ('ROLE_ADMIN'), ('ROLE_SELLER'), ('ROLE_BUYER');
