@@ -50,7 +50,7 @@ export default function Header() {
       </div>
 
       {/* Logo + Search */}
-      <div className="flex items-center gap-4 px-6 py-3 bg-white">
+      <div className="flex items-center gap-4 px-6 py-3 bg-white ">
         <img src={ebayLogo} alt="eBay" className="h-10 w-auto" />
 
         <select className="border text-sm rounded-md px-3 py-[6px]">
