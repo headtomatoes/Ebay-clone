@@ -13,7 +13,6 @@ export default function HomePage() {
 
   return (
     <>
-        <Header />
         {/* Greeting */}
         <div className="max-w-6xl mx-auto px-4 py-8">
             <div className="text-center mb-6">
@@ -73,7 +72,6 @@ export default function HomePage() {
         <MainBanner />
         <PopularCategories />
         <MoneyBackBanner />
-        <Footer />
     </>
   );
 }
