@@ -1,9 +1,7 @@
 import React from 'react';
-import Header from '../components/layout/Header.jsx';
 import MainBanner from '../components/layout/MainBanner.jsx';
 import PopularCategories from '../components/layout/PopularCategories.jsx';
 import MoneyBackBanner from '../components/layout/MoneyBackBanner.jsx';
-import Footer from '../components/layout/Footer.jsx';
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 
@@ -13,9 +11,7 @@ export default function HomePage() {
 
   return (
     <>
-      <Header />
 
-      //Greeting
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="text-center mb-6">
           {isAuthenticated ? (
@@ -72,7 +68,6 @@ export default function HomePage() {
       <MainBanner />
       <PopularCategories />
       <MoneyBackBanner />
-      <Footer />
     </>
   );
 }

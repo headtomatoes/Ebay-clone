@@ -73,25 +73,59 @@ export default function RegisterForm() {
   return (
       // Add display for apiError
       // Add disabled state to button based on loading
-      <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
-        {apiError && (
-            <p style={{ color: 'red', marginBottom: '15px', textAlign: 'center' }}>{apiError}</p>
-        )}
-        {['username', 'email', 'password'].map((field) => (
-            <div key={field} style={{ marginBottom: '15px' }}>
-              {/* ... label and input ... */}
-              {errors[field] && (
-                  <p style={{ color: 'red', marginTop: '5px' }}>{errors[field]}</p>
-              )}
-            </div>
-        ))}
-        <button
-            type="submit"
-            disabled={loading}
-            style={{ /* ... styles ... */ opacity: loading ? 0.6 : 1 }}
-        >
-          {loading ? 'Signing Up...' : 'Sign Up'}
-        </button>
-      </form>
+// {/*       <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}> */}
+// {/*         {apiError && ( */}
+// {/*             <p style={{ color: 'red', marginBottom: '15px', textAlign: 'center' }}>{apiError}</p> */}
+// {/*         )} */}
+// {/*         {['username', 'email', 'password'].map((field) => ( */}
+// {/*             <div key={field} style={{ marginBottom: '15px' }}> */}
+// {/*                */}{/* ... label and input ... */}
+// {/*               {errors[field] && ( */}
+// {/*                   <p style={{ color: 'red', marginTop: '5px' }}>{errors[field]}</p> */}
+// {/*               )} */}
+// {/*             </div> */}
+// {/*         ))} */}
+// {/*         <button */}
+// {/*             type="submit" */}
+// {/*             disabled={loading} */}
+// {/*             style={{ /* ... styles ... */ opacity: loading ? 0.6 : 1 }} */}
+// {/*         > */}
+// {/*           {loading ? 'Signing Up...' : 'Sign Up'} */}
+// {/*         </button> */}
+// {/*       </form> */}
+
+       <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-10 p-6 shadow rounded bg-white">
+             <h2 className="text-2xl font-bold mb-6 text-center">Create your account</h2>
+
+             {apiError && (
+               <p className="text-red-500 text-center mb-4">{apiError}</p>
+             )}
+
+             {['username', 'email', 'password'].map((field) => (
+               <div key={field} className="mb-4">
+                 <label className="block text-sm font-medium mb-1 capitalize" htmlFor={field}>
+                   {field}
+                 </label>
+                 <input
+                   type={field === 'password' ? 'password' : field === 'email' ? 'email' : 'text'}
+                   name={field}
+                   id={field}
+                   value={formData[field]}
+                   onChange={handleChange}
+                   placeholder={`Enter your ${field}`}
+                   className="w-full border rounded px-3 py-2"
+                 />
+                 {errors[field] && <p className="text-red-500 text-sm mt-1">{errors[field]}</p>}
+               </div>
+             ))}
+
+             <button
+               type="submit"
+               disabled={loading}
+               className={`w-full bg-blue-600 text-white py-2 rounded ${loading ? 'opacity-60' : ''}`}
+             >
+               {loading ? 'Signing Up...' : 'Sign Up'}
+             </button>
+       </form>
   );
 }

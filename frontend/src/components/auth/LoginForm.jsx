@@ -64,25 +64,75 @@ export default function LoginForm() {
     return (
         // Add display for apiError
         // Add disabled state to button based on loading
-        <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
-            {apiError && (
-                <p style={{ color: 'red', marginBottom: '15px', textAlign: 'center' }}>{apiError}</p>
-            )}
-            {['username', 'password'].map((field) => (
-                <div key={field} style={{ marginBottom: '15px' }}>
-                    {/* ... label and input ... */}
-                    {errors[field] && (
-                        <p style={{ color: 'red', marginTop: '5px' }}>{errors[field]}</p>
-                    )}
-                </div>
-            ))}
-            <button
-                type="submit"
-                disabled={loading} // Disable button while loading
-                style={{ /* ... styles ... */ opacity: loading ? 0.6 : 1 }}
-            >
-                {loading ? 'Logging in...' : 'Login'}
-            </button>
+//         <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
+//             {apiError && (
+//                 <p style={{ color: 'red', marginBottom: '15px', textAlign: 'center' }}>{apiError}</p>
+//             )}
+//             {['username', 'password'].map((field) => (
+//                 <div key={field} style={{ marginBottom: '15px' }}>
+//                     {/* ... label and input ... */}
+//                     {errors[field] && (
+//                         <p style={{ color: 'red', marginTop: '5px' }}>{errors[field]}</p>
+//                     )}
+//                 </div>
+//             ))}
+//             <button
+//                 type="submit"
+//                 disabled={loading} // Disable button while loading
+//                 style={{ /* ... styles ... */ opacity: loading ? 0.6 : 1 }}
+//             >
+//                 {loading ? 'Logging in...' : 'Login'}
+//             </button>
+//         </form>
+        <form onSubmit={handleSubmit} style={{ maxWidth: '400px', margin: '40px auto', padding: '30px', border: '1px solid #ccc', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+          <h2 style={{ textAlign: 'center', marginBottom: '25px', fontWeight: 'bold' }}>Sign in to your account</h2>
+
+          {apiError && (
+            <p style={{ color: 'red', marginBottom: '15px', textAlign: 'center' }}>{apiError}</p>
+          )}
+
+          {['username', 'password'].map((field) => (
+            <div key={field} style={{ marginBottom: '20px' }}>
+              <label htmlFor={field} style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+                {field === 'username' ? 'Username' : 'Password'}
+              </label>
+              <input
+                type={field === 'password' ? 'password' : 'text'}
+                name={field}
+                id={field}
+                value={formData[field]}
+                onChange={handleChange}
+                placeholder={`Enter your ${field}`}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  borderRadius: '4px',
+                  border: '1px solid #ccc',
+                  fontSize: '16px'
+                }}
+              />
+              {errors[field] && (
+                <p style={{ color: 'red', marginTop: '5px' }}>{errors[field]}</p>
+              )}
+            </div>
+          ))}
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width: '100%',
+              padding: '12px',
+              backgroundColor: '#3665f3',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              fontSize: '16px',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              opacity: loading ? 0.6 : 1
+            }}
+          >
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
         </form>
     );
 }

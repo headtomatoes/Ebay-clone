@@ -82,6 +82,7 @@ export default function Header() {
       {/* Secondary nav */}
       <div className="border-t px-6 py-2 bg-white">
         <nav className="flex flex-wrap gap-x-6 text-sm text-black font-medium justify-center">
+          <Link to="/products" className="hover:text-blue-600">Products</Link>
           <a href="#">eBay Live</a>
           <a href="#">Saved</a>
           <a href="#">Electronics</a>
