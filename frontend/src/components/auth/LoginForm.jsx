@@ -41,13 +41,18 @@ export default function LoginForm() {
 
             // Extract data from the actual backend response
             // Ensure your backend returns these fields in JwtResponseDTO
-            const { accessToken, id, username, email, roles } = response;
+            //const { accessToken, id, username, email, roles } = response;
+            const { token, id, username, email, roles } = response;
 
             // Set token for future requests (optional but good practice)
-            // setAuthToken(accessToken); // If your authService requires it
+            //setAuthToken(accessToken); // If your authService requires it
+            setAuthToken(token);
 
             // Update AuthContext state
-            login(accessToken, { id, username, email, roles });
+            login(token, { id, username, email, roles });
+            //login(accessToken, { id, username, email, roles });
+            console.log('Login API response:', response);
+
 
             // Redirect to home page after successful login
             navigate('/');

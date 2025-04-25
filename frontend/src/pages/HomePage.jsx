@@ -23,7 +23,7 @@ export default function HomePage() {
           )}
         </div>
 
-        //Role-based content
+        {/* Role-based content */}
         {isAuthenticated && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {hasRole('ROLE_ADMIN') && (
@@ -37,19 +37,19 @@ export default function HomePage() {
                 </ul>
               </div>
             )}
-
             {hasRole('ROLE_SELLER') && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                <h2 className="text-xl font-semibold mb-4 text-blue-800">Seller Tools</h2>
-                <p className="mb-4">You can list and manage products.</p>
-                <ul className="list-disc list-inside text-sm text-blue-900 text-left">
-                  <li>Create new product listings</li>
-                  <li>Update prices and descriptions</li>
-                  <li>Track and manage your orders</li>
-                </ul>
-              </div>
+              <Link to="/seller" className="block">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 hover:bg-blue-100 transition duration-200">
+                  <h2 className="text-xl font-semibold mb-4 text-blue-800">Seller Tools</h2>
+                  <p className="mb-4">You can list and manage products.</p>
+                  <ul className="list-disc list-inside text-sm text-blue-900 text-left">
+                    <li>Create new product listings</li>
+                    <li>Update prices and descriptions</li>
+                    <li>Track and manage your orders</li>
+                  </ul>
+                </div>
+              </Link>
             )}
-
             {hasRole('ROLE_BUYER') && (
               <div className="bg-green-50 border border-green-200 rounded-lg p-6">
                 <h2 className="text-xl font-semibold mb-4 text-green-800">Buyer Portal</h2>

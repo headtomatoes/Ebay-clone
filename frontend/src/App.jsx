@@ -2,7 +2,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
-import { ProductProvider } from './contexts/ProductContext';
 import { ProtectedRoute, RoleBasedRoute } from './routes/ProtectedRoute';
 
 // Page Components
@@ -10,8 +9,15 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import UnauthorizedPage from './pages/UnauthorizedPage';
+
 import ProductPage from './pages/ProductPage';
 import ProductDetailPage from './pages/ProductDetailPage';
+import CategoryPage from './pages/CategoryPage';
+import CategoryProductPage from './pages/CategoryProductPage';
+
+import AddProductPage from './pages/AddProductPage';
+
+import SellerPage from './pages/SellerPage';
 
 // Layout
 import Header from './components/layout/Header';
@@ -39,6 +45,8 @@ function App() {
               <Route path="/unauthorized" element={<UnauthorizedPage />} />
               <Route path="/products" element={<ProductPage />} />
               <Route path="/products/:productId" element={<ProductDetailPage />} />
+              <Route path="/categories" element={<CategoryPage />} />
+              <Route path="/categories/:categoryName" element={<CategoryProductPage />} />
 
               {/* Protected */}
               <Route element={<ProtectedRoute />}>
@@ -49,7 +57,8 @@ function App() {
                 </Route>
 
                 <Route element={<RoleBasedRoute requiredRole="ROLE_SELLER" />}>
-                  <Route path="/seller" element={<div>Seller Dashboard</div>} />
+                  <Route path="/seller/products/new" element={<AddProductPage />} />
+                  <Route path="/seller" element={<SellerPage />} />
                 </Route>
               </Route>
 

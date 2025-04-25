@@ -5,22 +5,11 @@ export default function ProductDetailSection({ product }) {
     <div className="flex flex-col md:flex-row gap-6 p-6">
       {/* Image Gallery + Main Image */}
       <div className="flex flex-col md:flex-row gap-4">
-        {/* Thumbnail Column */}
-        <div className="flex md:flex-col gap-2">
-          {[product.image_url, product.image_url, product.image_url].map((img, idx) => (
-            <img
-              key={idx}
-              src={img}
-              alt="thumb"
-              className="w-16 h-16 object-cover rounded border hover:scale-105 transition"
-            />
-          ))}
-        </div>
 
         {/* Main Image */}
         <div>
           <img
-            src={product.image_url}
+            src={product.imageUrl}
             alt={product.name}
             className="w-[400px] h-[400px] object-cover rounded shadow"
           />
@@ -30,7 +19,6 @@ export default function ProductDetailSection({ product }) {
       {/* Product Info */}
       <div className="flex-1">
         <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
-        <p className="text-sm text-gray-600 mb-4">Condition: <span className="uppercase">{product.status}</span></p>
         <p className="text-2xl font-semibold text-red-600 mb-4">${product.price}</p>
         <p className="text-gray-700 text-sm mb-6">{product.description}</p>
 

@@ -182,6 +182,7 @@ public class ProductService {
                 product.getName(),
                 product.getPrice(),
                 product.getCategory() != null ? product.getCategory().getName() : null // Handle potential nulls
+                product.getImageUrl() //update
         );
     }
 

@@ -66,9 +66,8 @@ export default function Header() {
               className="flex-grow px-2 py-2 text-sm focus:outline-none"
             />
             <div className="w-px h-6 bg-gray-300 mx-2"></div>
-            <select className="text-sm bg-white px-2 py-2 pr-4 focus:outline-none">
-              <option>All Categories</option>
-            </select>
+            <Link to="/categories">All Categories</Link>
+
           </div>
         </div>
 
