@@ -186,4 +186,14 @@ public class ProductService {
         );
     }
 
+    // Search
+    // Implement search logic here
+    public List<ProductSummaryDTO> searchProducts(String searchTerm) {
+        List<Product> product = productRepository.findTop10ByNameContainingIgnoreCase(searchTerm);
+
+        // convert Product entities to ProductSummaryDTO
+        return product.stream()
+                .map(this::mapToProductSummaryDTO)
+                .collect(Collectors.toList());
+    }
 }
