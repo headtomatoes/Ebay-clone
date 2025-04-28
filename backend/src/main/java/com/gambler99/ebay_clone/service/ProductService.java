@@ -181,7 +181,8 @@ public class ProductService {
                 product.getProductId(),
                 product.getName(),
                 product.getPrice(),
-                product.getCategory() != null ? product.getCategory().getName() : null // Handle potential nulls
+                product.getCategory() != null ? product.getCategory().getName() : null, // Handle potential nulls
+                product.getImageUrl() //update
         );
     }
 

@@ -18,17 +18,29 @@ services:
       - ./init:/docker-entrypoint-initdb.d
     restart: always
 
-  # springboot-app:
-  #   build: .
-  #   container_name: ebay-springboot
-  #   depends_on:
-  #     - mysql
-  #   environment:
-  #     DB_USERNAME: ${DB_USERNAME}
-  #     DB_PASSWORD: ${DB_PASSWORD}
-  #     SPRING_DATASOURCE_URL: ${DB_URL}
-  #   ports:
-  #     - "8082:8082"
-  #   restart: on-failure
+#   springboot-app:
+#     build: .
+#     container_name: ebay-springboot
+#     depends_on:
+#       - mysql
+#     environment:
+#       DB_USERNAME: ${DB_USERNAME}
+#       DB_PASSWORD: ${DB_PASSWORD}
+#       SPRING_DATASOURCE_URL: ${DB_URL}
+#     ports:
+#       - "8082:8082"
+#     restart: on-failure
+  springboot-app:
+    build: ./backend
+    container_name: ebay-springboot
+    depends_on:
+      - mysql
+    environment:
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_URL: ${DB_URL}
+    ports:
+      - "8082:8082"
+    restart: on-failure
 volumes:
   mysql_data:

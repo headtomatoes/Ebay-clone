@@ -86,109 +86,62 @@ export default function RegisterForm() {
   };
 
   return (
-      // Using Tailwind classes for styling
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Display API errors from backend */}
-        {apiError && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-              <span className="block sm:inline">{apiError}</span>
-            </div>
-        )}
+      // Add display for apiError
+      // Add disabled state to button based on loading
+// {/*       <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}> */}
+// {/*         {apiError && ( */}
+// {/*             <p style={{ color: 'red', marginBottom: '15px', textAlign: 'center' }}>{apiError}</p> */}
+// {/*         )} */}
+// {/*         {['username', 'email', 'password'].map((field) => ( */}
+// {/*             <div key={field} style={{ marginBottom: '15px' }}> */}
+// {/*                */}{/* ... label and input ... */}
+// {/*               {errors[field] && ( */}
+// {/*                   <p style={{ color: 'red', marginTop: '5px' }}>{errors[field]}</p> */}
+// {/*               )} */}
+// {/*             </div> */}
+// {/*         ))} */}
+// {/*         <button */}
+// {/*             type="submit" */}
+// {/*             disabled={loading} */}
+// {/*             style={{ /* ... styles ... */ opacity: loading ? 0.6 : 1 }} */}
+// {/*         > */}
+// {/*           {loading ? 'Signing Up...' : 'Sign Up'} */}
+// {/*         </button> */}
+// {/*       </form> */}
 
-        {/* Username Field */}
-        <div>
-          <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-            Username
-          </label>
-          <input
-              type="text"
-              id="username"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              required
-              className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 ${errors.username ? 'border-red-500' : ''}`}
-              aria-invalid={errors.username ? "true" : "false"}
-              aria-describedby={errors.username ? "username-error" : undefined}
-          />
-          {errors.username && (
-              <p id="username-error" className="mt-2 text-sm text-red-600">{errors.username}</p>
-          )}
-        </div>
+       <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-10 p-6 shadow rounded bg-white">
+             <h2 className="text-2xl font-bold mb-6 text-center">Create your account</h2>
 
-        {/* Email Field */}
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Email
-          </label>
-          <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 ${errors.email ? 'border-red-500' : ''}`}
-              aria-invalid={errors.email ? "true" : "false"}
-              aria-describedby={errors.email ? "email-error" : undefined}
-          />
-          {errors.email && (
-              <p id="email-error" className="mt-2 text-sm text-red-600">{errors.email}</p>
-          )}
-        </div>
+             {apiError && (
+               <p className="text-red-500 text-center mb-4">{apiError}</p>
+             )}
 
-        {/* Password Field */}
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-            Password
-          </label>
-          <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 ${errors.password ? 'border-red-500' : ''}`}
-              aria-invalid={errors.password ? "true" : "false"}
-              aria-describedby={errors.password ? "password-error" : undefined}
-          />
-          {errors.password && (
-              <p id="password-error" className="mt-2 text-sm text-red-600">{errors.password}</p>
-          )}
-        </div>
+             {['username', 'email', 'password'].map((field) => (
+               <div key={field} className="mb-4">
+                 <label className="block text-sm font-medium mb-1 capitalize" htmlFor={field}>
+                   {field}
+                 </label>
+                 <input
+                   type={field === 'password' ? 'password' : field === 'email' ? 'email' : 'text'}
+                   name={field}
+                   id={field}
+                   value={formData[field]}
+                   onChange={handleChange}
+                   placeholder={`Enter your ${field}`}
+                   className="w-full border rounded px-3 py-2"
+                 />
+                 {errors[field] && <p className="text-red-500 text-sm mt-1">{errors[field]}</p>}
+               </div>
+             ))}
 
-        {/* Confirm Password Field */}
-        <div>
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-            Confirm Password
-          </label>
-          <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-              className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 ${errors.confirmPassword ? 'border-red-500' : ''}`}
-              aria-invalid={errors.confirmPassword ? "true" : "false"}
-              aria-describedby={errors.confirmPassword ? "confirmPassword-error" : undefined}
-          />
-          {errors.confirmPassword && (
-              <p id="confirmPassword-error" className="mt-2 text-sm text-red-600">{errors.confirmPassword}</p>
-          )}
-        </div>
+             <button
+               type="submit"
+               disabled={loading}
+               className={`w-full bg-blue-600 text-white py-2 rounded ${loading ? 'opacity-60' : ''}`}
+             >
+               {loading ? 'Signing Up...' : 'Sign Up'}
+             </button>
+       </form>
 
-        {/* Submit Button */}
-        <div>
-          <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Signing Up...' : 'Sign Up'}
-          </button>
-        </div>
-      </form>
   );
 }

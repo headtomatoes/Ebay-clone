@@ -72,6 +72,22 @@ export const AuthProvider = ({ children }) => {
   };
 
 
+
+  // Auto-login on page refresh: restore session from localStorage
+//   useEffect(() => {
+//     const storedToken = localStorage.getItem("authToken");
+//     const storedUser = localStorage.getItem("authUser");
+//
+//     if (storedToken && storedUser) {
+//       setIsAuthenticated(true);
+//       setToken(storedToken);
+//       setUser(JSON.parse(storedUser));
+//     }
+//
+//     setLoading(false);
+//   }, []);
+
+
 // Provide context values to children components
   return (
       <AuthContext.Provider

@@ -1,69 +1,73 @@
+// src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute, RoleBasedRoute } from './routes/ProtectedRoute';
 
-// Import Page Components
+// Page Components
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import UnauthorizedPage from './pages/UnauthorizedPage';
 
-// Import Layout Components
+import ProductPage from './pages/ProductPage';
+import ProductDetailPage from './pages/ProductDetailPage';
+import CategoryPage from './pages/CategoryPage';
+import CategoryProductPage from './pages/CategoryProductPage';
+
+import AddProductPage from './pages/AddProductPage';
+
+import SellerPage from './pages/SellerPage';
+
+// Layout
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 
-// A Layout component to wrap pages with Header and Footer
-const MainLayout = () => {
-    return (
-        <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-grow"> {/* Outlet renders the matched Route's element here */}
-                <Outlet />
-            </main>
-            <Footer />
-        </div>
-    );
-};
+const MainLayout = () => (
+  <div className="flex flex-col min-h-screen">
+    <Header />
+    <main className="flex-grow">
+      <Outlet />
+    </main>
+    <Footer />
+  </div>
+);
 
 function App() {
-    return (
-        <AuthProvider> {/* AuthProvider wraps everything */}
-            <Router>
-                <Routes>
-                    {/* Routes using the MainLayout (Header/Footer) */}
-                    <Route element={<MainLayout />}>
-                        {/* Public routes */}
-                        <Route path="/login" element={<LoginPage />} />
-                        <Route path="/register" element={<RegisterPage />} />
-                        <Route path="/unauthorized" element={<UnauthorizedPage />} />
+  return (
+    <AuthProvider>
+        <Router>
+          <Routes>
+            <Route element={<MainLayout />}>
+              {/* Public */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/unauthorized" element={<UnauthorizedPage />} />
+              <Route path="/products" element={<ProductPage />} />
+              <Route path="/products/:productId" element={<ProductDetailPage />} />
+              <Route path="/categories" element={<CategoryPage />} />
+              <Route path="/categories/:categoryName" element={<CategoryProductPage />} />
 
-                        {/* Protected routes - require authentication */}
-                        <Route element={<ProtectedRoute />}>
-                            <Route path="/" element={<HomePage />} /> {/* HomePage will use the components like MainBanner etc. */}
+              {/* Protected */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/" element={<HomePage />} />
 
-                            {/* Role-based routes - examples */}
-                            <Route element={<RoleBasedRoute requiredRole="ROLE_ADMIN" />}>
-                                <Route path="/admin" element={<div>Admin Page (Content Here)</div>} />
-                            </Route>
+                <Route element={<RoleBasedRoute requiredRole="ROLE_ADMIN" />}>
+                  <Route path="/admin" element={<div>Admin Page</div>} />
+                </Route>
 
-                            <Route element={<RoleBasedRoute requiredRole="ROLE_SELLER" />}>
-                                <Route path="/seller" element={<div>Seller Dashboard (Content Here)</div>} />
-                            </Route>
-                            {/* Add other protected routes here */}
-                        </Route>
+                <Route element={<RoleBasedRoute requiredRole="ROLE_SELLER" />}>
+                  <Route path="/seller/products/new" element={<AddProductPage />} />
+                  <Route path="/seller" element={<SellerPage />} />
+                </Route>
+              </Route>
 
-                        {/* Catch-all route or specific 404 component */}
-                        <Route path="*" element={<div>Page not found</div>} />
-                    </Route>
-
-                    {/* You could have other routes OUTSIDE MainLayout if needed */}
-                    {/* e.g., a special fullscreen route */}
-
-                </Routes>
-            </Router>
-        </AuthProvider>
-    );
+              <Route path="*" element={<div>Page not found</div>} />
+            </Route>
+          </Routes>
+        </Router>
+    </AuthProvider>
+  );
 }
 
 export default App;

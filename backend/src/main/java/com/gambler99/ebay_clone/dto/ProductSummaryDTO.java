@@ -6,5 +6,6 @@ public record ProductSummaryDTO (
     Long productId,
     String name,
     BigDecimal price,
-    String categoryName // Denormalized for convenience
+    String categoryName, // Denormalized for convenience
+    String imageUrl
 ) { }

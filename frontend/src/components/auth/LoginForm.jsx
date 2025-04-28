@@ -43,16 +43,21 @@ export default function LoginForm({ successMessage }) {
 
             // Extract data from the actual backend response
             // Ensure your backend returns these fields in JwtResponseDTO
-            const { accessToken, id, username, email, roles } = response;
+            //const { accessToken, id, username, email, roles } = response;
+            const { token, id, username, email, roles } = response;
 
             // Set token for future axios requests IMMEDIATELY after getting it
             setAuthToken(accessToken);
 
             // Set token for future requests (optional but good practice)
-            // setAuthToken(accessToken); // If your authService requires it
+            //setAuthToken(accessToken); // If your authService requires it
+            setAuthToken(token);
 
             // Update AuthContext state
-            login(accessToken, { id, username, email, roles });
+            login(token, { id, username, email, roles });
+            //login(accessToken, { id, username, email, roles });
+            console.log('Login API response:', response);
+
 
             // Redirect to home page after successful login
             navigate('/');
@@ -67,74 +72,78 @@ export default function LoginForm({ successMessage }) {
     };
 
     return (
-        // Using Tailwind classes for styling - ensure Tailwind is set up
-        <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Display success message from registration if passed */}
-            {successMessage && (
-                <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                    <span className="block sm:inline">{successMessage}</span>
-                </div>
-            )}
+        // Add display for apiError
+        // Add disabled state to button based on loading
+//         <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
+//             {apiError && (
+//                 <p style={{ color: 'red', marginBottom: '15px', textAlign: 'center' }}>{apiError}</p>
+//             )}
+//             {['username', 'password'].map((field) => (
+//                 <div key={field} style={{ marginBottom: '15px' }}>
+//                     {/* ... label and input ... */}
+//                     {errors[field] && (
+//                         <p style={{ color: 'red', marginTop: '5px' }}>{errors[field]}</p>
+//                     )}
+//                 </div>
+//             ))}
+//             <button
+//                 type="submit"
+//                 disabled={loading} // Disable button while loading
+//                 style={{ /* ... styles ... */ opacity: loading ? 0.6 : 1 }}
+//             >
+//                 {loading ? 'Logging in...' : 'Login'}
+//             </button>
+//         </form>
+        <form onSubmit={handleSubmit} style={{ maxWidth: '400px', margin: '40px auto', padding: '30px', border: '1px solid #ccc', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+          <h2 style={{ textAlign: 'center', marginBottom: '25px', fontWeight: 'bold' }}>Sign in to your account</h2>
 
-            {/* Display API errors from backend */}
-            {apiError && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                    <span className="block sm:inline">{apiError}</span>
-                </div>
-            )}
+          {apiError && (
+            <p style={{ color: 'red', marginBottom: '15px', textAlign: 'center' }}>{apiError}</p>
+          )}
 
-            {/* Username Field */}
-            <div>
-                <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                    Username
-                </label>
-                <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    required
-                    className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 ${errors.username ? 'border-red-500' : ''}`}
-                    aria-invalid={errors.username ? "true" : "false"}
-                    aria-describedby={errors.username ? "username-error" : undefined}
-                />
-                {errors.username && (
-                    <p id="username-error" className="mt-2 text-sm text-red-600">{errors.username}</p>
-                )}
+          {['username', 'password'].map((field) => (
+            <div key={field} style={{ marginBottom: '20px' }}>
+              <label htmlFor={field} style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+                {field === 'username' ? 'Username' : 'Password'}
+              </label>
+              <input
+                type={field === 'password' ? 'password' : 'text'}
+                name={field}
+                id={field}
+                value={formData[field]}
+                onChange={handleChange}
+                placeholder={`Enter your ${field}`}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  borderRadius: '4px',
+                  border: '1px solid #ccc',
+                  fontSize: '16px'
+                }}
+              />
+              {errors[field] && (
+                <p style={{ color: 'red', marginTop: '5px' }}>{errors[field]}</p>
+              )}
             </div>
+          ))}
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width: '100%',
+              padding: '12px',
+              backgroundColor: '#3665f3',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              fontSize: '16px',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              opacity: loading ? 0.6 : 1
+            }}
+          >
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
 
-            {/* Password Field */}
-            <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                    Password
-                </label>
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                    className={`mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 ${errors.password ? 'border-red-500' : ''}`}
-                    aria-invalid={errors.password ? "true" : "false"}
-                    aria-describedby={errors.password ? "password-error" : undefined}
-                />
-                {errors.password && (
-                    <p id="password-error" className="mt-2 text-sm text-red-600">{errors.password}</p>
-                )}
-            </div>
-
-            {/* Submit Button */}
-            <div>
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    {loading ? 'Logging in...' : 'Login'}
-                </button>
-            </div>
         </form>
     );
 }

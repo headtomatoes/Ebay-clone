@@ -51,6 +51,7 @@ export const loginUser = async (credentials) => {
 // Function to set auth token for requests
 export const setAuthToken = (token) => {
     if (token) {
+        localStorage.setItem('token', token);
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     } else {
         delete api.defaults.headers.common['Authorization'];
@@ -65,3 +66,4 @@ const authService = {
 };
 
 export default authService;
+
