@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "*", maxAge = 3600) // Allow requests from all origins (adjust for production)
+@CrossOrigin(origins = "http://localhost:5173", maxAge = 3600) // Allow requests from all origins (adjust for production)
 @RestController //methods return domain objects instead of views
 @RequestMapping("/api/auth") // Base URL for authentication endpoints
 public class AuthController {

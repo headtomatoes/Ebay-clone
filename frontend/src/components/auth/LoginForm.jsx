@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 // Import the REAL login function from your service
-import { loginUser, setAuthToken } from '../../services/AuthService';
+import {loginUser, setAuthToken} from '../../services/AuthService'
 
-export default function LoginForm() {
+export default function LoginForm({ successMessage }) {
     const [formData, setFormData] = useState({ username: '', password: '' });
     const [errors, setErrors] = useState({});
     const [apiError, setApiError] = useState(''); // State for backend errors
@@ -14,7 +14,9 @@ export default function LoginForm() {
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
-        setErrors({ ...errors, [e.target.name]: '' }); // Clear validation error on change
+        if (errors[e.target.name]) {
+            setErrors({ ...errors, [e.target.name]: '' });
+        } // Clear validation error on change
         setApiError(''); // Clear API error on change
     };
 
@@ -43,6 +45,9 @@ export default function LoginForm() {
             // Ensure your backend returns these fields in JwtResponseDTO
             //const { accessToken, id, username, email, roles } = response;
             const { token, id, username, email, roles } = response;
+
+            // Set token for future axios requests IMMEDIATELY after getting it
+            setAuthToken(accessToken);
 
             // Set token for future requests (optional but good practice)
             //setAuthToken(accessToken); // If your authService requires it
@@ -138,6 +143,7 @@ export default function LoginForm() {
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>
+
         </form>
     );
 }

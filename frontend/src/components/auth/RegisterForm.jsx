@@ -8,7 +8,8 @@ export default function RegisterForm() {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
-    password: ''
+    password: '',
+    confirmPassword: '' // Added for confirmation check
   });
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState(''); // State for backend errors
@@ -16,21 +17,35 @@ export default function RegisterForm() {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    // ... same as LoginForm ...
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: '' });
+    // Clear validation error for the field being changed
+    if (errors[e.target.name]) {
+      setErrors({ ...errors, [e.target.name]: '' });
+    }
+    // Clear API error when user starts typing again
     setApiError('');
   };
 
   const validate = () => {
-    // ... same as before ...
     const newErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!formData.username.trim()) newErrors.username = 'Username is required';
-    if (!formData.email.trim()) newErrors.email = 'Email is required';
-    else if (!emailRegex.test(formData.email)) newErrors.email = 'Invalid email format';
-    if (!formData.password.trim()) newErrors.password = 'Password is required';
-    // Add password confirmation validation if needed
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = 'Invalid email format';
+    }
+    if (!formData.password.trim()) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 8) { // Example: Minimum length
+      newErrors.password = 'Password must be at least 8 characters and contain letters and numbers, and special characters';
+    }
+    if (!formData.confirmPassword.trim()) {
+      newErrors.confirmPassword = 'Password confirmation is required';
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -57,7 +72,7 @@ export default function RegisterForm() {
 
       // Registration successful! Redirect to login page with a success message.
       // The success message can be displayed on the LoginForm component.
-      navigate('/login', {
+      navigate('/signin', {
         state: { message: response.message || 'Registration successful! Please log in.' }
       });
 
@@ -127,5 +142,6 @@ export default function RegisterForm() {
                {loading ? 'Signing Up...' : 'Sign Up'}
              </button>
        </form>
+
   );
 }

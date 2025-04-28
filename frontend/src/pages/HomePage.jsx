@@ -56,18 +56,19 @@ export default function HomePage() {
                 <p className="mb-4">You can browse and purchase products.</p>
                 <ul className="list-disc list-inside text-sm text-green-900 text-left">
                   <li>Search and view product listings</li>
-                  <li>Add items to your cart</li>
-                  <li>Track your purchase history</li>
-                </ul>
-              </div>
+                  <li>Manage your profile</li>
+                </ul> */}
+                        </div>
+                    )}
+                </div>
             )}
-          </div>
-        )}
-      </div>
+        </div>
+
 
       <MainBanner />
       <PopularCategories />
       <MoneyBackBanner />
+
     </>
   );
 }

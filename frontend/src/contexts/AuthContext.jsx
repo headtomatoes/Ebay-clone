@@ -11,17 +11,35 @@ export const AuthProvider = ({ children }) => {
 
 // Check for existing token on mount
   useEffect(() => {
+    console.log("AuthContext: Checking localStorage...");
     const storedToken = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
 
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
-      setIsAuthenticated(true);
-    }
+      if (storedToken && storedUser) {
+          try {
+              const parsedUser = JSON.parse(storedUser);
+              console.log("AuthContext: Found token and user in localStorage.", parsedUser);
+              setToken(storedToken);
+              setUser(parsedUser);
+              setIsAuthenticated(true);
+              // Optional: Set token for axios immediately if found.
+              // Consider adding validation here (e.g., decode token, check expiration)
+              // before blindly trusting localStorage and setting the header.
+              // For simplicity now, we'll rely on login setting it.
+              // setAuthToken(storedToken);
+          } catch (error) {
+              console.error("AuthContext: Error parsing user from localStorage", error);
+              // Clear invalid data if parsing fails
+              localStorage.removeItem('token');
+              localStorage.removeItem('user');
+          }
+      } else {
+          console.log("AuthContext: No token/user found in localStorage.");
+      }
 
-    setLoading(false);
-  }, []);
+      console.log("AuthContext: Initial load check complete.");
+      setLoading(false); // IMPORTANT: Set loading to false after checking
+  }, []); // Empty dependency array ensures this runs only once on mount
 
 // Check if user has a specific role
   const hasRole = (role) => {
@@ -29,23 +47,28 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Login function: saves token and user info to state and localStorage
-  const login = (token, userData) => {
-    localStorage.setItem('token', token);
+  const login = (newToken, userData) => {
+    console.log("AuthContext: login called", userData);
+    localStorage.setItem('token', newToken);
     localStorage.setItem('user', JSON.stringify(userData));
 
-    setToken(token);
+    setToken(newToken);
     setUser(userData);
     setIsAuthenticated(true);
   };
 
   // Logout function: clears session from state and localStorage
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+      console.log("AuthContext: logout called");
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
 
-    setToken(null);
-    setUser(null);
-    setIsAuthenticated(false);
+      setToken(null);
+      setUser(null);
+      setIsAuthenticated(false);
+      // Also clear the auth token from axios headers
+      // import { setAuthToken } from '../services/AuthService'; // Import if needed
+      // setAuthToken(null); // Clear header on logout
   };
 
 
@@ -63,6 +86,7 @@ export const AuthProvider = ({ children }) => {
 //
 //     setLoading(false);
 //   }, []);
+
 
 // Provide context values to children components
   return (
