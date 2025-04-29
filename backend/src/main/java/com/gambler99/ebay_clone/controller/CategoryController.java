@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/categories")
+@RequestMapping("/api/public/categories")
 @RequiredArgsConstructor
 // @CrossOrigin(origins = "http://localhost:5173") // Example
 public class CategoryController {

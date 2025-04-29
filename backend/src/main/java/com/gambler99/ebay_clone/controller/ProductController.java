@@ -19,7 +19,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/products") // Base URL for product-related endpoints
+@RequestMapping("/api/public/products") // Base URL for product-related endpoints
 @RequiredArgsConstructor
 // Consider adding @CrossOrigin here or using global WebConfig (as discussed previously)
 // @CrossOrigin(origins = "http://localhost:5173") // Example for REACT localhost
@@ -106,5 +106,17 @@ public class ProductController {
         // Delegate delete logic AND authorization check (is this user the owner?) to the service
         productService.deleteProduct(id, sellerDetails);
         return ResponseEntity.noContent().build(); // Return 204 No Content
+    }
+
+    // --- SEARCH ---
+    @GetMapping("/search")
+    public ResponseEntity<List<ProductSummaryDTO>> searchProducts(
+            @RequestParam String query) {
+        if(query == null || query.isEmpty()) {
+            return ResponseEntity.badRequest().build(); // Return 400 Bad Request if query is empty
+        }
+
+        List<ProductSummaryDTO> products = productService.searchProducts(query);
+        return ResponseEntity.ok(products); // Return 200 OK with search results
     }
 }

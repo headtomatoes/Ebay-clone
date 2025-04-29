@@ -22,5 +22,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findBySeller_userId(Long sellerId);
 
+    /**
+     * Finds all products that have a specific name (case-insensitive).*/
+    List<Product> findTop10ByNameContainingIgnoreCase(String name);
 
 }
