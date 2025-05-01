@@ -23,7 +23,7 @@ import java.net.URI;
 
 @CrossOrigin(origins = "http://localhost:5173", maxAge = 3600)
 @RestController
-@RequestMapping("/api/auctions") // Base URL for auction-related endpoints
+@RequestMapping("/api/public/auctions") // Base URL for auction-related endpoints
 @RequiredArgsConstructor
 public class AuctionController {
 
@@ -73,7 +73,7 @@ public class AuctionController {
     }
 
     @PostMapping("/{auctionId}/bids")
-    @PreAuthorize("isAuthenticated()") // Only users who are authenticated can place bids
+    @PreAuthorize("isAuthenticated()") // Only users who are authenticated can place bids, but everyone can see the auction
     public ResponseEntity<BidResponseDTO> placeBid(
             @PathVariable Long auctionId,
             @Valid @RequestBody PlaceBidRequestDTO placeBidDTO,
