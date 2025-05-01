@@ -112,10 +112,10 @@ public class AuctionService {
     @Transactional(readOnly = true)
     public Page<AuctionResponseDTO> getAllAuctions(Pageable pageable) {
         // Fetch all auctions with pagination
-        Page<Auction> auctionPage = auctionRepository.findAll(pageable);
+        Page<Auction> auctionPages = auctionRepository.findAll(pageable);
 
         // Map each Auction entity to AuctionResponseDTO
-        return auctionPage.map(this::mapToAuctionResponseDTO);
+        return auctionPages.map(this::mapToAuctionResponseDTO);
 
     }
 
@@ -134,14 +134,14 @@ public class AuctionService {
 
 
 
-    // Helper method to map Auction to AuctionResponseDTO
+    // Helper methods
     public AuctionResponseDTO mapToAuctionResponseDTO(Auction auction) {
-        // Fetch highest bid amount efficiently if needed (or pass as arg)
+        // Fetch highest bid amount
         BigDecimal highestBidAmount = bidRepository.findTopByAuctionOrderByBidAmountDesc(auction)
                 .map(Bid::getBidAmount)
                 .orElse(null); // Or auction.getCurrentPrice() if no bids yet?
 
-        // Fetch count efficiently (or pass as arg)
+        // Fetch count
         long totalBids = bidRepository.countByAuction(auction);
 
         return new AuctionResponseDTO(
@@ -153,9 +153,7 @@ public class AuctionService {
                 auction.getStatus(),
                 auction.getProduct().getProductId(),
                 auction.getWinner() != null ? auction.getWinner().getUsername() : null,
-                // Use the efficiently fetched highest bid
                 highestBidAmount,
-                // Use the efficiently fetched count
                 (int) totalBids // Cast count to int for DTO if necessary
         );
     }

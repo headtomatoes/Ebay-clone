@@ -7,6 +7,7 @@ public record BidResponseDTO(
         Long BidId,
         BigDecimal bidAmount,
         LocalDateTime bidTime,
-        String bidderUsername
+        String bidderUsername // denormalized for convenience
+                            // could be id or username, subject to change
 ) {
 }
