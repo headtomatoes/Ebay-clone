@@ -1,23 +1,21 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8082/api/categories';
+const BASE_URL = 'http://localhost:8082/api/public/categories';
+const PRODUCT_API = 'http://localhost:8082/api/public/products';
 
-const categoryApi = axios.create({
-  baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// Get all categories
 const getAllCategories = async () => {
   const token = localStorage.getItem('token');
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
   if (token) {
-    categoryApi.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    config.headers['Authorization'] = `Bearer ${token}`;
   }
 
   try {
-    const response = await categoryApi.get('');
+    const response = await axios.get(BASE_URL, config);
     return response.data;
   } catch (error) {
     console.error('Error fetching categories:', error.response?.data || error.message);
@@ -25,6 +23,27 @@ const getAllCategories = async () => {
   }
 };
 
+const getProductsByCategoryId = async (categoryId) => {
+  const token = localStorage.getItem('token');
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+  if (token) {
+    config.headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  try {
+    const response = await axios.get(`${PRODUCT_API}?categoryId=${categoryId}`, config);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching products by category:', error.response?.data || error.message);
+    throw error.response?.data || { message: error.message };
+  }
+};
+
 export default {
   getAllCategories,
+  getProductsByCategoryId,
 };

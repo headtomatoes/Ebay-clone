@@ -116,18 +116,18 @@ export default function RegisterForm() {
                <p className="text-red-500 text-center mb-4">{apiError}</p>
              )}
 
-             {['username', 'email', 'password'].map((field) => (
+             {['username', 'email', 'password', 'confirmPassword'].map((field) => (
                <div key={field} className="mb-4">
                  <label className="block text-sm font-medium mb-1 capitalize" htmlFor={field}>
-                   {field}
+                   {field === 'confirmPassword' ? 'Confirm Password' : field}
                  </label>
                  <input
-                   type={field === 'password' ? 'password' : field === 'email' ? 'email' : 'text'}
+                   type={field.includes('password') ? 'password' : field === 'email' ? 'email' : 'text'}
                    name={field}
                    id={field}
                    value={formData[field]}
                    onChange={handleChange}
-                   placeholder={`Enter your ${field}`}
+                   placeholder={`Enter your ${field === 'confirmPassword' ? 'password again' : field}`}
                    className="w-full border rounded px-3 py-2"
                  />
                  {errors[field] && <p className="text-red-500 text-sm mt-1">{errors[field]}</p>}

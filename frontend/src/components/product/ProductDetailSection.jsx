@@ -8,6 +8,7 @@ export default function ProductDetailSection({ product }) {
 
         {/* Main Image */}
         <div>
+
           <img
             src={product.imageUrl}
             alt={product.name}
