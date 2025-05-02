@@ -47,7 +47,7 @@ export default function LoginForm({ successMessage }) {
             const { token, id, username, email, roles } = response;
 
             // Set token for future axios requests IMMEDIATELY after getting it
-            setAuthToken(accessToken);
+            //setAuthToken(accessToken);
 
             // Set token for future requests (optional but good practice)
             //setAuthToken(accessToken); // If your authService requires it
