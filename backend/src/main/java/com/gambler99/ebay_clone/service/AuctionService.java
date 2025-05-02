@@ -16,14 +16,13 @@ import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -132,6 +131,43 @@ public class AuctionService {
         return bidPage.map(this::mapToBidResponseDTO);
     }
 
+    //Updates auction status from SCHEDULED to ACTIVE when start time is reached. Should be called by a scheduler at regular intervals.
+
+    @Transactional
+    @Scheduled(fixedRate = 60000) // Run every minute
+    public void updateAuctionStatuses() {
+        LocalDateTime now = LocalDateTime.now();
+
+        // Activate scheduled auctions whose start time has been reached
+        List<Auction> scheduledAuctions = auctionRepository.findByStatusAndStartTimeBefore(
+                Auction.AuctionStatus.SCHEDULED, now);
+
+        for (Auction auction : scheduledAuctions) {
+            auction.setStatus(Auction.AuctionStatus.ACTIVE);
+            auctionRepository.save(auction);
+            // Future enhancement: Trigger notifications or events when an auction becomes active
+        }
+    }
+
+
+    // Validates if an auction is active and available for bidding.
+
+    @Transactional(readOnly = true)
+    public Auction validateAuctionForBidding(Long auctionId) throws BadRequestException {
+        Auction auction = auctionRepository.findById(auctionId)
+                .orElseThrow(() -> new RuntimeException("Auction not found with ID: " + auctionId));
+
+        if (auction.getStatus() != Auction.AuctionStatus.ACTIVE) {
+            throw new BadRequestException("Bids can only be placed on active auctions");
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        if (now.isBefore(auction.getStartTime()) || now.isAfter(auction.getEndTime())) {
+            throw new BadRequestException("Auction is not currently active");
+        }
+
+        return auction;
+    }
 
 
     // Helper methods
