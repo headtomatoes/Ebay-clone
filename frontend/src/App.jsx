@@ -1,4 +1,3 @@
-// src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
@@ -14,9 +13,10 @@ import ProductPage from './pages/ProductPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import CategoryPage from './pages/CategoryPage';
 import CategoryProductPage from './pages/CategoryProductPage';
+import SearchResultPage from './pages/SearchResultPage';
 
 import AddProductPage from './pages/AddProductPage';
-
+import UpdateProductPage from './pages/UpdateProductPage';
 import SellerPage from './pages/SellerPage';
 
 // Layout
@@ -47,6 +47,7 @@ function App() {
               <Route path="/products/:productId" element={<ProductDetailPage />} />
               <Route path="/categories" element={<CategoryPage />} />
               <Route path="/categories/:categoryName" element={<CategoryProductPage />} />
+              <Route path="/search" element={<SearchResultPage />} />
 
               {/* Protected */}
               <Route element={<ProtectedRoute />}>
@@ -58,6 +59,7 @@ function App() {
 
                 <Route element={<RoleBasedRoute requiredRole="ROLE_SELLER" />}>
                   <Route path="/seller/products/new" element={<AddProductPage />} />
+                  <Route path="/seller/products/update/:id" element={<UpdateProductPage />} />
                   <Route path="/seller" element={<SellerPage />} />
                 </Route>
               </Route>

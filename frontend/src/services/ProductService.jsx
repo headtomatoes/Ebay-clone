@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8082/api/products';
+const API_URL = 'http://localhost:8082/api/public/products';
 
 // Create axios instance with base configuration
 const productApi = axios.create({
@@ -10,14 +10,17 @@ const productApi = axios.create({
   },
 });
 
-// Get all products
-const getAllProducts = async () => {
-  // Retrieve token from localStorage and attach it to the request
+// Helper: Set Authorization token if available
+const setAuthHeader = () => {
   const token = localStorage.getItem('token');
   if (token) {
     productApi.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   }
+};
 
+// Get all products
+const getAllProducts = async () => {
+  setAuthHeader();
   try {
     const response = await productApi.get('');
     return response.data;
@@ -29,11 +32,7 @@ const getAllProducts = async () => {
 
 // Get a product detail by product ID
 const getProductById = async (id) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    productApi.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  }
-
+  setAuthHeader();
   try {
     const response = await productApi.get(`/${id}`);
     return response.data;
@@ -43,58 +42,55 @@ const getProductById = async (id) => {
   }
 };
 
-// Get all products that belong to a specific category
-const getProductsByCategory = async (categoryName) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    productApi.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  }
-
-  try {
-    const response = await productApi.get(`/category/${categoryName}`);
-    return response.data;
-  } catch (error) {
-    console.error('Get Category Products Error:', error.response?.data || error.message);
-    throw error.response?.data || { message: error.message };
-  }
-};
-
 // Create a new product
 const createProduct = async (productData) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    productApi.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  }
-
+  setAuthHeader();
   try {
-    const response = await productApi.post("", productData); // POST /api/products
+    const response = await productApi.post('', productData);
     return response.data;
   } catch (error) {
-    console.error("Create Product Error:", error.response?.data || error.message);
+    console.error('Create Product Error:', error.response?.data || error.message);
     throw error.response?.data || { message: error.message };
   }
 };
 
-// Delete a product ...
-const deleteProduct = async (productId) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    productApi.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+// Update an existing product
+const updateProduct = async (productId, productData) => {
+  setAuthHeader();
+  try {
+    const response = await productApi.put(`/${productId}`, productData);
+    return response.data;
+  } catch (error) {
+    console.error('Update Product Error:', error.response?.data || error.message);
+    throw error.response?.data || { message: error.message };
   }
+};
 
+// Delete a product by ID
+const deleteProduct = async (productId) => {
+  setAuthHeader();
   try {
     await productApi.delete(`/${productId}`);
   } catch (error) {
-    console.error("Delete Product Error:", error.response?.data || error.message);
+    console.error('Delete Product Error:', error.response?.data || error.message);
     throw error.response?.data || { message: error.message };
   }
 };
 
-// Export as default service
+// Search products
+const searchProducts = async (url) => {
+  const fullUrl = `http://localhost:8082${url}`;
+  const res = await fetch(fullUrl);
+  if (!res.ok) throw new Error('Failed to search');
+  return await res.json();
+};
+
+// Export all service functions
 export default {
   getAllProducts,
   getProductById,
-  getProductsByCategory,
   createProduct,
+  updateProduct,
   deleteProduct,
+  searchProducts,
 };
