@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping("/api/public/products") // Base URL for product-related endpoints
 @RequiredArgsConstructor
 // Consider adding @CrossOrigin here or using global WebConfig (as discussed previously)
-// @CrossOrigin(origins = "http://localhost:5173") // Example for REACT localhost
+ // @CrossOrigin(origins = "http://localhost:5173") // Example for REACT localhost
 // ProductController is responsible for handling product-related requests.
 public class ProductController {
 
