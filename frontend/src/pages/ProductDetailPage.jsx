@@ -68,6 +68,13 @@ export default function ProductDetailPage() {
           >
             Update This Product
           </button>
+          {/* Create Auction button */}
+          <button
+            onClick={() => navigate(`/seller/auction/create/${product.productId}`)}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Create Auction
+          </button>
         </div>
       )}
     </div>

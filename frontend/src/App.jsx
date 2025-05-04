@@ -15,6 +15,10 @@ import CategoryPage from './pages/CategoryPage';
 import CategoryProductPage from './pages/CategoryProductPage';
 import SearchResultPage from './pages/SearchResultPage';
 
+import AddAuctionPage from './pages/AddAuctionPage';
+import AuctionPage from "./pages/AuctionPage";
+import AuctionDetailPage from './pages/AuctionDetailPage';
+
 import AddProductPage from './pages/AddProductPage';
 import UpdateProductPage from './pages/UpdateProductPage';
 import SellerPage from './pages/SellerPage';
@@ -61,6 +65,9 @@ function App() {
                   <Route path="/seller/products/new" element={<AddProductPage />} />
                   <Route path="/seller/products/update/:id" element={<UpdateProductPage />} />
                   <Route path="/seller" element={<SellerPage />} />
+                  <Route path="/seller/auction/create/:id" element={<AddAuctionPage />} />
+                  <Route path="/auctions" element={<AuctionPage />} />
+                  <Route path="/auctions/:id" element={<AuctionDetailPage />} />
                 </Route>
               </Route>
 
