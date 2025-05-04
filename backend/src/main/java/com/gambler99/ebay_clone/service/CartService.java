@@ -76,10 +76,25 @@ public class CartService {
     /**
      * Removes a specific product from the user's cart.
      */
-    public void removeFromCart(User user, Long productId) {
-        productRepo.findById(productId).ifPresent(product -> {
-            cartItemRepo.findByUserAndProduct(user, product).ifPresent(cartItemRepo::delete);
-        });
+    public void removeFromCart(User user, Long productId, int quantityToRemove) {
+        if (quantityToRemove <= 0) {
+            throw new IllegalArgumentException("Quantity to remove must be greater than 0.");
+        }
+
+        Product product = productRepo.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        CartItem cartItem = cartItemRepo.findByUserAndProduct(user, product)
+                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+
+        int newQuantity = cartItem.getQuantity() - quantityToRemove;
+
+        if (newQuantity > 0) {
+            cartItem.setQuantity(newQuantity);
+            cartItemRepo.save(cartItem);
+        } else {
+            cartItemRepo.delete(cartItem);
+        }
     }
 
     /**

@@ -53,6 +53,7 @@ public class CartController {
         return ResponseEntity.ok(cartDTOs);
     }
 
+    //preauth check i
     @PostMapping("/{userId}/add")
     public ResponseEntity<CartItemDTO> addToCart(
             @PathVariable Long userId,
@@ -90,7 +91,7 @@ public class CartController {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        cartService.removeFromCart(user, request.getProductId());
+        cartService.removeFromCart(user, request.getProductId(), request.getQuantity());
         return ResponseEntity.ok().build();
     }
 
