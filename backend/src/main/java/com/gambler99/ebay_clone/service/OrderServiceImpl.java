@@ -1,96 +1,185 @@
 package com.gambler99.ebay_clone.service;
 
-import com.gambler99.ebay_clone.dto.OrderRequestDTO;
+import com.gambler99.ebay_clone.dto.OrderItemDTO;
 import com.gambler99.ebay_clone.dto.OrderResponseDTO;
-import com.gambler99.ebay_clone.entity.Order;
-import com.gambler99.ebay_clone.entity.Product;
-import com.gambler99.ebay_clone.entity.User; // Correct import for User entity
-import com.gambler99.ebay_clone.repository.OrderRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.gambler99.ebay_clone.entity.*;
+import com.gambler99.ebay_clone.repository.*;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class OrderServiceImpl implements OrderService {
 
-    @Autowired
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
+    private final CartItemRepository cartItemRepository;
+    private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
-    public OrderServiceImpl(OrderRepository orderRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, CartItemRepository cartItemRepository,
+                            ProductRepository productRepository, UserRepository userRepository) {
         this.orderRepository = orderRepository;
+        this.cartItemRepository = cartItemRepository;
+        this.productRepository = productRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
-    public Order createOrder(Order order) {
-        return orderRepository.save(order);
-    }
+    public OrderResponseDTO createOrderFromCart(Long userId, List<Long> productIds) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-    @Override
-    public List<Order> getOrdersByCustomerId(Long customerId) {
-        return orderRepository.findByCustomerUserId(customerId);
-    }
+        List<CartItem> cartItems = cartItemRepository.findByUserUserId(userId);
 
-    @Override
-    public List<Order> getOrdersByStatus(Order.OrderStatus status) {
-        return orderRepository.findByStatus(status);
-    }
+        if (productIds != null && !productIds.isEmpty()) {
+            cartItems = cartItems.stream()
+                    .filter(cartItem -> productIds.contains(cartItem.getProduct().getProductId()))
+                    .toList();
+        }
 
-    @Override
-    public List<Order> getOrdersAfterDate(LocalDateTime date) {
-        return orderRepository.findByOrderDateAfter(date);
-    }
+        if (cartItems.isEmpty()) {
+            throw new RuntimeException("No valid cart items found for the user.");
+        }
 
-    @Override
-    public Order updateOrderStatus(Long orderId, Order.OrderStatus status) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found with ID: " + orderId));
-        order.setStatus(status);
-        return orderRepository.save(order);
-    }
-
-    @Override
-    public OrderResponseDTO createOrder(OrderRequestDTO orderRequestDTO) {
-        // Map DTO to Entity
         Order order = new Order();
-        order.setCustomer(new User(orderRequestDTO.getCustomerId(), null, null, null, null, null, null, null, null, null)); // Correct User entity usage
-        order.setProducts(orderRequestDTO.getProductIds().stream()
-                .map(productId -> new Product(productId, null, null, null, null, null, null, null, null, null, null)) // Assuming Product has a constructor with ID
-                .collect(Collectors.toSet()));
-        order.setTotalAmount(orderRequestDTO.getTotalAmount());
-        order.setShippingAddressSnapshot(orderRequestDTO.getShippingAddressSnapshot());
-        order.setBillingAddressSnapshot(orderRequestDTO.getBillingAddressSnapshot());
+        order.setCustomer(user);
+        order.setOrderDate(LocalDateTime.now());
+        order.setStatus(Order.OrderStatus.PENDING_PAYMENT);
 
-        // Save the order
+        for (CartItem cartItem : cartItems) {
+            Product product = cartItem.getProduct();
+
+            if (product.getStockQuantity() < cartItem.getQuantity()) {
+                throw new RuntimeException("Insufficient stock for product: " + product.getName());
+            }
+
+            OrderItem orderItem = OrderItem.builder()
+                    .order(order)
+                    .product(product)
+                    .quantity(cartItem.getQuantity())
+                    .priceAtPurchase(product.getPrice())
+                    .build();
+
+            order.getOrderItems().add(orderItem);
+
+            // Update stock quantity
+            product.setStockQuantity(product.getStockQuantity() - cartItem.getQuantity());
+            productRepository.save(product);
+        }
+
+        // Calculate total amount
+        order.calculateTotalAmount();
+
+        // Save order and delete cart items
         Order savedOrder = orderRepository.save(order);
+        cartItemRepository.deleteAll(cartItems);
 
-        // Map Entity to DTO
         return mapToResponseDTO(savedOrder);
     }
 
+    @Override
+    public void deleteOrder(Long orderId, Long userId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        if (!order.getCustomer().getUserId().equals(userId)) {
+            throw new RuntimeException("Unauthorized action.");
+        }
+
+        if (order.getStatus() != Order.OrderStatus.PENDING_PAYMENT) {
+            throw new RuntimeException("Cannot delete order unless it is in PENDING_PAYMENT status.");
+        }
+
+        // Restore stock quantities
+        for (OrderItem orderItem : order.getOrderItems()) {
+            Product product = orderItem.getProduct();
+            product.setStockQuantity(product.getStockQuantity() + orderItem.getQuantity());
+            productRepository.save(product);
+        }
+
+        orderRepository.delete(order);
+    }
+
     private OrderResponseDTO mapToResponseDTO(Order order) {
-        OrderResponseDTO dto = new OrderResponseDTO();
-        dto.setOrderId(order.getOrderId());
-        dto.setCustomerId(order.getCustomer().getUserId());
-        dto.setProductIds(order.getProducts().stream()
-                .map(Product::getProductId)
-                .collect(Collectors.toSet()));
-        dto.setOrderDate(order.getOrderDate());
-        dto.setStatus(order.getStatus());
-        dto.setTotalAmount(order.getTotalAmount());
-        dto.setShippingAddressSnapshot(order.getShippingAddressSnapshot());
-        dto.setBillingAddressSnapshot(order.getBillingAddressSnapshot());
-        dto.setCreatedAt(order.getCreatedAt());
-        dto.setUpdatedAt(order.getUpdatedAt());
-        return dto;
+        return OrderResponseDTO.builder()
+                .orderId(order.getOrderId())
+                .customerId(order.getCustomer().getUserId())
+                .orderItems(order.getOrderItems().stream()
+                        .map(orderItem -> OrderItemDTO.builder()
+                                .orderItemId(orderItem.getOrderItemId())
+                                .productId(orderItem.getProduct().getProductId())
+                                .productName(orderItem.getProduct().getName())
+                                .quantity(orderItem.getQuantity())
+                                .priceAtPurchase(orderItem.getPriceAtPurchase().doubleValue())
+                                .build())
+                        .collect(Collectors.toList()))
+                .orderDate(order.getOrderDate())
+                .status(order.getStatus())
+                .totalAmount(order.getTotalAmount())
+                .build();
     }
 
     @Override
-    public OrderResponseDTO getOrderById(Long orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found with ID: " + orderId));
-        return mapToResponseDTO(order); // Reuse the mapping method
+    public OrderResponseDTO createOrderFromAllCartItems(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Fetch all cart items for the user
+        List<CartItem> cartItems = cartItemRepository.findByUserUserId(userId);
+
+        if (cartItems.isEmpty()) {
+            throw new RuntimeException("No cart items found for the user.");
+        }
+
+        Order order = new Order();
+        order.setCustomer(user);
+        order.setOrderDate(LocalDateTime.now());
+        order.setStatus(Order.OrderStatus.PENDING_PAYMENT);
+
+        for (CartItem cartItem : cartItems) {
+            Product product = cartItem.getProduct();
+
+            if (product.getStockQuantity() < cartItem.getQuantity()) {
+                throw new RuntimeException("Insufficient stock for product: " + product.getName());
+            }
+
+            OrderItem orderItem = OrderItem.builder()
+                    .order(order)
+                    .product(product)
+                    .quantity(cartItem.getQuantity())
+                    .priceAtPurchase(product.getPrice())
+                    .build();
+
+            order.getOrderItems().add(orderItem);
+
+            // Update stock quantity
+            product.setStockQuantity(product.getStockQuantity() - cartItem.getQuantity());
+            productRepository.save(product);
+        }
+
+        // Calculate total amount
+        order.calculateTotalAmount();
+
+        // Save order and delete cart items
+        Order savedOrder = orderRepository.save(order);
+        cartItemRepository.deleteAll(cartItems);
+
+        return mapToResponseDTO(savedOrder);
+    }
+
+    @Override
+    public List<OrderResponseDTO> getAllOrdersForCustomer(Long userId) {
+        // Fetch all orders for the customer
+        List<Order> orders = orderRepository.findByCustomerUserId(userId);
+
+        // Map orders to OrderResponseDTO
+        return orders.stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
     }
 }

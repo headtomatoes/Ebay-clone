@@ -2,7 +2,11 @@ package com.gambler99.ebay_clone.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -19,30 +23,27 @@ public class CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cart_item_id")
     private Long cartItemId;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User user;
 
-    @Column(name = "product_id", nullable = false)
-    private Long productId;
-
-    @Column(nullable = false)
-    private Integer quantity;
-
-    @Column(name = "added_at", nullable = false)
-    private LocalDateTime addedAt;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "product_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Product product;
 
+    @Column(nullable = false)
+    private int quantity;
 
-    @PrePersist
-    public void prePersist() {
-        if (addedAt == null) {
-            addedAt = LocalDateTime.now();
-        }
+    @CreationTimestamp
+    @Column(name = "added_at", nullable = false, updatable = false)
+    private LocalDateTime addedAt;
+
+    // Calculate total price for the cart item
+    public BigDecimal calculateTotalPrice() {
+        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
     }
 }

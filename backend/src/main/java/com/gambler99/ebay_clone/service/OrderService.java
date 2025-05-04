@@ -4,17 +4,17 @@ import com.gambler99.ebay_clone.dto.OrderRequestDTO;
 import com.gambler99.ebay_clone.dto.OrderResponseDTO;
 import com.gambler99.ebay_clone.entity.Order;
 
-import java.time.LocalDateTime;
+// import java.time.LocalDateTime;
 import java.util.List;
 
 public interface OrderService {
-    Order createOrder(Order order);
-    OrderResponseDTO getOrderById(Long orderId); // New method
+    OrderResponseDTO createOrderFromAllCartItems(Long userId); 
 
-    List<Order> getOrdersByCustomerId(Long customerId);
-    List<Order> getOrdersByStatus(Order.OrderStatus status);
-    List<Order> getOrdersAfterDate(LocalDateTime date);
-    Order updateOrderStatus(Long orderId, Order.OrderStatus status);
-    OrderResponseDTO createOrder(OrderRequestDTO orderRequestDTO);
-    /* create order from cart, input userID, */
+    OrderResponseDTO createOrderFromCart(Long userId, List<Long> productIds);
+
+    void deleteOrder(Long orderId, Long userId); 
+
+    // New method to get all orders for a customer
+    List<OrderResponseDTO> getAllOrdersForCustomer(Long userId);
+    
 }

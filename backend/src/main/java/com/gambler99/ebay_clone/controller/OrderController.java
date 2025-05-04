@@ -1,13 +1,10 @@
 package com.gambler99.ebay_clone.controller;
 
-import com.gambler99.ebay_clone.dto.OrderRequestDTO;
 import com.gambler99.ebay_clone.dto.OrderResponseDTO;
-import com.gambler99.ebay_clone.entity.Order;
 import com.gambler99.ebay_clone.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -17,54 +14,31 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    // Create new order
-    @PostMapping
-    public OrderResponseDTO createOrder(@RequestBody OrderRequestDTO orderRequestDTO) {
-        return orderService.createOrder(orderRequestDTO);
+    // Create a new order from all CartItems
+    @PostMapping("/from-cart/all/{userId}")
+    public OrderResponseDTO createOrderFromAllCartItems(@PathVariable Long userId) {
+        return orderService.createOrderFromAllCartItems(userId);
     }
 
-    // Get order by ID
-    @GetMapping("/{orderId}")
-    public OrderResponseDTO getOrderById(@PathVariable Long orderId) {
-        return orderService.getOrderById(orderId);
+    // Create a new order from selected CartItems
+    @PostMapping("/from-cart/{userId}")
+    public OrderResponseDTO createOrderFromCart(
+            @PathVariable Long userId,
+            @RequestBody List<Long> cartItemIds
+    ) {
+        return orderService.createOrderFromCart(userId, cartItemIds);
     }
 
-    // Get all orders by customer ID
-
-    // Get orders by status
-    @GetMapping("/status/{status}")
-    public List<Order> getOrdersByStatus(@PathVariable Order.OrderStatus status) {
-        return orderService.getOrdersByStatus(status);
+    // Delete an order (only if status is PENDING_PAYMENT)
+    @DeleteMapping("/{orderId}")
+    public void deleteOrder(@PathVariable Long orderId, @RequestParam Long userId) {
+        orderService.deleteOrder(orderId, userId);
     }
 
-    // Get orders after a certain date
-    @GetMapping("/after/{date}")
-    public List<Order> getOrdersAfterDate(@PathVariable String date) {
-        return orderService.getOrdersAfterDate(LocalDateTime.parse(date));
+    // New endpoint to get all orders for a customer
+    @GetMapping("/user/{userId}")
+    public List<OrderResponseDTO> getAllOrdersForCustomer(@PathVariable Long userId) {
+        return orderService.getAllOrdersForCustomer(userId);
     }
 
-    // Update order status
-    @PutMapping("/{orderId}/status")
-    public Order updateOrderStatus(@PathVariable Long orderId,
-                                              @RequestParam Order.OrderStatus status) {
-        return orderService.updateOrderStatus(orderId, status);
-    }
-
-
-    @GetMapping("/customer/{customerId}")
-    public List<Order> getOrdersByCustomerId(@PathVariable Long customerId) {
-        return orderService.getOrdersByCustomerId(customerId);
-    }
-
-
-    // @GetMapping("/status/{status}")
-    // public List<Order> getOrdersByStatus(@PathVariable Order.OrderStatus status) {
-    //     return orderService.getOrdersByStatus(status);
-    // }
-
-
-    // @GetMapping("/after/{date}")
-    // public List<Order> getOrdersAfterDate(@PathVariable String date) {
-    //     return orderService.getOrdersAfterDate(LocalDateTime.parse(date));
-    // }
 }
