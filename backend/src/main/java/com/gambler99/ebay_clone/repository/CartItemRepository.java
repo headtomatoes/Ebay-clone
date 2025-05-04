@@ -25,6 +25,9 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
     void deleteByUserAndProduct(User user, Product product);
 
     // Retrieves all cart items that contain a specific product.
+
+    // Use for stock updates and notifications.
+    //Retrieves all cart items that contain a specific product
     List<CartItem> findByProduct(Product product);
 
     // Retrieves all cart items for a user by user ID.

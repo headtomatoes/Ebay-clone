@@ -9,7 +9,11 @@ import com.gambler99.ebay_clone.entity.User;
 import com.gambler99.ebay_clone.repository.ProductRepository;
 import com.gambler99.ebay_clone.repository.UserRepository;
 import com.gambler99.ebay_clone.service.CartService;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,11 +44,17 @@ public class CartController {
         );
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<CartItemDTO>> getCart(@PathVariable Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    private User getAuthenticatedUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
+    }
 
+    @PreAuthorize("hasAnyRole('BUYER', 'ADMIN')")
+    @GetMapping
+    public ResponseEntity<List<CartItemDTO>> getCart() {
+        User user = getAuthenticatedUser();
         List<CartItemDTO> cartDTOs = cartService.getUserCart(user)
                 .stream()
                 .map(this::toDTO)
@@ -53,27 +63,18 @@ public class CartController {
         return ResponseEntity.ok(cartDTOs);
     }
 
-    @PostMapping("/{userId}/add")
-    public ResponseEntity<CartItemDTO> addToCart(
-            @PathVariable Long userId,
-            @RequestBody CartRequestDTO request
-    ) {
+    @PreAuthorize("hasAnyRole('BUYER', 'ADMIN')")
+    @PostMapping("/add")
+    public ResponseEntity<CartItemDTO> addToCart(@RequestBody CartRequestDTO request) {
         if (request.getQuantity() <= 0) {
             return ResponseEntity.badRequest().build();
         }
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = getAuthenticatedUser();
 
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        // Debug log
-        System.out.println(">>> Product found: " + product.getName() +
-                ", Stock: " + product.getStockQuantity() +
-                ", Status: " + product.getStatus());
-
-        // Check product status and stock
         if (product.getStatus() != ProductStatus.ACTIVE || product.getStockQuantity() < request.getQuantity()) {
             return ResponseEntity.badRequest().body(null);
         }
@@ -82,23 +83,18 @@ public class CartController {
         return ResponseEntity.ok(toDTO(item));
     }
 
-    @DeleteMapping("/{userId}/remove")
-    public ResponseEntity<Void> removeFromCart(
-            @PathVariable Long userId,
-            @RequestBody CartRequestDTO request
-    ) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        cartService.removeFromCart(user, request.getProductId());
+    @PreAuthorize("hasAnyRole('BUYER', 'ADMIN')")
+    @DeleteMapping("/remove")
+    public ResponseEntity<Void> removeFromCart(@RequestBody CartRequestDTO request) {
+        User user = getAuthenticatedUser();
+        cartService.removeFromCart(user, request.getProductId(), request.getQuantity());
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{userId}/clear")
-    public ResponseEntity<Void> clearCart(@PathVariable Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
+    @PreAuthorize("hasAnyRole('BUYER', 'ADMIN')")
+    @DeleteMapping("/clear")
+    public ResponseEntity<Void> clearCart() {
+        User user = getAuthenticatedUser();
         cartService.clearCart(user);
         return ResponseEntity.ok().build();
     }
