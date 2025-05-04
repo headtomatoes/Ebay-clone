@@ -36,7 +36,7 @@ public class OrderItem {
     private BigDecimal priceAtPurchase;
 
     public BigDecimal calculateTotalPrice() {
-        return priceAtPurchase.multiply(BigDecimal.valueOf(quantity));
+        return priceAtPurchase;
     }
 }
 
