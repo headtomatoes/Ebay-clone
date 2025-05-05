@@ -92,11 +92,21 @@ const getSellerProducts = async () => {
     const response = await productApi.get('/seller');
     return response.data;
   } catch (error) {
+
     console.error('Get Seller Products Error:', error.response?.data || error.message);
     throw error.response?.data || { message: error.message };
   }
 };
 
+
+
+// Search products
+const searchProducts = async (url) => {
+  const fullUrl = `http://localhost:8082${url}`;
+  const res = await fetch(fullUrl);
+  if (!res.ok) throw new Error('Failed to search');
+  return await res.json();
+};
 // Export all service functions
 export default {
   getAllProducts,

@@ -68,6 +68,7 @@ export default function ProductDetailPage() {
           >
             Update This Product
           </button>
+
           {/* Create Auction button */}
           <button
             onClick={() => navigate(`/seller/auction/create/${product.productId}`)}

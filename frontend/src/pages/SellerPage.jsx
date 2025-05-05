@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import ProductService from '../services/ProductService'; // Import ProductService for cleaner API calls
 
 const SellerPage = () => {
+
   const { user } = useAuth();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);

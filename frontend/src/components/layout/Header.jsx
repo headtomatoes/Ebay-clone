@@ -15,7 +15,6 @@ export default function Header() {
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [searchInput, setSearchInput] = useState('');
 
-
   useEffect(() => {
     const fetch = async () => {
       try {

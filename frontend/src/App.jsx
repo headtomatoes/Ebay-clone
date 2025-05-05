@@ -15,6 +15,7 @@ import CategoryPage from './pages/CategoryPage';
 import CategoryProductPage from './pages/CategoryProductPage';
 import SearchResultPage from './pages/SearchResultPage';
 
+
 import AddAuctionPage from './pages/AddAuctionPage';
 import AuctionPage from "./pages/AuctionPage";
 import AuctionDetailPage from './pages/AuctionDetailPage';
