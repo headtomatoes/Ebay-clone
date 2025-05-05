@@ -86,6 +86,7 @@ public class SecurityConfig {
                         auth
                                 .requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/api/public/**").permitAll()
+                                .requestMatchers("/ws/**").permitAll()  // Add this line to allow WebSocket connections
                                 .requestMatchers("/error").permitAll()
                                 .anyRequest().authenticated()
                 );
@@ -95,5 +96,6 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
 }

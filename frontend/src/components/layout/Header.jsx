@@ -70,8 +70,8 @@ export default function Header() {
 
         <div className="flex items-center gap-4 text-sm text-gray-800">
           <a href="#" className="hover:underline">Ship to</a>
-          <Link to="/seller"><a href="#" className="hover:underline">Sell</a></Link>
-          <Link to="/auctions"><a href="#" className="hover:underline">Auction</a></Link>
+          <Link to="/seller" className="hover:underline">Sell</Link>
+          <Link to="/auctions" className="hover:underline">Auction</Link>
           <a href="#" className="hover:underline">My eBay</a> {/* profile dropdown */}
           <ThemeToggle />
           <button>🔔</button>
