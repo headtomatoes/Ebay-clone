@@ -1,43 +1,43 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import ProductService from '../services/ProductService'; // Import ProductService for cleaner API calls
 
 const SellerPage = () => {
-  const { user } = useAuth(); // Get current logged-in user
-  const [products, setProducts] = useState([]); // State to store seller's products
 
-  // Fetch products created by the seller
+  const { user } = useAuth();
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+
   useEffect(() => {
     const fetchProducts = async () => {
-      if (user?.id) {
-        try {
-          const token = localStorage.getItem('token');
-          const headers = token ? { Authorization: `Bearer ${token}` } : {};
-          const res = await axios.get(`/api/products/seller/${user.id}`, { headers });
-          setProducts(res.data);
-        } catch (err) {
-          console.error('Failed to fetch seller products:', err);
-        }
+      try {
+        const data = await ProductService.getSellerProducts();
+        setProducts(data);
+        setLoading(false);
+      } catch (err) {
+        console.error('Failed to fetch seller products:', err);
+        setError('Failed to load your products');
+        setLoading(false);
       }
     };
 
-    fetchProducts(); // 👉 Always fetch when user is available
+    fetchProducts();
 
-    // 👉 If a new product was just created, fetch again to update the list
+    // Clear newProductCreated flag if it exists
     if (localStorage.getItem('newProductCreated') === 'true') {
-      fetchProducts();
-      localStorage.removeItem('newProductCreated'); // 👉 Clear the flag after fetching
+      localStorage.removeItem('newProductCreated');
     }
   }, [user]);
 
   // Handle product deletion
   const handleDelete = async (productId) => {
-    if (confirm('Are you sure you want to delete this product?')) {
+    if (window.confirm('Are you sure you want to delete this product?')) {
       try {
-        await ProductService.deleteProduct(productId); // Call API to delete product
-        setProducts(prev => prev.filter(p => p.id !== productId)); // Remove product from local list
+        await ProductService.deleteProduct(productId);
+        setProducts(prev => prev.filter(p => p.productId !== productId));
         alert('Product deleted successfully!');
       } catch (err) {
         console.error('Failed to delete product:', err);
@@ -46,50 +46,62 @@ const SellerPage = () => {
     }
   };
 
+  if (loading) return <div className="p-6">Loading your products...</div>;
+  if (error) return <div className="p-6 text-red-500">{error}</div>;
+
   return (
-    <div className="p-6">
-      {/* Welcome message */}
-      <h2 className="text-2xl font-bold mb-4">Welcome, {user?.username}!</h2>
+      <div className="p-6">
+        {/* Welcome message */}
+        <h2 className="text-2xl font-bold mb-4">Welcome, {user?.username}!</h2>
 
-      {/* Link to Create New Product */}
-      <div className="mb-4">
-        <Link to="/seller/products/new" className="text-blue-500 hover:underline">
-          ➕ Create New Product
-        </Link>
+        {/* Link to Create New Product */}
+        <div className="mb-4">
+          <Link to="/seller/products/new" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Create New Product
+          </Link>
+        </div>
+
+        {/* Seller's products list */}
+        <h3 className="text-xl mb-4">Your Products</h3>
+        {products.length === 0 ? (
+            <p>No products found. Create your first product to get started!</p>
+        ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {products.map(product => (
+                  <div key={product.productId} className="border rounded-lg p-4 shadow-sm">
+                    <img
+                        src={product.imageUrl || 'https://placehold.co/300x200?text=No+Image'}
+                        alt={product.name}
+                        className="w-full h-40 object-cover rounded-md mb-3"
+                    />
+                    <h3 className="font-bold text-lg mb-2">{product.name}</h3>
+                    <p className="text-gray-700 mb-2">${parseFloat(product.price).toFixed(2)}</p>
+
+                    <div className="flex space-x-2 mt-4">
+                      <Link
+                          to={`/seller/products/update/${product.productId}`}
+                          className="flex-1 bg-gray-200 text-gray-800 text-center py-2 rounded hover:bg-gray-300"
+                      >
+                        Edit
+                      </Link>
+                      <button
+                          onClick={() => handleDelete(product.productId)}
+                          className="flex-1 bg-red-600 text-white text-center py-2 rounded hover:bg-red-700"
+                      >
+                        Delete
+                      </button>
+                      <Link
+                          to={`/seller/auction/create/${product.productId}`}
+                          className="flex-1 bg-blue-600 text-white text-center py-2 rounded hover:bg-blue-700"
+                      >
+                        Auction
+                      </Link>
+                    </div>
+                  </div>
+              ))}
+            </div>
+        )}
       </div>
-
-      {/* Seller's products list */}
-      <h3 className="text-xl mb-2">Your Products</h3>
-      {products.length === 0 ? (
-        <p>No products found.</p>
-      ) : (
-        <ul className="space-y-3">
-          {products.map(product => (
-            <li key={product.id} className="p-3 border rounded flex justify-between items-center">
-              <div>
-                <strong>{product.name}</strong> – ${product.price}
-              </div>
-              <div className="flex space-x-4">
-                {/* Edit button (placeholder for future) */}
-                <Link
-                  to={`/seller/products/edit/${product.id}`}
-                  className="text-blue-600 hover:underline"
-                >
-                  Edit
-                </Link>
-                {/* Delete button */}
-                <button
-                  onClick={() => handleDelete(product.id)}
-                  className="text-red-600 hover:underline"
-                >
-                  Delete
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
   );
 };
 

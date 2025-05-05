@@ -3,7 +3,6 @@ package com.gambler99.ebay_clone.controller;
 import com.gambler99.ebay_clone.dto.ProductCreateDTO;
 import com.gambler99.ebay_clone.dto.ProductDetailDTO;
 import com.gambler99.ebay_clone.dto.ProductSummaryDTO;
-import com.gambler99.ebay_clone.entity.Product;
 import com.gambler99.ebay_clone.security.UserDetailsImpl;
 import com.gambler99.ebay_clone.service.ProductService;
 import jakarta.validation.Valid;
@@ -118,5 +117,19 @@ public class ProductController {
 
         List<ProductSummaryDTO> products = productService.searchProducts(query);
         return ResponseEntity.ok(products); // Return 200 OK with search results
+    }
+
+    // --- ADDITIONAL METHODS ---
+    // getProductsBySeller
+    @GetMapping("/seller")
+    @PreAuthorize("hasRole('SELLER')") // Ensure only sellers can attempt this
+    public ResponseEntity<List<ProductSummaryDTO>> getProductsBySeller(
+            @AuthenticationPrincipal UserDetailsImpl sellerDetails)
+    {
+        if (sellerDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        List<ProductSummaryDTO> products = productService.getProductsBySellerId(sellerDetails);
+        return ResponseEntity.ok(products); // Return 200 OK with seller's products
     }
 }

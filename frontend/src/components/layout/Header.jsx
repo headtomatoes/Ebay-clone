@@ -3,6 +3,7 @@ import ebayLogo from '../../assets/images/EBay_logo.svg';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 import CategoryService from '../../services/CategoryService';
+import ThemeToggle from './ThemeToggle.jsx';
 
 export default function Header() {
   const { isAuthenticated, user, logout } = useAuth();
@@ -68,9 +69,10 @@ export default function Header() {
 
         <div className="flex items-center gap-4 text-sm text-gray-800">
           <a href="#" className="hover:underline">Ship to</a>
-          <a href="#" className="hover:underline">Sell</a>
-          <a href="#" className="hover:underline">Watchlist ▾</a>
-          <a href="#" className="hover:underline">My eBay ▾</a>
+          <Link to="/seller" className="hover:underline">Sell</Link>
+          <Link to="/auctions" className="hover:underline">Auction</Link>
+          <a href="#" className="hover:underline">My eBay</a> {/* profile dropdown */}
+          <ThemeToggle />
           <button>🔔</button>
           <button>🛒</button>
         </div>
@@ -78,7 +80,7 @@ export default function Header() {
 
       {/* Logo + Search + Dropdown */}
       <div className="flex items-center gap-4 px-6 py-3 bg-white relative">
-        <img src={ebayLogo} alt="eBay" className="h-10 w-auto" />
+        <Link to="/"> <img src={ebayLogo} alt="eBay" className="h-10 w-auto" /> </Link>
 
         {/* Shop by Category Dropdown */}
         <div className="relative">
