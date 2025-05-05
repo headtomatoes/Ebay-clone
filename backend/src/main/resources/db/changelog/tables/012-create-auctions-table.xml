@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="12-create-auctions-table" author="LE_HUNG">
+        <createTable tableName="auctions">
+            <column name="auction_id" type="BIGINT UNSIGNED" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="product_id" type="BIGINT UNSIGNED">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="start_time" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_time" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="starting_price" type="DECIMAL(12, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="current_price" type="DECIMAL(12, 2)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="reserve_price" type="DECIMAL(12, 2)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="bid_increment" type="DECIMAL(10, 2)" defaultValueNumeric="1.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="winner_id" type="BIGINT UNSIGNED">
+                <constraints nullable="true"/>
+            </column>
+            <column name="status" type="ENUM('SCHEDULED', 'ACTIVE', 'ENDED_MET_RESERVE', 'ENDED_NO_RESERVE', 'ENDED_NO_BIDS', 'CANCELLED')" defaultValue="SCHEDULED">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <sql>ALTER TABLE auctions ADD CONSTRAINT chk_end_time_after_start_time CHECK (end_time > start_time)</sql>
+
+    </changeSet>
+</databaseChangeLog>

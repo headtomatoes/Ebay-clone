@@ -17,7 +17,9 @@ import java.io.IOException;
 
 public class AuthTokenFilter extends OncePerRequestFilter {
     //= JWT Validation Filter
+    @Autowired
     private JwtTokenProvider jwtTokenProvider;
+    @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
 
@@ -38,26 +40,31 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             String jwt = parseJwt(request);
-
-            if (jwt != null && jwtTokenProvider.validateJwtToken(jwt)) {
+            // Check if jwtTokenProvider is now injected before using it
+            if (jwt != null && jwtTokenProvider != null && jwtTokenProvider.validateJwtToken(jwt)) {
                 String username = jwtTokenProvider.getUsernameFromJwtToken(jwt);
 
-                // Load user details
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                // Check if userDetailsService is now injected
+                if (userDetailsService != null) {
+                    // Load user details
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                // Create authentication token with authorities from UserDetails
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities()
-                        );
+                    // Create an authentication token with authorities from UserDetails
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities()
+                            );
 
-                // Set details
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    // Set details
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                // Set authentication in SecurityContext
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                    // Set authentication in SecurityContext
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }else {
+                    logger.error("UserDetailsServiceImpl is null in AuthTokenFilter");
+                }
             }
         } catch (Exception e) {
             logger.error("Cannot set user authentication: {}", e.getMessage());

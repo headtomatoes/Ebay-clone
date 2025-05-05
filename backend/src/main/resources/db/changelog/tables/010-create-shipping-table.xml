@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="10-create-shipping-table" author="LE_HUNG">
+        <createTable tableName="shipping">
+            <column name="shipping_id" type="BIGINT UNSIGNED" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="order_id" type="BIGINT UNSIGNED">
+                <constraints nullable="false"/>
+            </column>
+            <column name="shipping_address_snapshot" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="shipping_provider" type="VARCHAR(100)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="tracking_number" type="VARCHAR(100)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="shipping_cost" type="DECIMAL(10, 2)" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="ENUM('PENDING', 'LABEL_CREATED', 'SHIPPED', 'IN_TRANSIT', 'DELIVERED', 'FAILED', 'RETURNED')" defaultValue="PENDING">
+                <constraints nullable="false"/>
+            </column>
+            <column name="shipped_date" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            <column name="estimated_delivery_date" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            <column name="actual_delivery_date" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+</databaseChangeLog>

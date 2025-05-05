@@ -1,0 +1,72 @@
+--  All buyers with their purchased products + category info
+SELECT 
+    u.username AS buyer_name,
+    p.name AS product_name,
+    p.status,
+    c.name AS category_name
+FROM users u
+JOIN user_roles ur ON u.user_id = ur.user_id
+JOIN roles r ON ur.role_id = r.role_id
+JOIN orders o ON u.user_id = o.buyer_id
+JOIN products p ON o.product_id = p.product_id
+JOIN categories c ON p.category_id = c.category_id
+WHERE r.role_name = 'ROLE_BUYER';
+
+
+-- A category and all its products
+SELECT 
+    c.name AS category_name,
+    p.name AS product_name,
+    p.description,
+    p.status
+FROM categories c
+JOIN products p ON c.category_id = p.category_id
+WHERE c.name = 'Electronics';
+
+
+-- All active products
+SELECT 
+    p.name, 
+    p.description, 
+    p.status,
+    c.name AS category,
+    u.username AS seller
+FROM products p
+JOIN categories c ON p.category_id = c.category_id
+JOIN users u ON p.seller_id = u.user_id
+WHERE p.status = 'active';
+
+
+-- All sold out products
+SELECT 
+    p.name, 
+    p.description,
+    c.name AS category,
+    u.username AS seller
+FROM products p
+JOIN categories c ON p.category_id = c.category_id
+JOIN users u ON p.seller_id = u.user_id
+WHERE p.status = 'sold';
+
+
+-- Each buyer and the number of products they bought
+SELECT 
+    u.username AS buyer,
+    COUNT(o.order_id) AS products_bought
+FROM users u
+JOIN user_roles ur ON u.user_id = ur.user_id
+JOIN roles r ON ur.role_id = r.role_id
+JOIN orders o ON u.user_id = o.buyer_id
+WHERE r.role_name = 'ROLE_BUYER'
+GROUP BY u.username;
+
+
+-- top 5 best-selling products
+SELECT 
+    p.name,
+    COUNT(o.order_id) AS times_sold
+FROM products p
+JOIN orders o ON p.product_id = o.product_id
+GROUP BY p.name
+ORDER BY times_sold DESC
+LIMIT 5;

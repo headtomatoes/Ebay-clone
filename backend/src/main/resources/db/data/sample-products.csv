@@ -1,0 +1,4 @@
+product_id,seller_id,category_id,name,description,price,stock_quantity,image_url,status,created_at,updated_at
+101,2,10,"Sample Laptop","A decent laptop for work.",899.99,15,https://i.pinimg.com/example.jpg,ACTIVE,2024-01-01 12:00:00,2024-01-01 12:00:00
+102,2,11,"Sample T-Shirt","Comfortable cotton t-shirt.",19.95,50,https://i.pinimg.com/example.jpg,ACTIVE,2024-01-01 12:01:00,2024-01-01 12:01:00
+103,2,10,"Wireless Mouse","Ergonomic wireless mouse.",25.50,30,https://i.pinimg.com/example.jpg,ACTIVE,2024-01-01 12:02:00,2024-01-01 12:02:00

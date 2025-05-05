@@ -1,0 +1,5 @@
+### internal environment setup for security password
+.env/
+
+### VS Code ###
+.vscode/

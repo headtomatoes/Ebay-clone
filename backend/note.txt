@@ -1,0 +1,53 @@
+token collision in google login
+/public path error
+
+sequence transaction
+// 1. login
+// 2. select a product
+// 3. add to cart != order
+// 4. redirect to cart page to view the cart and remove or adding products
+// 5. click checkout button
+// 6. redirect to checkout page || transfer cart items into order items
+// 7. fill in the form, shipping address(if already set then autofill), payment method(for now, Stripe)
+// 8. click place order button
+// 9. redirect to list of orders page and these orders can have multiple statuses
+
+sequence auction for seller
+// 1. login
+// 2. create a product(if not already created)
+// 3. create an auction
+// 4. set the auction parameters
+// 5. click create auction button
+
+sequence auction for bidder
+// 1. login
+// 2. select auction page ( all products have auction which have status inactive )
+// 3. select a product
+// 4. pick a price click bid button
+// 5. time out or reserve price met
+// 6. close the auction then notify the seller and winner
+// 7. product transfer to order page ( no need to cart )
+
+
+// status for product (subject to change)
+// 1. active and sold_out appear in the product list
+// 2. draft for seller only
+// 3. inactive for auction
+
+// Status for auction
+// 1. scheduled = not started yet
+// 2. active = started
+// 3. ended_met_reserve = ended and met reserve price
+// 4. ended_not_met_reserve = ended and not met reserve price
+// 5. ended_no_bids = ended and no bids
+// 6. cancelled = cancelled by seller ==> change status of the product to draft
+
+// Cart item (subject to change) (nhat anh)
+link FE for access local storage
+send the cart item on LS  to BE
+then BE save the data in cart_items table
+if user choose to buy then transfer cart_items => order items => creat an order
+    then delete the cart on both side
+if user not buy then delete in BE and continue to store on LS
+
+// Order item and order (subject to change) => payment method (hung)

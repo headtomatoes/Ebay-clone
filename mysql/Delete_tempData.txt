@@ -1,0 +1,24 @@
+-- delete data in specific tables if you want, run this sql on mySQL Workbench:
+-- or if you stuck while insert data, and want to insert again, 
+-- run this query to delete all current data
+-- Drop data from all tables (you can choose specifics)
+
+
+
+-- SET FOREIGN_KEY_CHECKS = 0;
+
+-- TRUNCATE TABLE reviews;
+-- TRUNCATE TABLE bids;
+-- TRUNCATE TABLE auctions;
+-- TRUNCATE TABLE shipping;
+-- TRUNCATE TABLE payments;
+-- TRUNCATE TABLE order_items;
+-- TRUNCATE TABLE orders;
+-- TRUNCATE TABLE cart_items;
+-- TRUNCATE TABLE products;
+-- TRUNCATE TABLE categories;
+-- TRUNCATE TABLE user_roles;
+-- TRUNCATE TABLE users;
+-- TRUNCATE TABLE roles;
+
+-- SET FOREIGN_KEY_CHECKS = 1;

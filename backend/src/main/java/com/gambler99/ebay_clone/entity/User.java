@@ -23,13 +23,12 @@ import java.util.Set;
 @Setter
 @ToString
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor // this is needed for JPA to create an instance of the class
+@AllArgsConstructor // this is needed for @Builder to work
 public class User {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
-
     private Long userId;
 
 
@@ -91,13 +90,15 @@ public class User {
     }
 
 //    @Override
-//    public final int hashCode() {
-//        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+//    public int hashCode() {
+//        return userId != null ? Objects.hash(userId) : getClass().hashCode();
+//
+//
+//    }
+
     @Override
     public int hashCode() {
         // Consistent with equals(): use username for hashCode
         return Objects.hash(username);
-
-
     }
 }
