@@ -85,6 +85,18 @@ const searchProducts = async (url) => {
   return await res.json();
 };
 
+// Get products created by a specific seller
+const getSellerProducts = async () => {
+  setAuthHeader();
+  try {
+    const response = await productApi.get('/seller');
+    return response.data;
+  } catch (error) {
+    console.error('Get Seller Products Error:', error.response?.data || error.message);
+    throw error.response?.data || { message: error.message };
+  }
+};
+
 // Export all service functions
 export default {
   getAllProducts,
@@ -93,4 +105,5 @@ export default {
   updateProduct,
   deleteProduct,
   searchProducts,
+  getSellerProducts,
 };
