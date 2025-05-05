@@ -141,7 +141,14 @@ public class ProductService {
         // 6. Map the updated product to DTO and return
         return mapToProductDetailDTO(updatedProduct);
     }
-    // Delete
+    /**
+     * Deletes a product if the requesting user is the product's seller.
+     *
+     * @param productId the ID of the product to delete
+     * @param sellerDetails the authenticated user's details
+     * @throws ResourceNotFoundException if the product does not exist
+     * @throws AccessDeniedException if the user is not authorized to delete the product
+     */
     @Transactional
     public void deleteProduct(Long productId, UserDetailsImpl sellerDetails){
         // 1. Find the existing product
@@ -158,6 +165,13 @@ public class ProductService {
         // Alternatively: productRepository.deleteById(productId); - less safe as it doesn't guarantee ownership check happened first.
     }
 
+    /**
+     * Retrieves a list of product summaries for all products associated with the specified seller.
+     *
+     * @param sellerDetails the authenticated seller's user details
+     * @return a list of product summary DTOs for the seller's products
+     * @throws ResourceNotFoundException if the seller user is not found
+     */
     @Transactional(readOnly = true)
     public List<ProductSummaryDTO> getProductsBySellerId(UserDetailsImpl sellerDetails) {
         // 1. Find the Seller User entity
@@ -173,7 +187,12 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
     // Helper method for mapping method
-    // This method is used to mapping Product entity into ProductDetailDTO
+    /**
+     * Converts a Product entity to a ProductDetailDTO, including category and seller information.
+     *
+     * @param product the Product entity to convert
+     * @return a ProductDetailDTO containing detailed product information, or null values for category and seller if not present
+     */
     private ProductDetailDTO mapToProductDetailDTO(Product product) {
         return new ProductDetailDTO(
                 product.getProductId(),

@@ -1,5 +1,17 @@
 import React, { useState, useEffect } from 'react';
 
+/**
+ * Renders a form for creating an auction for a given product, allowing users to set starting price, reserve price, start and end times, and a description.
+ *
+ * When a product is provided, the form pre-fills fields with default values based on the product's details. On submission, the form collects and parses the input values, then invokes the provided {@link onSubmit} callback with the auction data. The cancel button triggers the {@link onCancel} callback.
+ *
+ * @param {Object} props
+ * @param {Object} props.product - Product details used to pre-fill the form fields.
+ * @param {Function} props.onSubmit - Callback invoked with auction data when the form is submitted.
+ * @param {Function} props.onCancel - Callback invoked when the cancel button is clicked.
+ *
+ * @returns {JSX.Element} The auction creation form component.
+ */
 export default function AuctionForm({ product, onSubmit, onCancel }) {
     const [form, setForm] = useState({
         productId: '',

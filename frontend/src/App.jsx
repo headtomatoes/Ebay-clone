@@ -37,6 +37,13 @@ const MainLayout = () => (
   </div>
 );
 
+/**
+ * Defines the main application component with routing, authentication, and role-based access control.
+ *
+ * Wraps the app in authentication context and sets up public, protected, and role-restricted routes using a shared layout.
+ *
+ * @returns {JSX.Element} The root component containing all application routes and layout.
+ */
 function App() {
   return (
     <AuthProvider>

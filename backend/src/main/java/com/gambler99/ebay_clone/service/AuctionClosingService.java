@@ -20,6 +20,12 @@ public class AuctionClosingService {
     private final AuctionRepository auctionRepository;
     private final BidRepository bidRepository;
 
+    /**
+     * Closes all active auctions whose end time has passed, determining winners and updating auction statuses accordingly.
+     *
+     * This method is scheduled to run every 30 seconds. For each ended auction, it sets the winner if there are bids,
+     * updates the auction status based on whether the reserve price was met, and persists the changes within a transaction.
+     */
     @Scheduled(fixedRate = 30000) // Check every 60 seconds see if any auctions need to be closed
     @Transactional
     public void closeEndedAuctions() {

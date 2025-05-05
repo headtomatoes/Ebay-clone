@@ -4,6 +4,14 @@ import { useAuth } from '../../contexts/AuthContext';
 // Import the REAL login function from your service
 import {loginUser, setAuthToken} from '../../services/AuthService'
 
+/**
+ * Renders a login form with validation, handles user authentication, and manages UI feedback for login attempts.
+ *
+ * The form validates user input, submits credentials to the backend, updates authentication state on success, and displays error messages for validation or API failures. Redirects to the home page after successful login.
+ *
+ * @param {Object} props
+ * @param {string} [props.successMessage] - Optional message to display after a successful action prior to login.
+ */
 export default function LoginForm({ successMessage }) {
     const [formData, setFormData] = useState({ username: '', password: '' });
     const [errors, setErrors] = useState({});

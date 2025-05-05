@@ -1,6 +1,17 @@
 import React from 'react';
 import { format } from 'date-fns';
 
+/**
+ * Displays a styled table of auction bid history, highlighting the top bid.
+ *
+ * Renders a list of bids with rank, bidder username, bid amount, and formatted bid time. If no bids are present, shows a message indicating no bids have been placed.
+ *
+ * @param {Object[]} bids - Array of bid objects to display.
+ * @param {string|number} bids[].bidId - Unique identifier for each bid.
+ * @param {string} bids[].bidderUsername - Username of the bidder.
+ * @param {string|number} bids[].bidAmount - Amount of the bid.
+ * @param {string|Date} bids[].bidTime - Date and time the bid was placed.
+ */
 export default function BidHistory({ bids }) {
     // Format bid date and time
     const formatBidTime = (dateString) => {

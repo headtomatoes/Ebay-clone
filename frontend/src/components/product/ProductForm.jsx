@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from 'react';
 
-// ProductForm component for both creating and updating products
+/**
+ * React component for creating or updating a product entry via a controlled form.
+ *
+ * If `initialData` is provided, the form fields are pre-filled for editing an existing product; otherwise, the form is blank for creating a new product. On submission, the form data is normalized and passed to the provided `onSubmit` callback.
+ *
+ * @param {Object} props
+ * @param {Function} props.onSubmit - Callback invoked with the product data when the form is submitted.
+ * @param {Object} [props.initialData] - Optional initial product data for editing mode.
+ *
+ * @returns {JSX.Element} The product form component.
+ */
 export default function ProductForm({ onSubmit, initialData }) {
   const [form, setForm] = useState({
     name: '',

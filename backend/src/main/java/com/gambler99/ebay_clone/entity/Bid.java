@@ -48,6 +48,12 @@ public class Bid {
     @JoinColumn(name = "bidder_id", nullable = false)
     private User bidder;
 
+    /**
+     * Returns a string representation of the bid, including all fields and related entities.
+     * Handles Hibernate proxy instances by delegating to the underlying implementation.
+     *
+     * @return a string describing the bid and its associated auction and bidder
+     */
     @Override
     public String toString() {
         if (this instanceof HibernateProxy) {

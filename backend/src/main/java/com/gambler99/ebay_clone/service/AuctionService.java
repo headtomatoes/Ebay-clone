@@ -34,7 +34,17 @@ public class AuctionService {
     private final BidRepository bidRepository;
     private final UserRepository userRepository;
 
-    // Create an auction
+    /**
+     * Creates a new auction for a product owned by the seller, enforcing business rules and validation.
+     *
+     * Validates product ownership, ensures no overlapping active or scheduled auctions exist for the product,
+     * checks that the auction end time is after the start time, and that the starting price does not exceed the product price.
+     * Sets the auction status to SCHEDULED if the start time is in the future, otherwise ACTIVE.
+     *
+     * @param dto the auction creation request containing product ID, start time, end time, and starting price
+     * @return the created auction as an AuctionResponseDTO
+     * @throws BadRequestException if validation fails or business rules are violated
+     */
     @Transactional
     public AuctionResponseDTO createAuction(CreateAuctionRequestDTO dto, UserDetailsImpl sellerDetails) throws BadRequestException {
         // Find the seller by userId || subject to change
@@ -98,6 +108,13 @@ public class AuctionService {
         return mapToAuctionResponseDTO(savedAuction);
     }
 
+    /**
+     * Retrieves an auction by its ID and returns its details as an AuctionResponseDTO.
+     *
+     * @param auctionId the unique identifier of the auction to retrieve
+     * @return the auction details mapped to an AuctionResponseDTO
+     * @throws RuntimeException if no auction is found with the given ID
+     */
     @Transactional(readOnly = true)
     public AuctionResponseDTO getAuctionById(Long auctionId) {
         // Find the auction by ID
@@ -108,6 +125,12 @@ public class AuctionService {
         return mapToAuctionResponseDTO(auction);
     }
 
+    /**
+     * Retrieves a paginated list of all auctions.
+     *
+     * @param pageable pagination and sorting information
+     * @return a page of AuctionResponseDTO objects representing the auctions
+     */
     @Transactional(readOnly = true)
     public Page<AuctionResponseDTO> getAllAuctions(Pageable pageable) {
         // Fetch all auctions with pagination
@@ -118,6 +141,14 @@ public class AuctionService {
 
     }
 
+    /**
+     * Retrieves a paginated list of bids for a specific auction, ordered by bid time descending.
+     *
+     * @param auctionId the ID of the auction to retrieve bids for
+     * @param pageable pagination information
+     * @return a page of bid response DTOs for the specified auction
+     * @throws RuntimeException if the auction with the given ID does not exist
+     */
     @Transactional(readOnly = true)
     public Page<BidResponseDTO> getBidsForAuction(Long auctionId , Pageable pageable) {
         // Find the auction by ID
@@ -131,7 +162,11 @@ public class AuctionService {
         return bidPage.map(this::mapToBidResponseDTO);
     }
 
-    //Updates auction status from SCHEDULED to ACTIVE when start time is reached. Should be called by a scheduler at regular intervals.
+    /**
+     * Updates the status of scheduled auctions to active if their start time has been reached.
+     *
+     * This method is executed automatically every minute to ensure auctions transition from SCHEDULED to ACTIVE status at the correct time.
+     */
 
     @Transactional
     @Scheduled(fixedRate = 60000) // Run every minute
@@ -150,7 +185,13 @@ public class AuctionService {
     }
 
 
-    // Validates if an auction is active and available for bidding.
+    /**
+     * Validates that the specified auction is currently active and open for bidding.
+     *
+     * @param auctionId the ID of the auction to validate
+     * @return the auction entity if it is active and within the bidding period
+     * @throws BadRequestException if the auction is not active or not within the allowed bidding time
+     */
 
     @Transactional(readOnly = true)
     public Auction validateAuctionForBidding(Long auctionId) throws BadRequestException {
@@ -170,7 +211,12 @@ public class AuctionService {
     }
 
 
-    // Helper methods
+    /**
+     * Converts an Auction entity to an AuctionResponseDTO, including highest bid amount, total bids, and winner information.
+     *
+     * @param auction the Auction entity to convert
+     * @return an AuctionResponseDTO containing auction details, highest bid, total bids, and winner username if available
+     */
     public AuctionResponseDTO mapToAuctionResponseDTO(Auction auction) {
         // Fetch highest bid amount
         BigDecimal highestBidAmount = bidRepository.findTopByAuctionOrderByBidAmountDesc(auction)
@@ -194,6 +240,12 @@ public class AuctionService {
         );
     }
 
+    /**
+     * Converts a Bid entity to a BidResponseDTO containing bid details and the bidder's username.
+     *
+     * @param bid the Bid entity to convert
+     * @return a BidResponseDTO with bid ID, amount, time, and bidder username
+     */
     private BidResponseDTO mapToBidResponseDTO(Bid bid) {
         return new BidResponseDTO(
                 bid.getBidId(),

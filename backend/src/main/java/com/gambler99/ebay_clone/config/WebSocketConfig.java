@@ -14,6 +14,14 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+    /**
+     * Configures the message broker for WebSocket messaging with STOMP support.
+     *
+     * Enables a simple in-memory broker on the "/topic" destination with client and server heartbeats every 10 seconds,
+     * managed by a custom task scheduler. Sets "/app" as the prefix for messages sent from clients to server-side handlers.
+     *
+     * @param config the message broker registry to configure
+     */
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         // Enable simple broker with heartbeat
@@ -24,6 +32,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         config.setApplicationDestinationPrefixes("/app"); // Prefix for client messages TO server (if needed)
     }
 
+    /**
+     * Creates and initializes a thread pool task scheduler for managing WebSocket heartbeat tasks.
+     *
+     * @return a TaskScheduler with a pool size of 2 and a custom thread name prefix for heartbeat management
+     */
     @Bean
     public TaskScheduler heartbeatScheduler() {
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
@@ -33,6 +46,17 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         return scheduler;
     }
 
+    /**
+     * Registers STOMP endpoints for WebSocket connections at the "/ws" path.
+     *
+     * <p>
+     * Adds two endpoints: one with SockJS fallback enabled to support clients without native WebSocket support,
+     * and another as a direct WebSocket endpoint. Both endpoints allow cross-origin requests from any origin,
+     * which is suitable for development environments.
+     * </p>
+     *
+     * @param registry the registry to which the STOMP endpoints are added
+     */
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Register endpoint with SockJS support
@@ -45,6 +69,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .setAllowedOriginPatterns("*");  // Allow all origins for development
     }
 
+    /**
+     * Creates and configures a WebSocket container factory bean with custom buffer sizes and timeouts.
+     *
+     * @return a ServletServerContainerFactoryBean with increased message buffer sizes, session idle timeout, and asynchronous send timeout
+     */
     @Bean
     public ServletServerContainerFactoryBean createWebSocketContainer() {
         ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();

@@ -71,12 +71,18 @@ public class Auction {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    /**
+     * Sets the creation and update timestamps to the current time before the entity is persisted.
+     */
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
     }
 
+    /**
+     * Updates the {@code updatedAt} timestamp to the current time before the entity is updated in the database.
+     */
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
@@ -98,6 +104,11 @@ public class Auction {
     @OrderBy("bidTime DESC")
     private List<Bid> bids = new ArrayList<>();
 
+    /**
+     * Returns a string representation of the auction, handling Hibernate proxy instances to avoid lazy loading issues.
+     *
+     * @return a string describing the auction's key fields
+     */
     @Override
     public String toString() {
         if (this instanceof HibernateProxy) {

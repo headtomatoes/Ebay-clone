@@ -2,7 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // Removed useAuth import - we don't auto-login after register
 // Import the REAL registration function
-import { registerUser } from '../../services/AuthService'; // Adjust path
+import { registerUser } from '../../services/AuthService'; /**
+ * Renders a user registration form with client-side validation and backend integration.
+ *
+ * The form collects username, email, password, and password confirmation. It validates input fields, displays validation and backend errors, and submits registration data to the backend. On successful registration, the user is redirected to the sign-in page with a success message.
+ *
+ * @returns {JSX.Element} The registration form component.
+ */
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState({

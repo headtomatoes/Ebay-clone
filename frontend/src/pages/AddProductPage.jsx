@@ -3,6 +3,11 @@ import ProductService from '../services/ProductService';
 import ProductForm from '../components/product/ProductForm';
 import { useNavigate } from 'react-router-dom';
 
+/**
+ * Renders a page for creating a new product, including a form and feedback messages.
+ *
+ * Displays a product creation form and handles submission by creating the product via {@link ProductService.createProduct}. On success, shows a confirmation alert and navigates to the products list. On failure, displays an error message.
+ */
 export default function AddProductPage() {
   const [message, setMessage] = useState('');
   const navigate = useNavigate(); // Hook for navigating to another page after creating a product

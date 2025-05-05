@@ -2,6 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import ProductService from '../services/ProductService';
 
+/**
+ * Displays a list of product search results based on the current URL's query and category parameters.
+ *
+ * Retrieves products matching the search query from the API, filters them by category if specified, and renders them in a responsive grid. Shows a message if no products are found.
+ *
+ * @remark Errors during product fetching are logged to the console but not displayed in the UI.
+ */
 export default function SearchResultsPage() {
   const location = useLocation();
   const [products, setProducts] = useState([]);

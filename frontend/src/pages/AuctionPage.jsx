@@ -4,6 +4,15 @@ import ProductService from '../services/ProductService';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 
+/**
+ * Displays a list of auctions with associated product details, allowing users to view and interact with active and past auctions.
+ *
+ * Fetches auction data and related product information on mount, handles loading and error states, and renders each auction in a responsive grid with status, time remaining, and key details. Provides navigation to individual auction pages.
+ *
+ * @returns {JSX.Element} The rendered auction page component.
+ *
+ * @remark If product details fail to load for some auctions, those auctions are still displayed with limited information.
+ */
 export default function AuctionPage() {
   const [auctions, setAuctions] = useState([]);
   const [loading, setLoading] = useState(true);

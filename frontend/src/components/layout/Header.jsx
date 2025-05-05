@@ -5,6 +5,11 @@ import { useAuth } from '../../contexts/AuthContext.jsx';
 import CategoryService from '../../services/CategoryService';
 import ThemeToggle from './ThemeToggle.jsx';
 
+/**
+ * Renders the main header for the e-commerce site, including authentication controls, navigation links, dynamic category dropdowns, and a search bar with category filtering.
+ *
+ * The header displays user authentication status, provides navigation to key site sections, fetches and displays product categories, and enables searching with optional category selection. Dropdown menus allow users to browse categories and filter search queries. Navigation is handled client-side.
+ */
 export default function Header() {
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();

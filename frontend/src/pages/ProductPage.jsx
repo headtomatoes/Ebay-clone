@@ -3,6 +3,11 @@ import { Link } from 'react-router-dom';
 import ProductService from '../services/ProductService';
 import { useAuth } from '../contexts/AuthContext';
 
+/**
+ * Displays a paginated grid of all products with loading and error handling.
+ *
+ * Fetches product data on mount, shows 20 products per page, and provides pagination controls. Each product card displays an image, name (as a link to the product detail page), price, category, and a "Sold Out" label if applicable.
+ */
 export default function ProductPage() {
   const { user } = useAuth(); //get logged in user
 

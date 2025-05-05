@@ -107,7 +107,12 @@ public class ProductController {
         return ResponseEntity.noContent().build(); // Return 204 No Content
     }
 
-    // --- SEARCH ---
+    /**
+     * Searches for products matching the provided query string.
+     *
+     * @param query the search term to filter products by; must not be null or empty
+     * @return a response containing a list of product summaries matching the query, or 400 Bad Request if the query is empty
+     */
     @GetMapping("/search")
     public ResponseEntity<List<ProductSummaryDTO>> searchProducts(
             @RequestParam String query) {
@@ -120,7 +125,12 @@ public class ProductController {
     }
 
     // --- ADDITIONAL METHODS ---
-    // getProductsBySeller
+    /**
+     * Retrieves all products belonging to the currently authenticated seller.
+     *
+     * @param sellerDetails the authenticated seller's user details
+     * @return a response containing a list of the seller's product summaries, or 401 Unauthorized if authentication is missing
+     */
     @GetMapping("/seller")
     @PreAuthorize("hasRole('SELLER')") // Ensure only sellers can attempt this
     public ResponseEntity<List<ProductSummaryDTO>> getProductsBySeller(

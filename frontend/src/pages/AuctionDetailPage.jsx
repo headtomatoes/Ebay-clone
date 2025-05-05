@@ -10,7 +10,16 @@ import ProductService from '../services/ProductService';
 import BidHistory from '../components/auction/BidHistory';
 
 // Base URL for the WebSocket endpoint - adjust if your backend runs elsewhere
-const SOCKET_URL = 'http://localhost:8082/ws'; // Uses the proxy setup by Vite usually
+const SOCKET_URL = 'http://localhost:8082/ws'; /**
+ * Displays detailed information for a specific auction, including real-time bid updates, product details, bid history, and interactive bidding functionality.
+ *
+ * Fetches auction, product, and bid data on mount, and establishes a WebSocket connection to receive live bid updates. Dynamically updates auction state, time remaining, and bid history. Allows authenticated users to place bids with validation and provides user feedback for actions and errors. UI adapts based on auction status to show relevant controls and results.
+ *
+ * @returns {JSX.Element|null} The rendered auction detail page, or null if auction data is unavailable.
+ *
+ * @remark
+ * Real-time bid updates are handled via a STOMP-over-SockJS WebSocket connection. If the connection fails, the UI will display an error and live updates will not be available.
+ */
 
 export default function AuctionDetailPage() {
   const { id } = useParams();

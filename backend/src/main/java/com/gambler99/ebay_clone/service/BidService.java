@@ -31,7 +31,19 @@ public class BidService {
     private final UserRepository userRepository;
     private final SimpMessagingTemplate messagingTemplate; // inject WebSocket template
 
-    // place a bid
+    /**
+     * Places a bid on a specified auction after performing all necessary validations.
+     *
+     * Validates that the bidder exists, the auction exists and is active, the bidder is not the auction owner, the bid is within the auction's time window, and the bid amount exceeds the current price. Upon successful validation, creates and saves a new bid, updates the auction's current price, and broadcasts the new bid via WebSocket. Returns a response DTO with bid details.
+     *
+     * @param auctionId the ID of the auction to bid on
+     * @param dto the bid request containing the bid amount
+     * @param bidderDetails the authenticated user's details
+     * @return a DTO containing the placed bid's details
+     * @throws ResourceNotFoundException if the bidder or auction does not exist
+     * @throws IllegalArgumentException if the bid is invalid (e.g., self-bidding, inactive auction, invalid timing, or insufficient bid amount)
+     * @throws IllegalStateException if the auction's current price is not set
+     */
     @Transactional
     public BidResponseDTO placeBid(long auctionId, PlaceBidRequestDTO dto, UserDetailsImpl bidderDetails) {
 

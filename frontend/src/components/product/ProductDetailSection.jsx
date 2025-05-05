@@ -1,5 +1,10 @@
 import React from 'react';
 
+/**
+ * Displays detailed information and actions for a single product, including image, name, price, description, and purchase options.
+ *
+ * @param {{ imageUrl: string, name: string, price: number, description: string }} product - The product to display.
+ */
 export default function ProductDetailSection({ product }) {
   return (
     <div className="flex flex-col md:flex-row gap-6 p-6">

@@ -2,7 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import CategoryService from '../services/CategoryService';
 
-// CategoryPage: Displays all available categories
+/**
+ * React component that displays a list of all available categories with navigation links.
+ *
+ * Fetches category data on mount, handles loading and error states, and renders each category as a styled link.
+ *
+ * @returns {JSX.Element} The rendered category page.
+ */
 export default function CategoryPage() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);

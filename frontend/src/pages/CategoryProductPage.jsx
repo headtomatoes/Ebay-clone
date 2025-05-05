@@ -3,7 +3,13 @@ import { useParams, Link } from 'react-router-dom';
 import ProductService from '../services/ProductService';
 import CategoryService from '../services/CategoryService';
 
-// CategoryProductPage: Displays products filtered by category
+/**
+ * Displays a page of products filtered by the category specified in the URL.
+ *
+ * Fetches all categories, matches the category name from the URL (case-insensitive), and retrieves products for the matched category. Shows loading and error states as appropriate. Renders a responsive grid of product cards linking to individual product detail pages.
+ *
+ * @returns {JSX.Element} The rendered category product page.
+ */
 export default function CategoryProductPage() {
   const { categoryName } = useParams(); //Get the category name from the URL
 

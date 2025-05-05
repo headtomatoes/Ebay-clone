@@ -75,6 +75,15 @@ public class SecurityConfig {
         return source;
     }
 
+    /**
+     * Configures the application's HTTP security filter chain, including CORS, CSRF, session management, exception handling, and authorization rules.
+     *
+     * Allows unauthenticated access to authentication endpoints, public APIs, WebSocket connections, and error handling, while requiring authentication for all other requests. Integrates JWT authentication and sets the session policy to stateless.
+     *
+     * @param http the HttpSecurity to configure
+     * @return the configured SecurityFilterChain
+     * @throws Exception if an error occurs during configuration
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http

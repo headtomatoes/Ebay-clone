@@ -4,6 +4,11 @@ import ProductService from '../services/ProductService';
 import ProductDetailSection from "../components/product/ProductDetailSection";
 import { useAuth } from '../contexts/AuthContext';
 
+/**
+ * Displays detailed information about a specific product and provides seller-specific actions.
+ *
+ * Fetches product data based on the URL parameter and renders product details. If the authenticated user is the product's seller, displays options to delete, update, or create an auction for the product. Handles loading and error states.
+ */
 export default function ProductDetailPage() {
   const { productId } = useParams();  //Get the product ID from the URL
   const navigate = useNavigate();
