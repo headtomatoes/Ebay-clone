@@ -27,8 +27,10 @@ public record CreateAuctionRequestDTO(
 
         @Nullable
         @DecimalMin(value = "0.01", message = "Buyout price must be atleast 0.01 greater than of the startPrice") // object to change
-        BigDecimal reservePrice
+        BigDecimal reservePrice,
 
+        @Nullable
+        String description
 
 ) {
 }

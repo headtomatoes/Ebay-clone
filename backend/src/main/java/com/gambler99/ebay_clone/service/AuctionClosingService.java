@@ -34,8 +34,8 @@ public class AuctionClosingService {
             if (winningBidOpt.isPresent()) {
                 // Bids were placed
                 auction.setWinner(winningBidOpt.get().getBidder());
-                if (auction.getReservePrice().compareTo(winningBidOpt.get().getBidAmount()) < 0) {
-                    // Winning bid is above the reserve price
+                if (auction.getReservePrice() == null || auction.getReservePrice().compareTo(winningBidOpt.get().getBidAmount()) < 0) {
+                    // Winning bid is above the reserve price or no reserve price set
                     auction.setStatus(Auction.AuctionStatus.ENDED_MET_RESERVE);
                 } else {
                     // Winning bid is below the reserve price
