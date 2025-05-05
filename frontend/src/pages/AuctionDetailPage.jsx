@@ -1,10 +1,16 @@
-import React, { useEffect, useState } from 'react';
+<llm-snippet-file>src/pages/AuctionDetailPage.js</llm-snippet-file>
+import React, { useEffect, useState, useRef } from 'react'; // Added useRef
 import { useParams, Link } from 'react-router-dom';
 import { format } from 'date-fns';
+import { Client } from '@stomp/stompjs'; // Import STOMP Client
+import SockJS from 'sockjs-client'; // Import SockJS
 import BidService from '../services/BidService';
 import AuctionService from '../services/AuctionService';
 import ProductService from '../services/ProductService';
 import BidHistory from '../components/auction/BidHistory';
+
+// Base URL for the WebSocket endpoint - adjust if your backend runs elsewhere
+const SOCKET_URL = 'http://localhost:8082/ws'; // Uses the proxy setup by Vite usually
 
 export default function AuctionDetailPage() {
   const { id } = useParams();
@@ -16,10 +22,13 @@ export default function AuctionDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [timeRemaining, setTimeRemaining] = useState('');
+  const stompClientRef = useRef(null); // Ref to hold the STOMP client instance
 
-  // Load auction info, product details, and bids
+  // Load initial auction info, product details, and bids
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true); // Set loading true at the start of fetch
+      setError(''); // Clear previous errors
       try {
         // Get auction details
         const auctionData = await AuctionService.getAuctionById(id);
@@ -46,6 +55,84 @@ export default function AuctionDetailPage() {
     fetchData();
   }, [id]);
 
+
+  // WebSocket Connection and Subscription Effect
+  useEffect(() => {
+    if (!id) return; // Don't connect if no auction ID
+
+    const client = new Client({
+      webSocketFactory: () => new SockJS(SOCKET_URL), // Use SockJS for transport
+      debug: (str) => { // Uncomment for connection debugging
+        console.log('STOMP Debug:', str);
+      },
+      reconnectDelay: 5000, // Try to reconnect every 5 seconds
+      heartbeatIncoming: 10000, // Expect heartbeats from server
+      heartbeatOutgoing: 10000, // Send heartbeats to server
+    });
+
+    client.onConnect = (frame) => {
+      console.log('STOMP: Connected:', frame);
+      // Subscribe to the specific auction's bid topic
+      const subscription = client.subscribe(`/topic/auctions/${id}/bids`, (message) => {
+        try {
+          const newBid = JSON.parse(message.body);
+          console.log('STOMP: Received bid:', newBid);
+
+          // Update auction's current price and potentially bid count
+          setAuction((prevAuction) => {
+            if (!prevAuction) return null;
+            return {
+              ...prevAuction,
+              currentPrice: newBid.bidAmount, // Update price from the new bid
+              totalBids: (prevAuction.totalBids || 0) + 1, // Increment bid count
+            };
+          });
+
+          // Add the new bid to the bid history (at the beginning)
+          setBids((prevBids) => [newBid, ...prevBids]);
+
+        } catch (e) {
+          console.error("Error processing incoming bid message:", e);
+        }
+      });
+
+      // Store subscription to unsubscribe later if needed, though client deactivate handles it
+    };
+
+    client.onStompError = (frame) => {
+      console.error('STOMP: Broker reported error:', frame.headers['message']);
+      console.error('STOMP: Additional details:', frame.body);
+      setError(`WebSocket connection error: ${frame.headers['message']}`);
+    };
+
+    client.onWebSocketError = (event) => {
+      console.error('STOMP: WebSocket error:', event);
+      // Maybe set an error state here to inform the user
+      setError('WebSocket connection failed. Real-time updates may not work.');
+    };
+
+    client.onDisconnect = () => {
+      console.log('STOMP: Disconnected');
+      // Optional: Add logic if you need to know when it's explicitly disconnected
+    };
+
+    // Activate the client
+    console.log('STOMP: Activating client...');
+    client.activate();
+    stompClientRef.current = client; // Store client in ref
+
+    // Cleanup function: Deactivate the client when component unmounts or ID changes
+    return () => {
+      if (stompClientRef.current) {
+        console.log('STOMP: Deactivating client...');
+        stompClientRef.current.deactivate();
+        stompClientRef.current = null;
+        console.log('STOMP: Client deactivated.');
+      }
+    };
+
+  }, [id]); // Rerun effect if auction ID changes
+
   // Update time remaining every second
   useEffect(() => {
     if (!auction || auction.status !== 'ACTIVE') return;
@@ -57,6 +144,8 @@ export default function AuctionDetailPage() {
 
       if (diff <= 0) {
         setTimeRemaining('Auction ended');
+        // Optionally update auction status if WebSocket didn't already
+        setAuction(prev => prev && prev.status === 'ACTIVE' ? {...prev, status: 'ENDED_MET_RESERVE'} : prev); // Or another appropriate status
         return;
       }
 
@@ -68,23 +157,26 @@ export default function AuctionDetailPage() {
       setTimeRemaining(`${days}d ${hours}h ${minutes}m ${seconds}s`);
     };
 
-    calculateTimeRemaining();
+    calculateTimeRemaining(); // Initial calculation
     const timer = setInterval(calculateTimeRemaining, 1000);
 
+    // Cleanup timer
     return () => clearInterval(timer);
-  }, [auction]);
+  }, [auction]); // Rerun when auction data changes (e.g., status or end time)
 
   // Format date for display
   const formatDateTime = (dateString) => {
     try {
       return format(new Date(dateString), 'MMM dd, yyyy - h:mm a');
     } catch (error) {
-      return dateString;
+      console.warn("Could not format date:", dateString, error);
+      return dateString; // Return original string if formatting fails
     }
   };
 
   // Get status badge class
   const getStatusBadgeClass = (status) => {
+    // ... (keep existing function)
     switch (status) {
       case 'ACTIVE':
         return 'bg-green-100 text-green-800';
@@ -104,6 +196,7 @@ export default function AuctionDetailPage() {
 
   const handlePlaceBid = async (e) => {
     e.preventDefault();
+    setMessage({ text: '', type: '' }); // Clear previous message
 
     const token = localStorage.getItem('token');
     if (!token) {
@@ -114,41 +207,50 @@ export default function AuctionDetailPage() {
       return;
     }
 
-    // Validate bid amount
-    if (parseFloat(bidAmount) <= parseFloat(auction.currentPrice)) {
+    // Validate bid amount against the *current* auction state
+    if (!auction || parseFloat(bidAmount) <= parseFloat(auction.currentPrice)) {
       setMessage({
-        text: `Your bid must be higher than the current price ($${auction.currentPrice})`,
+        text: `Your bid must be higher than the current price ($${auction?.currentPrice?.toFixed(2) ?? 'N/A'})`,
         type: 'error'
       });
       return;
     }
 
     try {
+      // Call the backend to place the bid. The backend will handle broadcasting.
       await BidService.placeBid(id, bidAmount);
 
-      // Update UI with success message
+      // Update UI with *temporary* success message
       setMessage({
-        text: 'Bid placed successfully!',
+        text: 'Bid placed successfully! Waiting for confirmation...', // Adjusted message
         type: 'success'
       });
-      setBidAmount('');
+      setBidAmount(''); // Clear input field
 
-      // Refresh auction and bid data
-      const [updatedAuction, updatedBids] = await Promise.all([
-        AuctionService.getAuctionById(id),
-        BidService.getBidHistory(id)
-      ]);
+      // Clear success message after a few seconds - the WebSocket update will be the final confirmation
+      setTimeout(() => setMessage((prev) => (prev.type === 'success' ? { text: '', type: '' } : prev)), 3000);
 
-      setAuction(updatedAuction);
-      setBids(updatedBids);
+      // --- REMOVED ---
+      // No need to manually refresh auction and bid data here anymore.
+      // The WebSocket listener will handle updates pushed from the server.
+      // const [updatedAuction, updatedBids] = await Promise.all([
+      //   AuctionService.getAuctionById(id),
+      //   BidService.getBidHistory(id)
+      // ]);
+      // setAuction(updatedAuction);
+      // setBids(updatedBids);
+      // --- REMOVED ---
 
-      // Clear success message after 3 seconds
-      setTimeout(() => setMessage({ text: '', type: '' }), 3000);
     } catch (err) {
-      const msg = err.response?.data?.message || err.message;
-      setMessage({ text: msg, type: 'error' });
+      const errorData = err.response?.data;
+      const msg = errorData?.message || errorData || err.message || 'Failed to place bid.';
+      console.error('Error placing bid:', err);
+      setMessage({ text: `Error: ${msg}`, type: 'error' });
     }
   };
+
+  // --- Keep the rest of the component rendering logic as is ---
+  // (Loading indicator, error display, main layout, bid form, bid history etc.)
 
   if (loading) return (
       <div className="max-w-4xl mx-auto p-6">
@@ -159,27 +261,41 @@ export default function AuctionDetailPage() {
       </div>
   );
 
+  // Display WebSocket connection errors along with fetch errors
   if (error) return (
       <div className="max-w-4xl mx-auto p-6">
-        <div className="bg-red-100 text-red-700 p-4 rounded-lg">
+        <div className="bg-red-100 text-red-700 p-4 rounded-lg mb-4">
           <p className="text-center">{error}</p>
-          <div className="text-center mt-4">
-            <Link to="/auctions" className="text-blue-600 hover:underline">
-              ← Back to all auctions
-            </Link>
-          </div>
+        </div>
+        {/* Optionally keep the link even on WS error */}
+        <div className="text-center mt-4">
+          <Link to="/auctions" className="text-blue-600 hover:underline">
+            ← Back to all auctions
+          </Link>
         </div>
       </div>
   );
 
-  if (!auction) return (
+
+  if (!auction && !loading) return ( // Check loading flag too
       <div className="max-w-4xl mx-auto p-6 text-center">
-        Auction not found
+        Auction not found or failed to load.
+        <div className="text-center mt-4">
+          <Link to="/auctions" className="text-blue-600 hover:underline">
+            ← Back to all auctions
+          </Link>
+        </div>
       </div>
   );
 
+  if (!auction) return null; // Should be covered by loading/error, but good fallback
+
+
+  // --- Render the main component UI ---
   return (
       <div className="max-w-4xl mx-auto p-6">
+        {/* ... (rest of the JSX structure remains the same) ... */}
+
         <div className="mb-6">
           <Link to="/auctions" className="inline-flex items-center text-blue-600 hover:underline">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
@@ -219,7 +335,7 @@ export default function AuctionDetailPage() {
                   {product?.imageUrl ? (
                       <img
                           src={product.imageUrl}
-                          alt={product.name}
+                          alt={product.name || 'Product Image'}
                           className="w-full h-full object-cover"
                       />
                   ) : (
@@ -284,7 +400,7 @@ export default function AuctionDetailPage() {
 
                       <form onSubmit={handlePlaceBid} className="space-y-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                          <label htmlFor={`bidAmount-${id}`} className="block text-sm font-medium text-gray-700 mb-1">
                             Bid Amount ($)
                           </label>
                           <div className="flex">
@@ -292,14 +408,15 @@ export default function AuctionDetailPage() {
                           $
                         </span>
                             <input
+                                id={`bidAmount-${id}`} // Add unique id for label association
                                 type="number"
                                 value={bidAmount}
                                 onChange={(e) => setBidAmount(e.target.value)}
                                 placeholder={`Min bid: $${(parseFloat(auction.currentPrice) + 0.01).toFixed(2)}`}
-                                min={parseFloat(auction.currentPrice) + 0.01}
+                                min={(parseFloat(auction.currentPrice) + 0.01).toFixed(2)} // Set min attribute
                                 step="0.01"
                                 required
-                                className="flex-1 border rounded-r-md p-2 focus:ring focus:ring-blue-200 focus:outline-none"
+                                className="flex-1 border rounded-r-md p-2 focus:ring focus:ring-blue-200 focus:outline-none w-full" // Ensure full width
                             />
                           </div>
                           <p className="text-xs text-gray-500 mt-1">
@@ -309,7 +426,8 @@ export default function AuctionDetailPage() {
 
                         <button
                             type="submit"
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors disabled:opacity-50"
+                            disabled={!bidAmount || parseFloat(bidAmount) <= parseFloat(auction.currentPrice)} // Disable if invalid
                         >
                           Place Bid
                         </button>
@@ -352,8 +470,8 @@ export default function AuctionDetailPage() {
                                 <span className={`font-medium ${
                                     auction.status === 'ENDED_MET_RESERVE' ? 'text-green-600' : 'text-red-600'
                                 }`}>
-                            {auction.status === 'ENDED_MET_RESERVE' ? 'Yes' : 'No'}
-                          </span>
+                                {auction.status === 'ENDED_MET_RESERVE' ? 'Yes' : 'No'}
+                              </span>
                               </div>
                             </>
                         )}
@@ -367,6 +485,7 @@ export default function AuctionDetailPage() {
 
         {/* Bid History */}
         <div className="mt-8">
+          {/* Pass bids state which is now updated by WebSocket */}
           <BidHistory bids={bids} />
         </div>
       </div>

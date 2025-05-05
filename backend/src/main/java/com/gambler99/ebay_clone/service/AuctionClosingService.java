@@ -20,7 +20,7 @@ public class AuctionClosingService {
     private final AuctionRepository auctionRepository;
     private final BidRepository bidRepository;
 
-    @Scheduled(fixedRate = 60000) // Check every 60 seconds see if any auctions need to be closed
+    @Scheduled(fixedRate = 30000) // Check every 60 seconds see if any auctions need to be closed
     @Transactional
     public void closeEndedAuctions() {
         LocalDateTime now = LocalDateTime.now();
