@@ -70,3 +70,9 @@ JOIN orders o ON p.product_id = o.product_id
 GROUP BY p.name
 ORDER BY times_sold DESC
 LIMIT 5;
+
+
+-- get all active product
+SELECT * 
+FROM products 
+WHERE status = 'ACTIVE';

@@ -36,6 +36,9 @@ public class SignupRequestDTO {
         )
     private String password;
 
+    @NotBlank(message = "address is required")
+    private String address;
+
     public Set<String> getRoles() {
         return Set.of();
     }
