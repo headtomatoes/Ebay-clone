@@ -3,6 +3,7 @@ package com.gambler99.ebay_clone.service;
 import com.gambler99.ebay_clone.dto.OrderItemDTO;
 import com.gambler99.ebay_clone.dto.OrderResponseDTO;
 import com.gambler99.ebay_clone.entity.*;
+import com.gambler99.ebay_clone.exception.OrderException;
 import com.gambler99.ebay_clone.repository.*;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderResponseDTO createOrderFromCart(Long userId, List<Long> productIds) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+                .orElseThrow(() -> new OrderException("User not found with ID: " + userId));
 
         List<CartItem> cartItems = cartItemRepository.findByUserUserId(userId);
 
@@ -43,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         if (cartItems.isEmpty()) {
-            throw new RuntimeException("No valid cart items found for user ID: " + userId);
+            throw new OrderException("No valid cart items found for user ID: " + userId);
         }
 
         Order order = new Order();
@@ -55,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
             Product product = cartItem.getProduct();
 
             if (product.getStockQuantity() < cartItem.getQuantity()) {
-                throw new RuntimeException("Insufficient stock for product: " + product.getName());
+                throw new OrderException("Insufficient stock for product: " + product.getName());
             }
 
             OrderItem orderItem = OrderItem.builder()
@@ -68,6 +69,8 @@ public class OrderServiceImpl implements OrderService {
                     .build();
 
             order.getOrderItems().add(orderItem);
+            order.setShippingAddressSnapshot(user.getAddress());
+            order.setBillingAddressSnapshot(user.getAddress());
 
             // Update stock quantity
             product.setStockQuantity(product.getStockQuantity() - cartItem.getQuantity());
@@ -87,12 +90,12 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderResponseDTO createOrderFromAllCartItems(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+                .orElseThrow(() -> new OrderException("User not found with ID: " + userId));
 
         List<CartItem> cartItems = cartItemRepository.findByUserUserId(userId);
 
         if (cartItems.isEmpty()) {
-            throw new RuntimeException("No cart items found for user ID: " + userId);
+            throw new OrderException("No cart items found for user ID: " + userId);
         }
 
         Order order = new Order();
@@ -104,7 +107,7 @@ public class OrderServiceImpl implements OrderService {
             Product product = cartItem.getProduct();
 
             if (product.getStockQuantity() < cartItem.getQuantity()) {
-                throw new RuntimeException("Insufficient stock for product: " + product.getName());
+                throw new OrderException("Insufficient stock for product: " + product.getName());
             }
 
             OrderItem orderItem = OrderItem.builder()
@@ -115,6 +118,9 @@ public class OrderServiceImpl implements OrderService {
                     .build();
 
             order.getOrderItems().add(orderItem);
+            order.setShippingAddressSnapshot(user.getAddress());
+            order.setBillingAddressSnapshot(user.getAddress());
+           // order.setCustomerName(user.getUsername());
 
             // Update stock quantity
             product.setStockQuantity(product.getStockQuantity() - cartItem.getQuantity());
@@ -134,14 +140,14 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void deleteOrder(Long orderId, Long userId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found with ID: " + orderId));
+                .orElseThrow(() -> new OrderException("Order not found with ID: " + orderId));
 
         if (!order.getCustomer().getUserId().equals(userId)) {
-            throw new RuntimeException("Unauthorized action for user ID: " + userId);
+            throw new OrderException("Unauthorized action for user ID: " + userId);
         }
 
         if (order.getStatus() != Order.OrderStatus.PENDING_PAYMENT) {
-            throw new RuntimeException("Cannot delete order unless it is in PENDING_PAYMENT status.");
+            throw new OrderException("Cannot delete order unless it is in PENDING_PAYMENT status.");
         }
 
         // Restore stock quantities
@@ -169,6 +175,7 @@ public class OrderServiceImpl implements OrderService {
         return OrderResponseDTO.builder()
                 .orderId(order.getOrderId())
                 .customerId(order.getCustomer().getUserId())
+                .customerName(order.getCustomer().getUsername()) 
                 .orderItems(order.getOrderItems().stream()
                         .map(orderItem -> OrderItemDTO.builder()
                                 .orderItemId(orderItem.getOrderItemId())
@@ -181,6 +188,10 @@ public class OrderServiceImpl implements OrderService {
                 .orderDate(order.getOrderDate())
                 .status(order.getStatus())
                 .totalAmount(order.getTotalAmount())
+
+                .shippingAddressSnapshot(order.getShippingAddressSnapshot())
+                .billingAddressSnapshot(order.getBillingAddressSnapshot())
+                
                 .build();
     }
 }
@@ -219,7 +230,7 @@ public class OrderServiceImpl implements OrderService {
 //     @Override
 //     public OrderResponseDTO createOrderFromCart(Long userId, List<Long> productIds) {
 //         User user = userRepository.findById(userId)
-//                 .orElseThrow(() -> new RuntimeException("User not found"));
+//                 .orElseThrow(() -> new OrderException("User not found"));
 
 //         List<CartItem> cartItems = cartItemRepository.findByUserUserId(userId);
 
@@ -230,7 +241,7 @@ public class OrderServiceImpl implements OrderService {
 //         }
 
 //         if (cartItems.isEmpty()) {
-//             throw new RuntimeException("No valid cart items found for the user.");
+//             throw new OrderException("No valid cart items found for the user.");
 //         }
 
 //         Order order = new Order();
@@ -242,7 +253,7 @@ public class OrderServiceImpl implements OrderService {
 //             Product product = cartItem.getProduct();
 
 //             if (product.getStockQuantity() < cartItem.getQuantity()) {
-//                 throw new RuntimeException("Insufficient stock for product: " + product.getName());
+//                 throw new OrderException("Insufficient stock for product: " + product.getName());
 //             }
 
 //             OrderItem orderItem = OrderItem.builder()
@@ -272,14 +283,14 @@ public class OrderServiceImpl implements OrderService {
 //     @Override
 //     public void deleteOrder(Long orderId, Long userId) {
 //         Order order = orderRepository.findById(orderId)
-//                 .orElseThrow(() -> new RuntimeException("Order not found"));
+//                 .orElseThrow(() -> new OrderException("Order not found"));
 
 //         if (!order.getCustomer().getUserId().equals(userId)) {
-//             throw new RuntimeException("Unauthorized action.");
+//             throw new OrderException("Unauthorized action.");
 //         }
 
 //         if (order.getStatus() != Order.OrderStatus.PENDING_PAYMENT) {
-//             throw new RuntimeException("Cannot delete order unless it is in PENDING_PAYMENT status.");
+//             throw new OrderException("Cannot delete order unless it is in PENDING_PAYMENT status.");
 //         }
 
 //         // Restore stock quantities
@@ -314,13 +325,13 @@ public class OrderServiceImpl implements OrderService {
 //     @Override
 //     public OrderResponseDTO createOrderFromAllCartItems(Long userId) {
 //         User user = userRepository.findById(userId)
-//                 .orElseThrow(() -> new RuntimeException("User not found"));
+//                 .orElseThrow(() -> new OrderException("User not found"));
 
 //         // Fetch all cart items for the user
 //         List<CartItem> cartItems = cartItemRepository.findByUserUserId(userId);
 
 //         if (cartItems.isEmpty()) {
-//             throw new RuntimeException("No cart items found for the user.");
+//             throw new OrderException("No cart items found for the user.");
 //         }
 
 //         Order order = new Order();
@@ -332,7 +343,7 @@ public class OrderServiceImpl implements OrderService {
 //             Product product = cartItem.getProduct();
 
 //             if (product.getStockQuantity() < cartItem.getQuantity()) {
-//                 throw new RuntimeException("Insufficient stock for product: " + product.getName());
+//                 throw new OrderException("Insufficient stock for product: " + product.getName());
 //             }
 
 //             OrderItem orderItem = OrderItem.builder()
