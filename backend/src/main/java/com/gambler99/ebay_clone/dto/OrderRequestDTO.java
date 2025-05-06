@@ -23,9 +23,9 @@ public class OrderRequestDTO {
     @DecimalMin(value = "0.0", inclusive = false, message = "Total amount must be greater than 0")
     private BigDecimal totalAmount;
 
-    @NotEmpty(message = "Shipping address is required")
-    private String shippingAddressSnapshot;
+    // @NotEmpty(message = "Shipping address is required")
+    // private String shippingAddressSnapshot;
 
-    @NotEmpty(message = "Billing address is required")
-    private String billingAddressSnapshot;
+    // @NotEmpty(message = "Billing address is required")
+    // private String billingAddressSnapshot;
 }

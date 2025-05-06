@@ -68,6 +68,8 @@ public class OrderServiceImpl implements OrderService {
                     .build();
 
             order.getOrderItems().add(orderItem);
+            order.setShippingAddressSnapshot(user.getAddress());
+            order.setBillingAddressSnapshot(user.getAddress());
 
             // Update stock quantity
             product.setStockQuantity(product.getStockQuantity() - cartItem.getQuantity());
@@ -115,6 +117,9 @@ public class OrderServiceImpl implements OrderService {
                     .build();
 
             order.getOrderItems().add(orderItem);
+            order.setShippingAddressSnapshot(user.getAddress());
+            order.setBillingAddressSnapshot(user.getAddress());
+           // order.setCustomerName(user.getUsername());
 
             // Update stock quantity
             product.setStockQuantity(product.getStockQuantity() - cartItem.getQuantity());
@@ -169,6 +174,7 @@ public class OrderServiceImpl implements OrderService {
         return OrderResponseDTO.builder()
                 .orderId(order.getOrderId())
                 .customerId(order.getCustomer().getUserId())
+                .customerName(order.getCustomer().getUsername()) 
                 .orderItems(order.getOrderItems().stream()
                         .map(orderItem -> OrderItemDTO.builder()
                                 .orderItemId(orderItem.getOrderItemId())
@@ -181,6 +187,10 @@ public class OrderServiceImpl implements OrderService {
                 .orderDate(order.getOrderDate())
                 .status(order.getStatus())
                 .totalAmount(order.getTotalAmount())
+
+                .shippingAddressSnapshot(order.getShippingAddressSnapshot())
+                .billingAddressSnapshot(order.getBillingAddressSnapshot())
+                
                 .build();
     }
 }

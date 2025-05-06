@@ -1,0 +1,336 @@
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 1, 'Horizontal client-server artificial intelligence', 'National finish song country program prove. Street know rich. Impact network alone culture exist deal area.
+Himself already person strategy large. Among job reality. Realize put happen.', 
+     213.68, 34, 'https://picsum.photos/seed/1/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 5, 'Managed content-based middleware', 'Only already make east exactly than later. Bad discussion however.', 
+     321.57, 47, 'https://picsum.photos/seed/2/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 5, 'Exclusive modular database', 'Quality if list claim writer modern available. Personal receive well condition not who. Lay cover majority somebody anything economy.', 
+     910.75, 6, 'https://picsum.photos/seed/3/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 5, 'Persistent heuristic intranet', 'Thousand ask possible decide career professor experience. Concern above next role.
+Southern lot consider stay throughout itself few. Reduce allow eat. Another heart others bring.', 
+     658.81, 92, 'https://picsum.photos/seed/4/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 4, 'Organic well-modulated complexity', 'Political traditional probably article last. Charge author themselves other today PM.', 
+     643.74, 48, 'https://picsum.photos/seed/5/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 5, 'Optimized multimedia extranet', 'Book whatever building whole. Spring impact next not. With visit door admit visit against some.', 
+     186.51, 49, 'https://picsum.photos/seed/6/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 5, 'Multi-lateral actuating architecture', 'Walk sometimes evidence today case. Determine away girl produce class PM. Style become what may simple.
+Ground left north while measure trial whose thus. Window part game which store peace.', 
+     298.13, 18, 'https://picsum.photos/seed/7/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 2, 'Multi-layered homogeneous info-mediaries', 'Report reason country debate son. Consumer any space what practice. Skill nature another check.', 
+     278.66, 44, 'https://picsum.photos/seed/8/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 3, 'Universal explicit hierarchy', 'Behind just player. Them particularly admit live down daughter trip. Cup he father evidence question fund arrive clearly. Run its near really.', 
+     721.31, 44, 'https://picsum.photos/seed/9/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 5, 'Down-sized radical conglomeration', 'Laugh action short us. Thing home stuff seem spend full particular. Set offer present pretty.', 
+     45.31, 35, 'https://picsum.photos/seed/10/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 2, 'Secured bi-directional standardization', 'Describe pattern hard however sign put. Space majority bit instead smile happen.
+Stand service public according understand happen. First heart two data. World various picture rule poor information.', 
+     157.92, 75, 'https://picsum.photos/seed/11/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 3, 'Sharable fresh-thinking frame', 'Power management sell magazine perform. Film kitchen environment.
+Wrong pick structure wrong figure continue food. Glass loss increase organization decide. Present spend make garden social man.', 
+     367.3, 71, 'https://picsum.photos/seed/12/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 2, 'Multi-channeled zero-defect adapter', 'War partner determine response wide method movie. Mrs design boy if near energy fund later. Meet adult prepare son. Image lot party mother purpose family east within.', 
+     300.47, 62, 'https://picsum.photos/seed/13/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 2, 'Universal fault-tolerant data-warehouse', 'Glass way face.
+Every quality he under body phone. Hard movement similar certainly little talk. Money something move race special away.', 
+     934.42, 40, 'https://picsum.photos/seed/14/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 2, 'Upgradable methodical algorithm', 'Sound again professor operation next black bag. Indeed fill Democrat left piece time.', 
+     858.47, 94, 'https://picsum.photos/seed/15/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 1, 'Optimized grid-enabled emulation', 'So magazine worker official thousand whose. Republican life field game look probably public soon.
+Pass he training one. Social production consider state.', 
+     309.64, 43, 'https://picsum.photos/seed/16/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 3, 'Diverse mission-critical application', 'Many ability bit. Deep scientist rather summer country toward claim.
+Inside friend service push. Book current black wide.', 
+     420.57, 13, 'https://picsum.photos/seed/17/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 5, 'Upgradable scalable methodology', 'Upon project draw seat true listen. Operation participant affect better.
+Almost deep travel baby cover office.', 
+     909.57, 61, 'https://picsum.photos/seed/18/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 3, 'Up-sized motivating focus group', 'Happen debate view country adult represent.
+Despite government reveal movement.
+Current cost later despite training behavior maybe consider. Southern street contain relate.', 
+     842.44, 44, 'https://picsum.photos/seed/19/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 1, 'De-engineered local customer loyalty', 'Many ten interest concern important son participant tree. Recent type rest name. Unit difficult matter police anyone.', 
+     484.3, 90, 'https://picsum.photos/seed/20/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 4, 'Universal demand-driven knowledge user', 'Fight face region go program address agent life. Change area either.
+Start wonder space particular. Walk four stop part agency stock window safe.', 
+     432.27, 39, 'https://picsum.photos/seed/21/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 3, 'Function-based dynamic adapter', 'Concern laugh organization street stuff rock foreign pressure.
+Mention detail enough suddenly. Fear thus north do film modern write. They magazine record indicate wish.', 
+     737.4, 20, 'https://picsum.photos/seed/22/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 2, 'Reverse-engineered web-enabled benchmark', 'Value quickly record.
+Institution wait maybe before far many thing. Finally pretty well list.', 
+     630.47, 49, 'https://picsum.photos/seed/23/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 1, 'Front-line attitude-oriented knowledgebase', 'Main fly conference me about determine Mrs. Health four finally tell.
+Purpose either hold base. A various week car. A rich open person explain product civil.', 
+     75.18, 11, 'https://picsum.photos/seed/24/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 2, 'Expanded client-driven Local Area Network', 'Mention several home yard. Possible left car it large rock. Anything notice season probably office another perform view.
+Others throughout attention.
+Forward against federal hot here.', 
+     752.37, 8, 'https://picsum.photos/seed/25/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 4, 'Streamlined motivating Graphical User Interface', 'Friend attack guy address chair professor everybody. Sort dream glass raise. Television sense operation without method.', 
+     17.77, 51, 'https://picsum.photos/seed/26/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 5, 'Intuitive background attitude', 'Manager conference least money lose. Draw culture all.
+Finally small north follow few if available. Truth policy open size behind section rather. Mouth happen thousand agency.', 
+     523.81, 58, 'https://picsum.photos/seed/27/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 4, 'Devolved value-added application', 'Similar third over sometimes street pressure son time. Statement catch language help yeah.
+Enough very right right. Quickly fall third former watch positive.', 
+     790.41, 92, 'https://picsum.photos/seed/28/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 2, 'Robust real-time encoding', 'Natural force different stay again partner. Despite director speech sure. Tell them whatever service well project.
+Without about once whether. Court child from.', 
+     428.81, 48, 'https://picsum.photos/seed/29/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 2, 'Optimized web-enabled core', 'But city operation might. Reason training several research water behind lose.
+Number beat mission sound employee international. Reason run yourself until federal part.', 
+     988.57, 34, 'https://picsum.photos/seed/30/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 5, 'User-friendly object-oriented instruction set', 'Question above democratic scientist film. Almost itself impact fund can.
+Arrive usually can at. Book another chair team.', 
+     779.33, 56, 'https://picsum.photos/seed/31/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 2, 'Innovative didactic capability', 'Last total type especially question. Job lay whose despite myself black hot.
+Sport prepare none they team after. Again imagine cut day.', 
+     364.94, 9, 'https://picsum.photos/seed/32/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 1, 'Multi-lateral multi-tasking Local Area Network', 'Husband ground question himself price. Yet outside now store over book community. Player need ok much.
+Pressure ball financial field. Pay marriage model exist data send.', 
+     903.98, 58, 'https://picsum.photos/seed/33/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 2, 'Intuitive global artificial intelligence', 'Your thousand safe ever example charge. How participant discover whether language three something us.
+Act gun voice. Bring reason PM event wait describe four blood.', 
+     127.72, 51, 'https://picsum.photos/seed/34/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 3, 'Grass-roots encompassing system engine', 'Else better single hundred. Room provide upon summer during leader old. Along smile receive happy experience.', 
+     215.16, 6, 'https://picsum.photos/seed/35/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 2, 'Cross-group secondary help-desk', 'Finally list finish unit bar blood away. Reach kid three let poor. Condition she value in night former use.
+During hot best city. Week charge since thank. Federal specific truth one.', 
+     627.18, 14, 'https://picsum.photos/seed/36/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 2, 'Front-line 3rdgeneration budgetary management', 'Interest fear always staff better final.
+Investment short else instead. Find sound join region conference lawyer care.', 
+     463.82, 47, 'https://picsum.photos/seed/37/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 5, 'Automated actuating ability', 'Right anyone until before. Mean respond place civil significant.
+Ok coach his who approach share peace. Republican wall imagine story middle weight total. Common start college wall.', 
+     828.72, 14, 'https://picsum.photos/seed/38/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 5, 'Mandatory zero-defect time-frame', 'Plant off to several test morning article. Reduce still thousand season. Behind number alone join.', 
+     983.16, 19, 'https://picsum.photos/seed/39/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 5, 'Face-to-face multimedia Local Area Network', 'Owner economic both magazine mean represent too. It tree onto situation star.
+Skill me movement hand since become black.', 
+     411.85, 88, 'https://picsum.photos/seed/40/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 4, 'Fully-configurable tertiary customer loyalty', 'Trouble if example treatment together collection among professor. Them radio face station career wall relationship no. Hard usually direction campaign Congress.', 
+     878.88, 64, 'https://picsum.photos/seed/41/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 3, 'Business-focused mobile challenge', 'Which lead probably base open scene today bar. Significant debate front free long hot.
+Hot audience machine admit culture. Dinner participant cold machine our.', 
+     835.2, 64, 'https://picsum.photos/seed/42/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 2, 'Switchable global throughput', 'Establish process almost. Accept not you work each scene.
+Standard past stage reach story case establish. Record produce cause especially.', 
+     547.38, 29, 'https://picsum.photos/seed/43/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 1, 'Innovative stable strategy', 'Another everything those whose choose. Listen western treatment early wait agency change should. Community summer third fight project.
+Board happen gas million such region.', 
+     346.82, 96, 'https://picsum.photos/seed/44/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 3, 'Public-key mobile moratorium', 'Defense brother foot administration meet. Child loss our.
+Enough accept stay much think. Term try wait side part. Hold leave provide story factor camera agree.', 
+     819.94, 5, 'https://picsum.photos/seed/45/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 5, 'Configurable multi-tasking encryption', 'Matter ever stock decision sport. Reduce recent look audience generation set onto figure.
+Adult possible six life see. Plan your participant sit I cause happen society.', 
+     156.88, 33, 'https://picsum.photos/seed/46/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 5, 'Monitored next generation matrices', 'Third three sister cut product have threat. Month fund cell change rock before. Human bit finish center hope executive.
+Too nor book list fire develop. Collection personal network nature cost red.', 
+     786.32, 49, 'https://picsum.photos/seed/47/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 5, 'Persistent zero-defect attitude', 'Statement stay performance Mrs particular fly. Minute parent money huge heart forward none sure. History blood whose marriage kid several. Relate woman strategy physical.', 
+     301.44, 91, 'https://picsum.photos/seed/48/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 4, 'Cross-platform 3rdgeneration matrix', 'Always response long star street line. Often from reach institution name perform themselves.
+Direction democratic political population. Suffer myself direction message age hand conference.', 
+     75.7, 11, 'https://picsum.photos/seed/49/600/400', 'ACTIVE');
+
+INSERT INTO products 
+    (seller_id, category_id, name, description, price, stock_quantity, image_url, status) 
+    VALUES 
+    (2, 5, 'User-friendly needs-based installation', 'Then prepare fight crime water miss. Determine action who special factor spend.
+Wind method gun go base sign this strong. Wish arrive attention.', 
+     870.21, 6, 'https://picsum.photos/seed/50/600/400', 'ACTIVE');

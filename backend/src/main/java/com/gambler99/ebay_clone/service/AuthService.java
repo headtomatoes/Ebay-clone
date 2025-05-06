@@ -70,6 +70,7 @@ public class AuthService {
                 .username(signupRequestDTO.getUsername())
                 .email(signupRequestDTO.getEmail())
                 .passwordHash(passwordEncoder.encode(signupRequestDTO.getPassword()))
+                .address(signupRequestDTO.getAddress())
                 .build();
 
         // Set roles for the user
