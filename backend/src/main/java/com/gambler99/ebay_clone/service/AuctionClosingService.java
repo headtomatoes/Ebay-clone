@@ -20,7 +20,7 @@ public class AuctionClosingService {
     private final AuctionRepository auctionRepository;
     private final BidRepository bidRepository;
 
-    @Scheduled(fixedRate = 60000) // Check every 60 seconds see if any auctions need to be closed
+    @Scheduled(fixedRate = 30000) // Check every 60 seconds see if any auctions need to be closed
     @Transactional
     public void closeEndedAuctions() {
         LocalDateTime now = LocalDateTime.now();
@@ -34,7 +34,13 @@ public class AuctionClosingService {
             if (winningBidOpt.isPresent()) {
                 // Bids were placed
                 auction.setWinner(winningBidOpt.get().getBidder());
-                auction.setStatus(Auction.AuctionStatus.ENDED_MET_RESERVE); // Or more complex status
+                if (auction.getReservePrice() == null || auction.getReservePrice().compareTo(winningBidOpt.get().getBidAmount()) < 0) {
+                    // Winning bid is above the reserve price or no reserve price set
+                    auction.setStatus(Auction.AuctionStatus.ENDED_MET_RESERVE);
+                } else {
+                    // Winning bid is below the reserve price
+                    auction.setStatus(Auction.AuctionStatus.ENDED_NO_RESERVE);
+                }
             } else {
                 // No bids placed
                 auction.setStatus(Auction.AuctionStatus.ENDED_NO_BIDS);

@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
               // Consider adding validation here (e.g., decode token, check expiration)
               // before blindly trusting localStorage and setting the header.
               // For simplicity now, we'll rely on login setting it.
-              // setAuthToken(storedToken);
+              //setAuthToken(storedToken);
           } catch (error) {
               console.error("AuthContext: Error parsing user from localStorage", error);
               // Clear invalid data if parsing fails

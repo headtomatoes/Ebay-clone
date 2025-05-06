@@ -29,6 +29,14 @@ public interface AuctionRepository extends JpaRepository<Auction, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE) // Use when conflicts are expected and critical
     List<Auction> findByStatusAndEndTimeBefore(Auction.AuctionStatus auctionStatus, LocalDateTime endTime);
 
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    List<Auction> findByStatusAndEndTimeAfter(Auction.AuctionStatus auctionStatus, LocalDateTime endTime);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    List<Auction> findByStatusAndStartTimeBefore(Auction.AuctionStatus auctionStatus, LocalDateTime startTime);
+
+
     // find auctions by the AuctionId
     //SELECT * FROM auction WHERE auction_id = ?
     //@Lock(LockModeType.OPTIMISTIC) // Use when conflicts are rare but possible

@@ -158,6 +158,20 @@ public class ProductService {
         // Alternatively: productRepository.deleteById(productId); - less safe as it doesn't guarantee ownership check happened first.
     }
 
+    @Transactional(readOnly = true)
+    public List<ProductSummaryDTO> getProductsBySellerId(UserDetailsImpl sellerDetails) {
+        // 1. Find the Seller User entity
+        User seller = userRepository.findById(sellerDetails.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("Seller not found with ID: " + sellerDetails.getUserId()));
+
+        // 2. Fetch products by seller
+        List<Product> products = productRepository.findBySeller(seller);
+
+        // 3. Map each Product entity to ProductSummaryDTO
+        return products.stream()
+                .map(this::mapToProductSummaryDTO)
+                .collect(Collectors.toList());
+    }
     // Helper method for mapping method
     // This method is used to mapping Product entity into ProductDetailDTO
     private ProductDetailDTO mapToProductDetailDTO(Product product) {

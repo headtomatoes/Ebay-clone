@@ -8,10 +8,8 @@ import com.gambler99.ebay_clone.entity.User;
 import com.gambler99.ebay_clone.exception.ResourceNotFoundException;
 import com.gambler99.ebay_clone.repository.AuctionRepository;
 import com.gambler99.ebay_clone.repository.BidRepository;
-import com.gambler99.ebay_clone.repository.ProductRepository;
 import com.gambler99.ebay_clone.repository.UserRepository;
 import com.gambler99.ebay_clone.security.UserDetailsImpl;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +36,10 @@ public class BidService {
     public BidResponseDTO placeBid(long auctionId, PlaceBidRequestDTO dto, UserDetailsImpl bidderDetails) {
 
         log.info("Attempting to place bid for auction ID: {} by user ID: {}", auctionId, bidderDetails.getUserId());
+
+        // Validation check:
+        // 0. check if the auction status is active yet
+
 
         // 1. Get Bidder
         User bidder = userRepository.findById(bidderDetails.getUserId())
