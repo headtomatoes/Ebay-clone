@@ -54,7 +54,7 @@ public class CartController {
                 .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
     }
 
-    @PreAuthorize("hasAnyRole('BUYER', 'ADMIN')")
+    //@PreAuthorize("hasAnyRole('BUYER', 'ADMIN')")
     @GetMapping
     public ResponseEntity<List<CartItemDTO>> getCart() {
         User user = getAuthenticatedUser();
@@ -66,7 +66,7 @@ public class CartController {
         return ResponseEntity.ok(cartDTOs);
     }
 
-    @PreAuthorize("hasAnyRole('BUYER', 'ADMIN')")
+    //@PreAuthorize("hasAnyRole('BUYER', 'ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<CartItemDTO> addToCart(@RequestBody CartRequestDTO request) {
         //  Validate quantity

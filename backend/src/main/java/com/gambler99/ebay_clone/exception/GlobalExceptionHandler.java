@@ -93,5 +93,14 @@ public class GlobalExceptionHandler {
         log.warn("Handled ResponseStatusException: {}", ex.getReason());
         return new ResponseEntity<>(new MessageResponseDTO(ex.getReason()), ex.getStatusCode());
     }
+
+    // --- OrderException Handling ---
+    @ExceptionHandler(OrderException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<MessageResponseDTO> handleOrderException(OrderException ex) {
+        log.warn("Order error: {}", ex.getMessage());
+        MessageResponseDTO message = new MessageResponseDTO(ex.getMessage());
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    }
     
 }
