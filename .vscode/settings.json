@@ -3,7 +3,9 @@
     "cSpell.words": [
         "dotenv",
         "DTOs",
-        "mcfc"
+        "initdb",
+        "mcfc",
+        "springboot"
     ],
     "java.configuration.updateBuildConfiguration": "automatic"
 }

@@ -40,6 +40,11 @@ public class Order {
     @Column(name = "total_amount", precision = 12, scale = 2, nullable = false, columnDefinition = "DECIMAL(12, 2) DEFAULT 0")
     private BigDecimal totalAmount;
 
+    @Column(name = "shipping_address_snapshot", nullable = false)
+    private String shippingAddressSnapshot;
+    @Column(name = "billing_address_snapshot", nullable = false) 
+    private String billingAddressSnapshot; 
+
     public void calculateTotalAmount() {
         this.totalAmount = orderItems.stream()
                 .map(OrderItem::calculateTotalPrice)

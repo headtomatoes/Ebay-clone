@@ -21,4 +21,8 @@ public class OrderResponseDTO {
     private LocalDateTime orderDate;
     private OrderStatus status;
     private BigDecimal totalAmount;
+    
+    private String shippingAddressSnapshot;
+    private String billingAddressSnapshot;
+    private String customerName; // Optional: Include customer name if needed
 }
