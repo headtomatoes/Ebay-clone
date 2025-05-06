@@ -5,7 +5,9 @@
         "DTOs",
         "initdb",
         "mcfc",
-        "springboot"
+        "springboot",
+        "springframework",
+        "Watchlist"
     ],
     "java.configuration.updateBuildConfiguration": "automatic"
 }

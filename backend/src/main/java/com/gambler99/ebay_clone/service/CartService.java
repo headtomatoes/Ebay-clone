@@ -180,6 +180,7 @@ public class CartService {
      * Adjusts cart quantities if stock is reduced below cart quantity.
      * (Currently unused, but helpful for batch stock updates.)
      */
+    @SuppressWarnings("unused")
     private void adjustCartQuantitiesIfNeeded(Product product) {
         List<CartItem> cartItems = cartItemRepo.findByProduct(product);
         for (CartItem cartItem : cartItems) {

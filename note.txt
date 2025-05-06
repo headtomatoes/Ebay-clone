@@ -1,5 +1,0 @@
--- note
-firstly, create order from cart, all cart items will be generated 1 by 1 to order items, then from order items we change 
-to the order:
-
--- create orderItem class
