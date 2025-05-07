@@ -26,4 +26,15 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
      * Finds all products that have a specific name (case-insensitive).*/
     List<Product> findTop10ByNameContainingIgnoreCase(String name);
 
+    /**
+     * Finds all products that have a specific name (case-insensitive) and belong to a specific category.*/
+    List<Product> findTop10ByNameContainingIgnoreCaseAndCategory(String name, Category category);
+
+    /**
+     * Finds all products that have a specific name (case-insensitive) and are sold by a specific user (seller).*/
+    List<Product> findTop10ByNameContainingIgnoreCaseAndSeller(String name, User seller);
+
+    /**
+     * Finds all products that have active status*/
+    List<Product> findByStatusAndCategory(Product.ProductStatus status, Category category);
 }

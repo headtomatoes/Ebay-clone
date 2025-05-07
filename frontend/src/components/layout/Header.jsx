@@ -71,10 +71,10 @@ export default function Header() {
           <a href="#" className="hover:underline">Ship to</a>
           <Link to="/seller" className="hover:underline">Sell</Link>
           <Link to="/auctions" className="hover:underline">Auction</Link>
-          <a href="#" className="hover:underline">My eBay</a> {/* profile dropdown */}
+          <Link to="/order" className="hover:underline">My orders</Link>{/* profile dropdown */}
           <ThemeToggle />
           <button>🔔</button>
-          <button>🛒</button>
+          <Link to="/cart" className="hover:underline"><button>🛒</button></Link>
         </div>
       </div>
 

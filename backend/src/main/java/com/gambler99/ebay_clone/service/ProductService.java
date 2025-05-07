@@ -84,18 +84,18 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProductSummaryDTO> getAllProducts(Long categoryId /* accept null */){
+    public List<ProductSummaryDTO> getAllActiveProducts(Long categoryId /* accept null */){
         // If categoryId is null, fetch all products
         // If categoryId is not null, fetch products by category
         List<Product> products;
         if (categoryId == null) {
-            products = productRepository.findAll();
+            products = productRepository.findByStatus(Product.ProductStatus.ACTIVE);
         } else {
             Category category = categoryRepository.findById(categoryId)
                     .orElseThrow(() -> new ResourceNotFoundException(
                             "Category not found with ID: "
                                     + categoryId));
-            products = productRepository.findByCategory(category);
+            products = productRepository.findByStatusAndCategory(Product.ProductStatus.ACTIVE, category);
         }
 
         // Map each Product entity to ProductSummaryDTO
@@ -195,7 +195,8 @@ public class ProductService {
                 product.getProductId(),
                 product.getName(),
                 product.getPrice(),
-                product.getCategory() != null ? product.getCategory().getName() : null, // Handle potential nulls
+                product.getCategory() != null ? product.getCategory().getName() : null,
+                product.getStatus(),// Handle potential nulls
                 product.getImageUrl() //update
         );
     }

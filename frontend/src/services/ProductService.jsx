@@ -77,14 +77,6 @@ const deleteProduct = async (productId) => {
   }
 };
 
-// Search products
-const searchProducts = async (url) => {
-  const fullUrl = `http://localhost:8082${url}`;
-  const res = await fetch(fullUrl);
-  if (!res.ok) throw new Error('Failed to search');
-  return await res.json();
-};
-
 // Get products created by a specific seller
 const getSellerProducts = async () => {
   setAuthHeader();
@@ -107,6 +99,7 @@ const searchProducts = async (url) => {
   if (!res.ok) throw new Error('Failed to search');
   return await res.json();
 };
+
 // Export all service functions
 export default {
   getAllProducts,

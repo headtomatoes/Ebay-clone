@@ -1,5 +1,5 @@
 import React from 'react';
-
+import {handleAddToCart} from "../../services/CartService.jsx"; // Adjust the import path as needed
 export default function ProductDetailSection({ product }) {
   return (
     <div className="flex flex-col md:flex-row gap-6 p-6">
@@ -26,7 +26,9 @@ export default function ProductDetailSection({ product }) {
         {/* Action Buttons */}
         <div className="flex flex-col gap-3 w-[250px]">
           <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Buy It Now</button>
-          <button className="border border-blue-600 text-blue-600 hover:bg-blue-100 px-4 py-2 rounded">Add to Cart</button>
+          <button
+              onClick={handleAddToCart}
+              className="border border-blue-600 text-blue-600 hover:bg-blue-100 px-4 py-2 rounded">Add to Cart</button>
           <button className="text-blue-600 underline text-sm">Add to Watchlist</button>
         </div>
       </div>

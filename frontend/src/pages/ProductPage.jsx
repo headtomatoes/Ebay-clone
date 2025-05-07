@@ -75,6 +75,10 @@ export default function ProductPage() {
               <p className="text-blue-600 font-bold">${product.price.toFixed(2)}</p>
               <p className="text-xs text-gray-500 mt-1">{product.categoryName}</p>
 
+              {product.status === 'ACTIVE' && (
+                <span className="text-green-500 text-xs font-semibold mt-1">Available</span>
+              )}
+
               {product.status === 'SOLD_OUT' && (
                 <span className="text-red-500 text-xs font-semibold mt-1">Sold Out</span>
               )}

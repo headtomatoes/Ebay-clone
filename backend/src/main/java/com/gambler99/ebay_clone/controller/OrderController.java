@@ -4,6 +4,7 @@ import com.gambler99.ebay_clone.dto.OrderResponseDTO;
 import com.gambler99.ebay_clone.entity.User;
 import com.gambler99.ebay_clone.repository.UserRepository;
 import com.gambler99.ebay_clone.service.OrderService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;

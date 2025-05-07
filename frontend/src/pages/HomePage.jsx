@@ -57,7 +57,7 @@ export default function HomePage() {
                 <ul className="list-disc list-inside text-sm text-green-900 text-left">
                   <li>Search and view product listings</li>
                   <li>Manage your profile</li>
-                </ul> */}
+                </ul>
                         </div>
                     )}
                 </div>

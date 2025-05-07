@@ -69,10 +69,10 @@ public class ProductController {
 
     // --- READ (All/Filtered) ---
     @GetMapping
-    public ResponseEntity<List<ProductSummaryDTO>> getAllProducts(
+    public ResponseEntity<List<ProductSummaryDTO>> getAllActiveProducts(
             @RequestParam(required = false) Long categoryId // Optional category filter
     ) {
-        List<ProductSummaryDTO> products = productService.getAllProducts(categoryId);
+        List<ProductSummaryDTO> products = productService.getAllActiveProducts(categoryId);
         return ResponseEntity.ok(products); // Return 200 OK
     }
 

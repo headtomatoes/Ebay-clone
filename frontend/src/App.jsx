@@ -27,6 +27,9 @@ import SellerPage from './pages/SellerPage';
 // Layout
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
+import CartPage from "./pages/CartPage.jsx";
+import OrderPage from "./pages/OrderPage.jsx";
+import CheckoutPage from "./pages/CheckoutPage.jsx";
 
 const MainLayout = () => (
   <div className="flex flex-col min-h-screen">
@@ -67,9 +70,12 @@ function App() {
                   <Route path="/seller/products/update/:id" element={<UpdateProductPage />} />
                   <Route path="/seller" element={<SellerPage />} />
                   <Route path="/seller/auction/create/:id" element={<AddAuctionPage />} />
-                  <Route path="/auctions" element={<AuctionPage />} />
-                  <Route path="/auctions/:id" element={<AuctionDetailPage />} />
                 </Route>
+                <Route path="/auctions" element={<AuctionPage />} />
+                <Route path="/auctions/:id" element={<AuctionDetailPage />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route path="/checkout" element={<CheckoutPage />} />
+                <Route path="/order" element={<OrderPage />} />
               </Route>
 
               <Route path="*" element={<div>Page not found</div>} />
