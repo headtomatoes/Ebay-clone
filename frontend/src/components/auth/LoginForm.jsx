@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 // Import the REAL login function from your service
 import {loginUser, setAuthToken} from '../../services/AuthService'
+import GoogleLoginButton from './GoogleLoginButton';
 
 export default function LoginForm({ successMessage }) {
     const [formData, setFormData] = useState({ username: '', password: '' });
