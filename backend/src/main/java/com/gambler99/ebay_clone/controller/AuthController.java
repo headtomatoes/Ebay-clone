@@ -22,6 +22,9 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 @CrossOrigin(origins = "http://localhost:5173", maxAge = 3600) // Allow requests from all origins (adjust for production)
 @RestController //methods return domain objects instead of views
 @RequestMapping("/api/auth") // Base URL for authentication endpoints
@@ -45,48 +48,83 @@ public class AuthController {
     }
 
     @GetMapping("/oauth2/success")
-    public ResponseEntity<?> oauth2Success(Authentication authentication) {
+    public void oauth2Success(Authentication authentication, HttpServletResponse response) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = oAuth2User.getAttribute("email");
         String googleId = oAuth2User.getAttribute("sub");
         String name = oAuth2User.getAttribute("name");
-
+    
         // Find or create user
         var user = userService.findOrCreateGoogleUser(email, googleId, name);
-
+    
         // Build UserDetailsImpl for JWT
         UserDetailsImpl userDetails = UserDetailsImpl.build(user);
-
+    
         // Generate JWT token
         String token = jwtTokenProvider.generateJwtToken(
-                new Authentication() {
-                    @Override
-                    public List<? extends GrantedAuthority> getAuthorities() {
-                        return userDetails.getAuthorities().stream().collect(Collectors.toList());
-                    }
-                    @Override public Object getCredentials() { return null; }
-                    @Override public Object getDetails() { return null; }
-                    @Override public Object getPrincipal() { return userDetails; }
-                    @Override public boolean isAuthenticated() { return true; }
-                    @Override public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {}
-                    @Override public String getName() { return userDetails.getUsername(); }
-                }
+                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities()
+                )
         );
-
-        List<String> roles = userDetails.getAuthorities().stream()
+    
+        String roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
-
-        JwtResponseDTO jwtResponse = new JwtResponseDTO(
-                token,
-                user.getUserId(),
-                user.getUsername(),
-                user.getEmail(),
-                roles
+                .collect(Collectors.joining(","));
+    
+        // Redirect to frontend with token and user info
+        String redirectUrl = String.format(
+            "http://localhost:5173/oauth2/redirect?token=%s&userId=%s&username=%s&email=%s&roles=%s",
+            token,
+            user.getUserId(),
+            user.getUsername(),
+            user.getEmail(),
+            roles
         );
-
-        return ResponseEntity.ok(jwtResponse);
+        response.sendRedirect(redirectUrl);
     }
+    // public ResponseEntity<?> oauth2Success(Authentication authentication) {
+    //     OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+    //     String email = oAuth2User.getAttribute("email");
+    //     String googleId = oAuth2User.getAttribute("sub");
+    //     String name = oAuth2User.getAttribute("name");
+
+    //     // Find or create user
+    //     var user = userService.findOrCreateGoogleUser(email, googleId, name);
+
+    //     // Build UserDetailsImpl for JWT
+    //     UserDetailsImpl userDetails = UserDetailsImpl.build(user);
+
+    //     // Generate JWT token
+    //     String token = jwtTokenProvider.generateJwtToken(
+    //             new Authentication() {
+    //                 @Override
+    //                 public List<? extends GrantedAuthority> getAuthorities() {
+    //                     return userDetails.getAuthorities().stream().collect(Collectors.toList());
+    //                 }
+    //                 @Override public Object getCredentials() { return null; }
+    //                 @Override public Object getDetails() { return null; }
+    //                 @Override public Object getPrincipal() { return userDetails; }
+    //                 @Override public boolean isAuthenticated() { return true; }
+    //                 @Override public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {}
+    //                 @Override public String getName() { return userDetails.getUsername(); }
+    //             }
+    //     );
+
+    //     List<String> roles = userDetails.getAuthorities().stream()
+    //             .map(GrantedAuthority::getAuthority)
+    //             .collect(Collectors.toList());
+
+    //     JwtResponseDTO jwtResponse = new JwtResponseDTO(
+    //             token,
+    //             user.getUserId(),
+    //             user.getUsername(),
+    //             user.getEmail(),
+    //             roles
+    //     );
+
+    //     return ResponseEntity.ok(jwtResponse);
+        
+    // }
 
     @GetMapping("/oauth2/failure")
     public ResponseEntity<?> oauth2Failure() {

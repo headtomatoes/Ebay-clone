@@ -121,6 +121,7 @@ public class SecurityConfig {
                 )
                 .oauth2Login(oauth2 -> oauth2
                     .defaultSuccessUrl("/api/auth/oauth2/success", true)
+                    //.defaultSuccessUrl("http://localhost:5173/oauth2/redirect", true)
                     .failureUrl("/api/auth/oauth2/failure")
                 );
 

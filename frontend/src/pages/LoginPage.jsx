@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom'; // Import useLocation
 import LoginForm from '../components/auth/LoginForm';
+import GoogleLoginButton from '../components/auth/GoogleLoginButton';
 
 function LoginPage() {
     const location = useLocation(); // Get location state
