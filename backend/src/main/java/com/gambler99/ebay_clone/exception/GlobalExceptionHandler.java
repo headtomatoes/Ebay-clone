@@ -21,7 +21,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
     // This class is used to handle global exceptions in the application.
     // It can be extended to include specific exception handling methods as needed.
-    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    public static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     // --- Custom Business Logic Exceptions ---
 
