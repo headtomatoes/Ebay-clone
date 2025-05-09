@@ -32,6 +32,7 @@ import CartPage from "./pages/CartPage.jsx";
 import OrderPage from "./pages/OrderPage.jsx";
 import CheckoutPage from "./pages/CheckoutPage.jsx";
 
+import OAuth2Redirect from './pages/OAuth2Redirect';
 const MainLayout = () => (
   <div className="flex flex-col min-h-screen">
     <Header />
@@ -64,6 +65,8 @@ function App() {
               <Route path="/categories/:categoryName" element={<CategoryProductPage />} />
               <Route path="/search" element={<SearchResultPage />} />
 
+              {/* <Route path="/login" element={<LoginPage />} /> */}
+              <Route path="/oauth2/redirect" element={<OAuth2Redirect />} />
               {/* Protected */}
               <Route element={<ProtectedRoute />}>
                 <Route path="/" element={<HomePage />} />

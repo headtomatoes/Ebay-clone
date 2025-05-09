@@ -27,4 +27,99 @@ docker volume ls
 -- go the docker-compose.yml file and run:
 docker-compose up --build
 
+// ...existing code...
+import com.gambler99.ebay_clone.entity.User;
+import com.gambler99.ebay_clone.repository.UserRepository;
+import com.gambler99.ebay_clone.security.JwtTokenProvider;
+import com.gambler99.ebay_clone.security.UserDetailsImpl;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping("/api/auth")
+public class AuthController {
+    // ...existing fields...
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
+    // ...existing endpoints...
+
+    @GetMapping("/oauth2/success")
+    public ResponseEntity<?> oauth2Success(Authentication authentication) {
+        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+        String email = oAuth2User.getAttribute("email");
+        String googleId = oAuth2User.getAttribute("sub");
+        String name = oAuth2User.getAttribute("name");
+
+        // Try to find user by googleId or email
+        User user = userRepository.findByGoogleId(googleId)
+                .orElseGet(() -> userRepository.findByEmail(email).orElse(null));
+
+        if (user == null) {
+            // Create new user if not exists
+            user = User.builder()
+                    .username(email) // or generate a unique username
+                    .email(email)
+                    .googleId(googleId)
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
+                    .build();
+            // Optionally assign default roles here if needed
+            userRepository.save(user);
+        } else if (user.getGoogleId() == null) {
+            // Link Google ID if user exists by email but not linked yet
+            user.setGoogleId(googleId);
+            user.setUpdatedAt(LocalDateTime.now());
+            userRepository.save(user);
+        }
+
+        // Build UserDetailsImpl for JWT
+        UserDetailsImpl userDetails = UserDetailsImpl.build(user);
+
+        // Generate JWT token
+        String token = jwtTokenProvider.generateJwtToken(
+                new Authentication() {
+                    @Override
+                    public List<? extends org.springframework.security.core.GrantedAuthority> getAuthorities() {
+                        return userDetails.getAuthorities().stream().collect(Collectors.toList());
+                    }
+                    @Override public Object getCredentials() { return null; }
+                    @Override public Object getDetails() { return null; }
+                    @Override public Object getPrincipal() { return userDetails; }
+                    @Override public boolean isAuthenticated() { return true; }
+                    @Override public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {}
+                    @Override public String getName() { return userDetails.getUsername(); }
+                }
+        );
+
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(auth -> auth.getAuthority())
+                .collect(Collectors.toList());
+
+        JwtResponseDTO jwtResponse = new JwtResponseDTO(
+                token,
+                user.getUserId(),
+                user.getUsername(),
+                user.getEmail(),
+                roles
+        );
+
+        return ResponseEntity.ok(jwtResponse);
+    }
+
+    @GetMapping("/oauth2/failure")
+    public ResponseEntity<?> oauth2Failure() {
+        return ResponseEntity.badRequest().body(new MessageResponseDTO("Google login failed"));
+    }
+    // ...existing code...
+}
