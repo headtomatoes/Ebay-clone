@@ -75,20 +75,54 @@ public class SecurityConfig {
         return source;
     }
 
+    // @Bean
+    // public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    //     http
+    //             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+    //             .csrf(csrf -> csrf.disable())
+    //             .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+    //             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+    //             .authorizeHttpRequests(auth ->
+    //                     auth
+    //                             .requestMatchers("/api/auth/**").permitAll()
+    //                             .requestMatchers("/api/public/**").permitAll()
+    //                             .requestMatchers("/ws/**").permitAll()  // Add this line to allow WebSocket connections
+    //                             .requestMatchers("/error").permitAll()
+    //                             .anyRequest().authenticated()
+    //             )
+    //             .oauth2Login(oauth2 -> oauth2
+    //             .defaultSuccessUrl("/api/auth/oauth2/success", true)
+    //             .failureUrl("/api/auth/oauth2/failure")
+    //             );
+
+    //     http.authenticationProvider(authenticationProvider());
+    //     http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
+    //     return http.build();
+    // }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // CHỈ ĐỂ STATELESS CHO API, KHÔNG ÁP DỤNG CHO OAUTH2 LOGIN
+                .sessionManagement(session -> session
+                    .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                )
                 .authorizeHttpRequests(auth ->
                         auth
                                 .requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/api/public/**").permitAll()
-                                .requestMatchers("/ws/**").permitAll()  // Add this line to allow WebSocket connections
+                                .requestMatchers("/ws/**").permitAll()
                                 .requestMatchers("/error").permitAll()
                                 .anyRequest().authenticated()
+                )
+                .oauth2Login(oauth2 -> oauth2
+                    .defaultSuccessUrl("/api/auth/oauth2/success", true)
+                    //.defaultSuccessUrl("http://localhost:5173/oauth2/redirect", true)
+                    .failureUrl("/api/auth/oauth2/failure")
                 );
 
         http.authenticationProvider(authenticationProvider());

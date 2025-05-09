@@ -5,6 +5,7 @@ import com.gambler99.ebay_clone.entity.Bid;
 import com.gambler99.ebay_clone.repository.AuctionRepository;
 import com.gambler99.ebay_clone.repository.BidRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +20,13 @@ public class AuctionClosingService {
 
     private final AuctionRepository auctionRepository;
     private final BidRepository bidRepository;
+    private final EmailService emailService;
 
-    @Scheduled(fixedRate = 30000) // Check every 60 seconds see if any auctions need to be closed
+    // You can set this property in application.properties: frontend.base-url=http://localhost:5173
+    @Value("${frontend.base-url:http://localhost:5173}")
+    private String frontendBaseUrl;
+
+    @Scheduled(fixedRate = 30000) // Check every 30 seconds if any auctions need to be closed
     @Transactional
     public void closeEndedAuctions() {
         LocalDateTime now = LocalDateTime.now();
@@ -41,13 +47,20 @@ public class AuctionClosingService {
                     // Winning bid is below the reserve price
                     auction.setStatus(Auction.AuctionStatus.ENDED_NO_RESERVE);
                 }
+                auctionRepository.save(auction);
+
+                // Send winner email with auction URL
+                String auctionUrl = frontendBaseUrl + "/auctions/" + auction.getAuctionId();
+                emailService.sendAuctionWinEmail(
+                    winningBidOpt.get().getBidder().getEmail(),
+                    auction.getProduct().getName(),
+                    auctionUrl
+                );
             } else {
                 // No bids placed
                 auction.setStatus(Auction.AuctionStatus.ENDED_NO_BIDS);
+                auctionRepository.save(auction);
             }
-            auctionRepository.save(auction); // Save changes within the loop/transaction
-            // ADD LATER: Trigger notification/event later
-
         }
     }
 }
