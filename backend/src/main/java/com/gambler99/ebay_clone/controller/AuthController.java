@@ -53,9 +53,10 @@ public class AuthController {
         String email = oAuth2User.getAttribute("email");
         String googleId = oAuth2User.getAttribute("sub");
         String name = oAuth2User.getAttribute("name");
+        String address = oAuth2User.getAttribute("address"); // Extract address if available
     
         // Find or create user
-        var user = userService.findOrCreateGoogleUser(email, googleId, name);
+        var user = userService.findOrCreateGoogleUser(email, googleId, name, address);
     
         // Build UserDetailsImpl for JWT
         UserDetailsImpl userDetails = UserDetailsImpl.build(user);

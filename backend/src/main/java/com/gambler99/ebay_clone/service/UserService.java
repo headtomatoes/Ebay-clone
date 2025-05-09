@@ -18,7 +18,7 @@ public class UserService {
     @Autowired
     private RoleRepository roleRepository;
 
-    public User findOrCreateGoogleUser(String email, String googleId, String name) {
+    public User findOrCreateGoogleUser(String email, String googleId, String name, String address) {
         User user = userRepository.findByGoogleId(googleId)
                 .orElseGet(() -> userRepository.findByEmail(email).orElse(null));
 
@@ -27,10 +27,15 @@ public class UserService {
             Role defaultRole = roleRepository.findByRoleName("ROLE_BUYER")
                     .orElseThrow(() -> new RuntimeException("Default role not found"));
 
+                    if (address == null) {
+                        address = email; // Set to email if address is not provided
+                        
+                    }
             user = User.builder()
                     .username(email)
                     .email(email)
                     .googleId(googleId)
+                    .address(address)
                     .createdAt(LocalDateTime.now())
                     .updatedAt(LocalDateTime.now())
                     .roles(Collections.singleton(defaultRole))
