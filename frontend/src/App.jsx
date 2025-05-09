@@ -14,7 +14,8 @@ import ProductDetailPage from './pages/ProductDetailPage';
 import CategoryPage from './pages/CategoryPage';
 import CategoryProductPage from './pages/CategoryProductPage';
 import SearchResultPage from './pages/SearchResultPage';
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import AddAuctionPage from './pages/AddAuctionPage';
 import AuctionPage from "./pages/AuctionPage";
@@ -38,6 +39,12 @@ const MainLayout = () => (
       <Outlet />
     </main>
     <Footer />
+    <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          pauseOnHover
+          theme="light"
+        />
   </div>
 );
 
@@ -74,8 +81,8 @@ function App() {
                 <Route path="/auctions" element={<AuctionPage />} />
                 <Route path="/auctions/:id" element={<AuctionDetailPage />} />
                 <Route path="/cart" element={<CartPage />} />
-                <Route path="/checkout" element={<CheckoutPage />} />
                 <Route path="/order" element={<OrderPage />} />
+                <Route path="/checkout" element={<CheckoutPage />} />
               </Route>
 
               <Route path="*" element={<div>Page not found</div>} />
