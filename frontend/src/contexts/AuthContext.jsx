@@ -5,7 +5,10 @@ const AuthContext = createContext(null);
 // Provider
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(null); // { id, username, email, roles }
+    const [user, setUser] = useState(() => {
+        const storedUser = localStorage.getItem('user');
+        return storedUser ? JSON.parse(storedUser) : null;
+    });
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -47,13 +50,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Login function: saves token and user info to state and localStorage
-  const login = (newToken, userData) => {
-    console.log("AuthContext: login called", userData);
+  const login = (newToken, userDataFromBackend) => {
+    console.log("AuthContext: login called", userDataFromBackend);
     localStorage.setItem('token', newToken);
-    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('user', JSON.stringify(userDataFromBackend));
 
     setToken(newToken);
-    setUser(userData);
+    setUser(userDataFromBackend);
     setIsAuthenticated(true);
   };
 
