@@ -105,6 +105,14 @@ const OrderPage = () => {
                                     </button>
                                 </div>
                             )}
+                            {order.status === 'PENDING_PAYMENT' && (
+                              <button
+                                onClick={() => window.location.href = `/payment/${order.orderId}`}
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm ml-2 transition-colors"
+                              >
+                                Pay Now
+                              </button>
+                            )}
                         </div>
                     ))}
                 </div>

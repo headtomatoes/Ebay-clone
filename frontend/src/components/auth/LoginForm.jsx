@@ -96,7 +96,7 @@ export default function LoginForm({ successMessage }) {
 //             </button>
 //         </form>
         <form onSubmit={handleSubmit} style={{ maxWidth: '400px', margin: '40px auto', padding: '30px', border: '1px solid #ccc', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-          <h2 style={{ textAlign: 'center', marginBottom: '25px', fontWeight: 'bold' }}>Sign in to your account</h2>
+{/*           <h2 style={{ textAlign: 'center', marginBottom: '25px', fontWeight: 'bold' }}>Sign in to your account</h2> */}
 
           {apiError && (
             <p style={{ color: 'red', marginBottom: '15px', textAlign: 'center' }}>{apiError}</p>
@@ -117,7 +117,7 @@ export default function LoginForm({ successMessage }) {
                 style={{
                   width: '100%',
                   padding: '10px',
-                  borderRadius: '4px',
+                  borderRadius: '14px',
                   border: '1px solid #ccc',
                   fontSize: '16px'
                 }}
@@ -136,7 +136,7 @@ export default function LoginForm({ successMessage }) {
               backgroundColor: '#3665f3',
               color: '#fff',
               border: 'none',
-              borderRadius: '4px',
+              borderRadius: '14px',
               fontSize: '16px',
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.6 : 1

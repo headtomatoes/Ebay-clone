@@ -109,8 +109,8 @@ export default function RegisterForm() {
 // {/*         </button> */}
 // {/*       </form> */}
 
-       <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-10 p-6 shadow rounded bg-white">
-             <h2 className="text-2xl font-bold mb-6 text-center">Create your account</h2>
+       <form onSubmit={handleSubmit} className="border border-gray-300 rounded-xl max-w-md mx-auto mt-10 p-6 shadow bg-white">
+{/*              <h2 className="text-2xl font-bold mb-6 text-center">Create your account</h2> */}
 
              {apiError && (
                <p className="text-red-500 text-center mb-4">{apiError}</p>
@@ -137,7 +137,7 @@ export default function RegisterForm() {
              <button
                type="submit"
                disabled={loading}
-               className={`w-full bg-blue-600 text-white py-2 rounded ${loading ? 'opacity-60' : ''}`}
+               className={`w-full bg-blue-600 text-white py-2 rounded-full ${loading ? 'opacity-60' : ''}`}
              >
                {loading ? 'Signing Up...' : 'Sign Up'}
              </button>

@@ -93,7 +93,7 @@ public class CartController {
         return ResponseEntity.ok(toDTO(item));
     }
 
-    @PreAuthorize("hasAnyRole('BUYER', 'ADMIN')")
+//    @PreAuthorize("hasAnyRole('BUYER', 'ADMIN')")
     @DeleteMapping("/remove")
     public ResponseEntity<Void> removeFromCart(@RequestBody CartRequestDTO request) {
         User user = getAuthenticatedUser();
