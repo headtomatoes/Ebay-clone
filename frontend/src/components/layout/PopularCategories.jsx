@@ -1,52 +1,64 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import electronicImg from "../../assets/images/electronic.jpeg";
+import bookImg from "../../assets/images/book.jpg";
+import clothingImg from "../../assets/images/Clothing.webp";
+import homeKitchenImg from "../../assets/images/homenchicken.webp";
+import toysImg from "../../assets/images/toys.webp";
+import beautyImg from "../../assets/images/beauty.webp";
 
 const categories = [
   {
-    label: 'Luxury',
-    img: 'https://i.ebayimg.com/images/g/luxury/s-l1600.png',
+    label: 'Electronics',
+    img: electronicImg,
   },
   {
-    label: 'Sneakers',
-    img: 'https://i.ebayimg.com/images/g/sneakers/s-l1600.png',
+    label: 'Books',
+    img: bookImg,
   },
   {
-    label: 'P&A',
-    img: 'https://i.ebayimg.com/images/g/rims/s-l1600.png',
+    label: 'Clothing',
+    img: clothingImg,
   },
   {
-    label: 'Refurbished',
-    img: 'https://i.ebayimg.com/images/g/refurbished/s-l1600.png',
-  },
-  {
-    label: 'Trading cards',
-    img: 'https://i.ebayimg.com/images/g/cards/s-l1600.png',
-  },
-  {
-    label: 'Pre-loved Luxury',
-    img: 'https://i.ebayimg.com/images/g/preloved/s-l1600.png',
+    label: 'Home & Kitchen',
+    img: homeKitchenImg,
   },
   {
     label: 'Toys',
-    img: 'https://i.ebayimg.com/images/g/toys/s-l1600.png',
+    img: toysImg,
+  },
+  {
+    label: 'Beauty',
+    img: beautyImg,
   },
 ];
 
 export default function PopularCategories() {
   return (
-    <section className="py-10 bg-white px-6">
-      <h2 className="text-[22px] font-bold text-gray-900 mb-6">
+    <section className="py-10 px-4 md:px-6 bg-white">
+      <h2 className="text-[22px] font-bold text-gray-900 mb-6 text-center md:text-left">
         Explore Popular Categories
       </h2>
-      <div className="flex flex-wrap gap-10 justify-center">
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 justify-center">
         {categories.map((item, idx) => (
-          <div key={idx} className="flex flex-col items-center w-[140px]">
-            <div className="w-[140px] h-[140px] bg-gray-100 rounded-full flex items-center justify-center">
-              <img src={item.img} alt={item.label} className="max-w-[80%] max-h-[80%] object-contain" />
+          <Link
+            to={`/categories/${encodeURIComponent(item.label)}`}
+            key={idx}
+            className="flex flex-col items-center hover:scale-105 transition-transform"
+          >
+            <div className="w-[130px] h-[130px] bg-gray-100 rounded-full flex items-center justify-center shadow-sm">
+              <img
+                src={item.img}
+                alt={item.label}
+                className="max-w-[80%] max-h-[80%] object-contain"
+              />
             </div>
-            <span className="mt-3 text-[15px] font-medium text-center text-gray-900 leading-tight">
+            <span className="mt-4 text-[16px] font-medium text-center text-gray-900">
               {item.label}
             </span>
-          </div>
+          </Link>
         ))}
       </div>
 
@@ -60,7 +72,7 @@ export default function PopularCategories() {
             Enjoy reliability, secure deliveries and hassle-free returns.
           </p>
         </div>
-        <button className="bg-black text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-gray-800">
+        <button className="bg-black text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors">
           Start now
         </button>
       </div>
