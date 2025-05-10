@@ -63,11 +63,22 @@ const cancelOrder = async (orderId) => {
     }
 };
 
+// const  = async (orderId) => {
+//   const token = lgetOrderByIdocalStorage.getItem('token');
+//   const config = {
+//     headers: { Authorization: `Bearer ${token}` }
+//   };
+//   const response = await axios.get(`${BASE_URL}/${orderId}`, config);
+//   return response.data;
+// };
+
+
 // Export the functions to be used in other parts of the application
 export default {
     getAllOrders,
     createOrderFromCart, // This will be used by CheckoutPage
     createOrderFromCartId, // Keep if you have a use case for creating orders from specific cart items
     cancelOrder,
+    //getOrderById,
 };
 

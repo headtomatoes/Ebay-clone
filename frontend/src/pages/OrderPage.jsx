@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import orderService from '../services/OrderService'; // Adjust path as needed
-import { Link } from 'react-router-dom'; // If you want to link to order details
+import { Link, useNavigate } from 'react-router-dom'; // If you want to link to order details
 
 const OrderPage = () => {
     const [orders, setOrders] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     const fetchOrders = async () => {
         setIsLoading(true);
@@ -95,7 +96,7 @@ const OrderPage = () => {
                             {/* Optional: Link to a more detailed order view page */}
                             {/* <Link to={`/orders/${order.orderId}`} className="text-blue-500 hover:underline mt-3 inline-block">View Details</Link> */}
 
-                            {order.status !== 'CANCELLED' && order.status !== 'COMPLETED' && ( // Example condition
+                            {order.status !== 'CANCELLED' && order.status !== 'COMPLETED' && order.status !== 'PROCESSING' &&  ( // Example condition
                                 <div className="mt-4 text-right">
                                     <button
                                         onClick={() => handleCancelOrder(order.orderId)}
@@ -106,12 +107,12 @@ const OrderPage = () => {
                                 </div>
                             )}
                             {order.status === 'PENDING_PAYMENT' && (
-                              <button
-                                onClick={() => window.location.href = `/payment/${order.orderId}`}
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm ml-2 transition-colors"
-                              >
-                                Pay Now
-                              </button>
+                            <button
+                              onClick={() => navigate(`/checkout?orderId=${order.orderId}`)}
+                              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm transition-colors"
+                            >
+                              Pay Now
+                            </button>
                             )}
                         </div>
                     ))}

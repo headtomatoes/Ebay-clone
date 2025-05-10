@@ -6,6 +6,7 @@ import PaymentService from '../services/PaymentService';
 import { useAuth } from '../contexts/AuthContext';
 import StripeCheckoutForm from '../components/payments/StripeCheckoutForm';
 import CODCheckoutForm from '../components/payments/CODCheckoutForm';
+import { useLocation } from 'react-router-dom';
 
 const CHECKOUT_STEPS = {
     REVIEW_ORDER: 'REVIEW_ORDER',
@@ -157,9 +158,8 @@ const CheckoutPage = () => {
     };
 
     if (!user && !isLoading) {
-
         return <div className="p-4 text-center">Redirecting to login...</div>;
-
+    }
 
     if (isLoading && checkoutStep === CHECKOUT_STEPS.REVIEW_ORDER && cartItemCount === 0 && !createdOrder) {
         return <div className="p-4 text-center">Loading checkout details...</div>;
