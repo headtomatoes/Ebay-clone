@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ProductService from '../services/ProductService';
 import { useAuth } from '../contexts/AuthContext';
-import ReviewService from '../services/ReviewService'; // Import the ReviewService
+import ReviewService from '../services/ReviewService';
 
 export default function ProductPage() {
   const { user } = useAuth(); // Get logged in user
@@ -15,32 +15,46 @@ export default function ProductPage() {
   const productsPerPage = 20;  // Display 20 products per page
   const [productRatings, setProductRatings] = useState({}); // State to store average ratings for each product
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const data = await ProductService.getAllProducts();
-        console.log("Products loaded:", data);
-        setProducts(data);
+ useEffect(() => {
+   const fetchProducts = async () => {
+     try {
+       const data = await ProductService.getAllProducts();
+       setProducts(data);
 
-        // Fetch reviews for each product
-        const ratings = {};
-        for (const product of data) {
-          const reviews = await ReviewService.getReviewsByProduct(product.productId);
-          const avgRating = reviews.length
-            ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
-            : 0;
-          ratings[product.productId] = avgRating;
-        }
-        setProductRatings(ratings);
-      } catch (err) {
-        console.error('Error fetching products:', err);
-        setError('Failed to load products.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProducts();
-  }, []);
+       const ratings = {};
+
+       // Use Promise.all to wait for all average ratings
+       await Promise.all(
+         data.map(async (product) => {
+           try {
+             // Fetch average rating from API
+             const avgRating = await ReviewService.getAverageRating(product.productId);
+             console.log(`Product ${product.productId} - Average Rating:`, avgRating);
+
+             // Handle invalid ratings
+             if (avgRating !== null && avgRating !== undefined) {
+               ratings[product.productId] = Number(avgRating).toFixed(1);
+             } else {
+               ratings[product.productId] = '0.0'; // Default to 0 if no rating found
+             }
+           } catch (err) {
+             console.error(`Error fetching rating for product ${product.productId}`, err);
+             ratings[product.productId] = '0.0'; // Default to 0 in case of error
+           }
+         })
+       );
+
+       setProductRatings(ratings);
+     } catch (err) {
+       console.error('Error fetching products:', err);
+       setError('Failed to load products.');
+     } finally {
+       setLoading(false);
+     }
+   };
+
+   fetchProducts();
+ }, []);
 
   if (loading) return <p className="text-center mt-10">Loading products...</p>;
   if (error) return <p className="text-center text-red-500 mt-10">{error}</p>;
@@ -93,10 +107,12 @@ export default function ProductPage() {
                 <div className="w-24 h-2 bg-gray-200 rounded">
                   <div
                     className="h-full bg-yellow-400 rounded"
-                    style={{ width: `${(productRatings[product.productId] / 5) * 100}%` }}
+                    style={{
+                      width: `${(parseFloat(productRatings[product.productId] || 0) / 5) * 100}%`
+                    }}
                   ></div>
                 </div>
-                <span className="text-xs ml-2">{productRatings[product.productId]} / 5</span>
+                <span className="text-xs ml-2">{productRatings[product.productId] || '0.0'} / 5</span>
               </div>
 
               {product.status === 'ACTIVE' && (

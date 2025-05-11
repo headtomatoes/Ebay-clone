@@ -54,7 +54,7 @@ public class ReviewController {
 
     //Retrieve all reviews for a specific product.
 
-    @GetMapping("/product/{productId}")
+    @GetMapping("/product/public/{productId}")
     public ResponseEntity<List<ReviewDTO>> getReviewsByProduct(@PathVariable Long productId) {
         List<ReviewDTO> reviews = reviewService.getReviewsByProduct(productId);
         return ResponseEntity.ok(reviews);
@@ -62,12 +62,14 @@ public class ReviewController {
 
 
     //Get the average rating for a specific product.
+    @GetMapping("/product/public/{productId}/average-rating")
+    public ResponseEntity<Double> getAverageRating(@PathVariable Long productId) {
+        Double average = reviewService.getAverageRating(productId);
 
+        // Round to 1 decimal place if average is not null
+        double roundedAverage = average != null ? Math.round(average * 10.0) / 10.0 : 0.0;
 
-
-
-
-
-
+        return ResponseEntity.ok(roundedAverage);
+    }
 
 }
