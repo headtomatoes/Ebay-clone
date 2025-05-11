@@ -22,6 +22,8 @@
    3.10: delete product
    3.11: create auction
    3.12: 
+
+   ----------- SELLER USE CASE -------------
    
 4. Schema Diagram: --> done
 5. Package (MVC model) and class Diagrams:
