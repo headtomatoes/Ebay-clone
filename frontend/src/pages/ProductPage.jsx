@@ -2,16 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ProductService from '../services/ProductService';
 import { useAuth } from '../contexts/AuthContext';
+import ReviewService from '../services/ReviewService'; // Import the ReviewService
 
 export default function ProductPage() {
-  const { user } = useAuth(); //get logged in user
+  const { user } = useAuth(); // Get logged in user
 
   // States for products, loading status, error messages, and pagination
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 20;  //Display 20 products per page
+  const productsPerPage = 20;  // Display 20 products per page
+  const [productRatings, setProductRatings] = useState({}); // State to store average ratings for each product
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -19,6 +21,17 @@ export default function ProductPage() {
         const data = await ProductService.getAllProducts();
         console.log("Products loaded:", data);
         setProducts(data);
+
+        // Fetch reviews for each product
+        const ratings = {};
+        for (const product of data) {
+          const reviews = await ReviewService.getReviewsByProduct(product.productId);
+          const avgRating = reviews.length
+            ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+            : 0;
+          ratings[product.productId] = avgRating;
+        }
+        setProductRatings(ratings);
       } catch (err) {
         console.error('Error fetching products:', err);
         setError('Failed to load products.');
@@ -38,7 +51,7 @@ export default function ProductPage() {
   const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(products.length / productsPerPage);
 
-  //Handle changing pages
+  // Handle changing pages
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -75,6 +88,17 @@ export default function ProductPage() {
               <p className="text-blue-600 font-bold">${product.price.toFixed(2)}</p>
               <p className="text-xs text-gray-500 mt-1">{product.categoryName}</p>
 
+              {/* Display average rating */}
+              <div className="flex items-center mt-2">
+                <div className="w-24 h-2 bg-gray-200 rounded">
+                  <div
+                    className="h-full bg-yellow-400 rounded"
+                    style={{ width: `${(productRatings[product.productId] / 5) * 100}%` }}
+                  ></div>
+                </div>
+                <span className="text-xs ml-2">{productRatings[product.productId]} / 5</span>
+              </div>
+
               {product.status === 'ACTIVE' && (
                 <span className="text-green-500 text-xs font-semibold mt-1">Available</span>
               )}
@@ -82,7 +106,6 @@ export default function ProductPage() {
               {product.status === 'SOLD_OUT' && (
                 <span className="text-red-500 text-xs font-semibold mt-1">Sold Out</span>
               )}
-
             </div>
           </div>
         ))}
@@ -94,11 +117,7 @@ export default function ProductPage() {
           <button
             key={index + 1}
             onClick={() => handlePageChange(index + 1)}
-            className={`px-4 py-2 border rounded ${
-              currentPage === index + 1
-                ? 'bg-blue-500 text-white'
-                : 'bg-white text-blue-500 hover:bg-blue-100'
-            }`}
+            className={`px-4 py-2 border rounded ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-white text-blue-500 hover:bg-blue-100'}`}
           >
             {index + 1}
           </button>
