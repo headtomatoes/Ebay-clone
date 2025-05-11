@@ -171,6 +171,21 @@ public class OrderServiceImpl implements OrderService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public OrderResponseDTO getOrderById(Long orderId, Long userId) {
+        // Fetch the order by ID
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderException("Order not found with ID: " + orderId));
+
+        // Check if the order belongs to the customer
+        if (!order.getCustomer().getUserId().equals(userId)) {
+            throw new OrderException("Unauthorized action for user ID: " + userId);
+        }
+
+        // Map the order to OrderResponseDTO
+        return mapToResponseDTO(order);
+    }
+
     private OrderResponseDTO mapToResponseDTO(Order order) {
         return OrderResponseDTO.builder()
                 .orderId(order.getOrderId())
@@ -183,6 +198,7 @@ public class OrderServiceImpl implements OrderService {
                                 .productName(orderItem.getProduct().getName())
                                 .quantity(orderItem.getQuantity())
                                 .priceAtPurchase(orderItem.getPriceAtPurchase().doubleValue())
+                                .productImageUrl(orderItem.getProduct().getImageUrl())
                                 .build())
                         .collect(Collectors.toList()))
                 .orderDate(order.getOrderDate())

@@ -32,6 +32,7 @@ import OrderPage from "./pages/OrderPage.jsx";
 import CheckoutPage from "./pages/CheckoutPage.jsx";
 
 import OAuth2Redirect from './pages/OAuth2Redirect';
+import OrderDetailPage from "./pages/OrderDetailPage.jsx";
 
 const MainLayout = () => (
   <div className="flex flex-col min-h-screen">
@@ -88,6 +89,7 @@ function App() {
                 <Route path="/auctions/:id" element={<AuctionDetailPage />} />
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/order" element={<OrderPage />} />
+                <Route path="/orders/:orderId" element={<OrderDetailPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
               </Route>
 

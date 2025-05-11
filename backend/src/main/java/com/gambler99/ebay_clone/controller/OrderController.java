@@ -51,6 +51,11 @@ public class OrderController {
         orderService.deleteOrder(orderId, user.getUserId());
     }
 
+    @GetMapping("/{orderId}")
+    public OrderResponseDTO getOrderById(@PathVariable Long orderId) {
+        User user = getAuthenticatedUser();
+        return orderService.getOrderById(orderId, user.getUserId());
+    }
     // Get all orders for the authenticated user
     @GetMapping
     public List<OrderResponseDTO> getAllOrdersForCustomer() {
