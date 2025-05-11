@@ -67,12 +67,7 @@ public class ReviewController {
 
 
 
-    @GetMapping(value = "/product/{productId}/average-rating", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Double> getAverageRating(@PathVariable Long productId) {
-        Double average = reviewService.getAverageRating(productId);
-        double roundedAverage = average != null ? Math.round(average * 10.0) / 10.0 : 0.0;
-        return ResponseEntity.ok(roundedAverage);
-    }
+
 
 
 }
