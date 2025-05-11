@@ -1,0 +1,27 @@
+1. Use case Diagram: ---> Almost done
+
+2. Activity Diagrams:
+   2.1: Process when Customer login to the Egay until they order successfully
+   2.2: Process when Seller create an products and auction
+   2.3: process when customer bid an auction, until they win or loose
+
+3. Sequence Diagram:
+   3.1: User register a new account
+   3.2: Login into the Egay (include login by gg account)
+
+   ----------- CUSTOMER USE CASE -------------
+   3.3: Search product
+   3.4: Add products to cart 
+   3.5: Checkout cart and place order
+   3.6: Payment Process
+   3.7: Bid the auctions
+   3.8: Review and rating a product
+
+   ----------- SELLER USE CASE -------------
+   3.9: Create a product
+   3.10: delete product
+   3.11: create auction
+   3.12: 
+   
+4. Schema Diagram: --> done
+5. Package (MVC model) and class Diagrams:

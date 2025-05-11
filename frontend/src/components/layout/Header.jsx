@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import ebayLogo from '../../assets/images/EBay_logo.svg';
+import ebayLogo from '../../assets/images/egaylogo.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 import CategoryService from '../../services/CategoryService';
@@ -83,7 +83,7 @@ export default function Header() {
 
       {/* Logo + Search + Dropdown */}
       <div className="flex items-center gap-4 px-6 py-3 bg-white relative border-t border-b">
-        <Link to="/"> <img src={ebayLogo} alt="eBay" className="h-10 w-auto" /> </Link>
+        <Link to="/"> <img src={ebayLogo} alt="eBay" className="h-10 w-auto max-w-[200px]" /> </Link>
 
         {/* Search bar with Category Filter */}
         <div className="flex justify-center w-full">

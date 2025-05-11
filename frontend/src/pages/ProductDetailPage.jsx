@@ -79,42 +79,54 @@ export default function ProductDetailPage() {
     }
   }
 
-  //handleBuyNow
-  const handleBuyNow = () => {
+  // Handle buying now
+  const handleBuyNow = async () => {
     if (!user) {
-      toast.error('Please log in to purchase this product.');
+      alert('Please log in to buy products.');
       return;
     }
-
     if (!product || !product.productId) {
-      toast.error('Product information is missing.');
+      setError("Product information is missing.");
       return;
     }
 
-    navigate('/checkout', {
-      state: {
-        mode: 'buynow',
-        product,
-        quantity,
-      },
-    });
+    //setIsAdding(true);
+    setError(null);
+    setSuccessMessage('');
+
+    try {
+      // Always add 1 quantity when buying now
+      await CartService.addToCart(product.productId, 1);
+      toast.success(`${product.name || 'Product'} added to cart!`);
+
+      // After adding successfully, redirect to cart page
+      navigate('/cart');
+    } catch (err) {
+      toast.error(`Failed to buy product: ${err.message || 'Unknown error'}`);
+    } finally {
+      setIsAdding(false);
+    }
   };
 
 
 
   function Accordion({ title, children }) {
+    // State to track whether the accordion is open (true) or closed (false)
     const [open, setOpen] = useState(false);
 
     return (
       <div className="border rounded-lg overflow-hidden">
         <button
-          onClick={() => setOpen(!open)}
+          onClick={() => setOpen(!open)} // Toggle the open state on click
           className="w-full flex justify-between items-center px-4 py-3 font-semibold text-gray-800"
         >
           <span>{title}</span>
+
+          {/* Display '+' when closed and '−' when open */}
           <span className="text-xl">{open ? "−" : "+"}</span>
         </button>
 
+        {/* Accordion content area */}
         <div
           className={`transition-all duration-300 ease-in-out px-4 text-sm text-gray-700 ${
             open ? 'max-h-[500px] py-3 opacity-100' : 'max-h-0 py-0 opacity-0'
@@ -182,7 +194,6 @@ export default function ProductDetailPage() {
 
                 <button
                   onClick={handleBuyNow}
-                  disabled={isAdding}
                   className="rounded-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold"
                 >
                   Buy Now

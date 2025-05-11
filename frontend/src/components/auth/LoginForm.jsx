@@ -144,10 +144,6 @@ export default function LoginForm({ successMessage }) {
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>
-
-          <div style={{ margin: '20px 0' }}>
-            <GoogleLoginButton />
-          </div>
         </form>
 
     );
