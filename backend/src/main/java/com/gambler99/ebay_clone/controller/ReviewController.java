@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
 
 import jakarta.validation.Valid;
 import java.util.List;
@@ -64,13 +65,12 @@ public class ReviewController {
 
 
 
-    @GetMapping("/product/{productId}/average-rating")
+
+
+    @GetMapping(value = "/product/{productId}/average-rating", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Double> getAverageRating(@PathVariable Long productId) {
         Double average = reviewService.getAverageRating(productId);
-
-        // Round to 1 decimal place if average is not null
         double roundedAverage = average != null ? Math.round(average * 10.0) / 10.0 : 0.0;
-
         return ResponseEntity.ok(roundedAverage);
     }
 

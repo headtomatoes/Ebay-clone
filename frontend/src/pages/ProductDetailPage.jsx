@@ -321,7 +321,7 @@ export default function ProductDetailPage() {
             onChange={(e) => setNewReview({ ...newReview, rating: Number(e.target.value) })}
             className="border border-gray-300 p-2 rounded-md"
           >
-            {[1, 2, 3, 4, 5].map(rating => (
+            {[0,1, 2, 3, 4, 5].map(rating => (
               <option key={rating} value={rating}>{rating}</option>
             ))}
           </select>
