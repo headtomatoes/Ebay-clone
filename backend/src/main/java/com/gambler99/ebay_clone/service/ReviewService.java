@@ -26,6 +26,11 @@ public class ReviewService {
         Product product = productRepository.findById(dto.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
+        // Check if the user is the owner of the product (seller of the product)
+        if (product.getSeller().getUserId().equals(user.getUserId())) { // Use getUserId() instead of getId()
+            throw new RuntimeException("You cannot review your own product");
+        }
+
         // Create a new review and set its properties
         Review review = new Review();
         review.setUser(user);
