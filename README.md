@@ -25,12 +25,63 @@ This project is an eBay-inspired auction and e-commerce web application develope
 ## Project Structure (to be modified)
 
 ```
-ebay-clone-project/
-├── .gitignore          
-├── README.md           
-├── backend/            
-└── frontend/           
-    
+ebay_clone/
+├── backend/
+│   ├── .mvn/
+│   ├── document/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/
+│   │   │   │   └── com/
+│   │   │   │       └── com.gambler99/
+│   │   │   │           └── com.gambler99.ebay_clone/
+│   │   │   │               ├── config/
+│   │   │   │               ├── controller/
+│   │   │   │               ├── dto/
+│   │   │   │               ├── entity/
+│   │   │   │               ├── exception/
+│   │   │   │               ├── repository/
+│   │   │   │               ├── security/
+│   │   │   │               └── service/
+│   │   │   │                   ├── EbayCloneApplication.java
+│   │   │   │                   ├── EnvLoader.java
+│   │   │   │                   └── ServletInitializer.java
+│   │   │   └── resources/
+│   │   │       └── db/
+│   │   │       └── application.properties
+│   │   └── test/
+│   ├── target/
+│   ├── .gitattributes
+│   ├── .gitignore
+│   ├── Dockerfile
+│   ├── ebay_clone.iml
+│   ├── mvnw
+│   ├── mvnw.cmd
+│   ├── note.md
+│   ├── note.txt
+│   └── pom.xml
+└── frontend/
+    ├── node_modules/
+    ├── public/
+    │   └── icon.png
+    ├── src/
+    │   ├── assets/
+    │   ├── components/
+    │   ├── contexts/
+    │   ├── pages/
+    │   ├── routes/
+    │   └── services/
+    │   ├── App.jsx
+    │   └── main.jsx
+    ├── .gitignore
+    ├── .eslintrc.config.js
+    ├── index.html
+    ├── package.json
+    ├── package-lock.json
+    ├── postcss.config.js
+    ├── README.md
+    ├── tailwind.config.js
+    └── vite.config.js
 ```
 
 ## Getting Started
@@ -71,8 +122,8 @@ ebay-clone-project/
 ### Team Members
 - [Nguyễn Quốc Trung] - Frontend Developer
 - [Lê Hưng] - Backend Developer (Database focus)
-- [Đàm Nguyễn Trọng Lễ] - Full-stack Developer (WebSocket focus)
-- [Lê Nhật Anh] - Backend Developer (Security focus)
+- [Đàm Nguyễn Trọng Lễ] - Full-stack Developer (WebSocket focus) (Leader)
+- [Lê Nhật Anh] - Backend Developer 
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
