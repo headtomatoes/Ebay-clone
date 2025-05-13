@@ -100,7 +100,9 @@ const CartPage = () => {
                         className="w-16 h-16 object-cover rounded"
                       />
                       <div>
-                        <p className="font-medium text-gray-800">{item.productName}</p>
+                        <Link to={`/products/${item.productId}`} className="text-lg font-semibold text-indigo-600 hover:text-indigo-800 hover:underline">
+                          {item.productName || 'Unknown Product'}
+                        </Link>
                         <p className="text-xs text-gray-500">ID: {item.productId}</p>
                       </div>
                     </td>
