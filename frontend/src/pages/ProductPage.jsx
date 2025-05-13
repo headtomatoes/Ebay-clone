@@ -2,32 +2,59 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ProductService from '../services/ProductService';
 import { useAuth } from '../contexts/AuthContext';
+import ReviewService from '../services/ReviewService';
 
 export default function ProductPage() {
-  const { user } = useAuth(); //get logged in user
+  const { user } = useAuth(); // Get logged in user
 
   // States for products, loading status, error messages, and pagination
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 20;  //Display 20 products per page
+  const productsPerPage = 20;  // Display 20 products per page
+  const [productRatings, setProductRatings] = useState({}); // State to store average ratings for each product
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const data = await ProductService.getAllProducts();
-        console.log("Products loaded:", data);
-        setProducts(data);
-      } catch (err) {
-        console.error('Error fetching products:', err);
-        setError('Failed to load products.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProducts();
-  }, []);
+ useEffect(() => {
+   const fetchProducts = async () => {
+     try {
+       const data = await ProductService.getAllProducts();
+       setProducts(data);
+
+       const ratings = {};
+
+       // Use Promise.all to wait for all average ratings
+       await Promise.all(
+         data.map(async (product) => {
+           try {
+             // Fetch average rating from API
+             const avgRating = await ReviewService.getAverageRating(product.productId);
+             console.log(`Product ${product.productId} - Average Rating:`, avgRating);
+
+             // Handle invalid ratings
+             if (avgRating !== null && avgRating !== undefined) {
+               ratings[product.productId] = Number(avgRating).toFixed(1);
+             } else {
+               ratings[product.productId] = '0.0'; // Default to 0 if no rating found
+             }
+           } catch (err) {
+             console.error(`Error fetching rating for product ${product.productId}`, err);
+             ratings[product.productId] = '0.0'; // Default to 0 in case of error
+           }
+         })
+       );
+
+       setProductRatings(ratings);
+     } catch (err) {
+       console.error('Error fetching products:', err);
+       setError('Failed to load products.');
+     } finally {
+       setLoading(false);
+     }
+   };
+
+   fetchProducts();
+ }, []);
 
   if (loading) return <p className="text-center mt-10">Loading products...</p>;
   if (error) return <p className="text-center text-red-500 mt-10">{error}</p>;
@@ -38,7 +65,7 @@ export default function ProductPage() {
   const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(products.length / productsPerPage);
 
-  //Handle changing pages
+  // Handle changing pages
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -75,6 +102,19 @@ export default function ProductPage() {
               <p className="text-blue-600 font-bold">${product.price.toFixed(2)}</p>
               <p className="text-xs text-gray-500 mt-1">{product.categoryName}</p>
 
+              {/* Display average rating */}
+              <div className="flex items-center mt-2">
+                <div className="w-24 h-2 bg-gray-200 rounded">
+                  <div
+                    className="h-full bg-yellow-400 rounded"
+                    style={{
+                      width: `${(parseFloat(productRatings[product.productId] || 0) / 5) * 100}%`
+                    }}
+                  ></div>
+                </div>
+                <span className="text-xs ml-2">{productRatings[product.productId] || '0.0'} / 5</span>
+              </div>
+
               {product.status === 'ACTIVE' && (
                 <span className="text-green-500 text-xs font-semibold mt-1">Available</span>
               )}
@@ -82,7 +122,6 @@ export default function ProductPage() {
               {product.status === 'SOLD_OUT' && (
                 <span className="text-red-500 text-xs font-semibold mt-1">Sold Out</span>
               )}
-
             </div>
           </div>
         ))}
@@ -94,11 +133,7 @@ export default function ProductPage() {
           <button
             key={index + 1}
             onClick={() => handlePageChange(index + 1)}
-            className={`px-4 py-2 border rounded ${
-              currentPage === index + 1
-                ? 'bg-blue-500 text-white'
-                : 'bg-white text-blue-500 hover:bg-blue-100'
-            }`}
+            className={`px-4 py-2 border rounded ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-white text-blue-500 hover:bg-blue-100'}`}
           >
             {index + 1}
           </button>
