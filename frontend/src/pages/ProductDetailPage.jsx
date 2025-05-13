@@ -135,6 +135,7 @@
             {[...Array(emptyStars)].map((_, i) => (
               <span key={`empty-${i}`} className="text-gray-300 text-lg">★</span>
             ))}
+
           </div>
         );
       };
@@ -181,13 +182,22 @@
                     {isAdding ? 'Adding...' : 'Add to Cart'}
                   </button>
 
-                  <button
-                    onClick={handleBuyNow}
-                    className="rounded-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold"
-                  >
-                    Buy Now
-                  </button>
-                </div>
+              {/* Add to Cart & Buy Now */}
+              <div className="flex gap-3">
+                <button
+                  onClick={handleAddToCart}
+                  disabled={isAdding}
+                  className="rounded-full px-6 py-3 border border-blue-600 text-blue-600 hover:bg-blue-50 text-sm font-medium"
+                >
+                  {isAdding ? 'Adding...' : 'Add to Cart'}
+                </button>
+
+                <button
+                  onClick={handleBuyNow}
+                  className="rounded-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold"
+                >
+                  Buy Now
+                </button>
               </div>
 
               {/* Additional Info */}

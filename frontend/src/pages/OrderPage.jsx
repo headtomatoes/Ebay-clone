@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import orderService from '../services/OrderService'; // Adjust path as needed
-import { Link } from 'react-router-dom'; // If you want to link to order details
+import { Link, useNavigate } from 'react-router-dom';
 
 const OrderPage = () => {
     const [orders, setOrders] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     const fetchOrders = async () => {
         setIsLoading(true);
@@ -33,7 +34,6 @@ const OrderPage = () => {
         if (window.confirm(`Are you sure you want to cancel order ${orderId}?`)) {
             try {
                 await orderService.cancelOrder(orderId);
-                // Refresh orders list
                 fetchOrders();
             } catch (err) {
                 setError(`Failed to cancel order ${orderId}: ${err.message || 'Unknown error'}`);
@@ -64,8 +64,9 @@ const OrderPage = () => {
                                 </div>
                                 <span className={`px-3 py-1 text-sm font-semibold rounded-full ${
                                     order.status === 'CANCELLED' ? 'bg-red-200 text-red-800' :
-                                        order.status === 'COMPLETED' ? 'bg-green-200 text-green-800' : // Example status
-                                            'bg-yellow-200 text-yellow-800' // Default for other statuses
+                                        order.status === 'COMPLETED' ? 'bg-green-200 text-green-800' :
+                                            order.status === 'PROCESSING' ? 'bg-blue-200 text-blue-800' :
+                                                'bg-yellow-200 text-yellow-800'
                                 }`}>
                                     Status: {order.status || 'N/A'}
                                 </span>
@@ -78,41 +79,40 @@ const OrderPage = () => {
                                 </span>
                             </p>
 
+                            {/* Mini item summary - keep this brief */}
                             {order.items && order.items.length > 0 && (
-                                <div className="mt-4">
-                                    <h3 className="text-md font-semibold text-gray-700 mb-2">Items:</h3>
-                                    <ul className="list-disc list-inside ml-4 space-y-1 text-sm text-gray-600">
-                                        {order.items.map((item, index) => (
-                                            <li key={item.orderItemId || item.productId || index}> {/* Ensure unique key */}
-                                                {item.productName || 'Unknown Product'} (Quantity: {item.quantity})
-                                                - ${item.price ? item.price.toFixed(2) : 'N/A'} each
-                                            </li>
-                                        ))}
-                                    </ul>
+                                <div className="mt-3 mb-3">
+                                    <p className="text-sm text-gray-600">
+                                        {order.items.length} item(s) -
+                                        Preview: {order.items[0].productName}{order.items.length > 1 ? ' and more...' : ''}
+                                    </p>
                                 </div>
                             )}
 
-                            {/* Optional: Link to a more detailed order view page */}
-                            {/* <Link to={`/orders/${order.orderId}`} className="text-blue-500 hover:underline mt-3 inline-block">View Details</Link> */}
-
-                            {order.status !== 'CANCELLED' && order.status !== 'COMPLETED' && ( // Example condition
-                                <div className="mt-4 text-right">
+                            <div className="mt-4 flex flex-wrap gap-2 justify-end items-center">
+                                <Link
+                                    to={`/orders/${order.orderId}`}
+                                    className="bg-indigo-500 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded text-sm transition-colors"
+                                >
+                                    View Details
+                                </Link>
+                                {order.status === 'PENDING_PAYMENT' && (
+                                    <button
+                                        onClick={() => navigate(`/checkout?orderId=${order.orderId}`)}
+                                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm transition-colors"
+                                    >
+                                        Pay Now
+                                    </button>
+                                )}
+                                {order.status !== 'CANCELLED' && order.status !== 'COMPLETED' && order.status !== 'PROCESSING' && (
                                     <button
                                         onClick={() => handleCancelOrder(order.orderId)}
                                         className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-sm transition-colors"
                                     >
                                         Cancel Order
                                     </button>
-                                </div>
-                            )}
-                            {order.status === 'PENDING_PAYMENT' && (
-                              <button
-                                onClick={() => window.location.href = `/payment/${order.orderId}`}
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm ml-2 transition-colors"
-                              >
-                                Pay Now
-                              </button>
-                            )}
+                                )}
+                            </div>
                         </div>
                     ))}
                 </div>

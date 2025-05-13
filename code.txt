@@ -1,0 +1,455 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.university.controller;
+
+/**
+ *
+ * @author hung
+ */
+
+
+import com.university.model.Product;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+@WebServlet("/cart")
+public class CartServlet extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Get current theme and language from cookies
+        Cookie[] cookies = request.getCookies();
+        String theme = "light";
+        String language = "en";
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("theme".equals(cookie.getName())) {
+                    theme = cookie.getValue();
+                } else if ("language".equals(cookie.getName())) {
+                    language = cookie.getValue();
+                }
+            }
+        }
+        request.setAttribute("theme", theme);
+        request.setAttribute("language", language);
+
+        // Get the shopping cart from session or create a new one
+        HttpSession session = request.getSession();
+        List<Product> cart = (List<Product>) session.getAttribute("cart");
+        if (cart == null) {
+            cart = new ArrayList<>();
+            session.setAttribute("cart", cart);
+        }
+
+        // Calculate cart total
+        double total = 0.0;
+        for (Product product : cart) {
+            total += product.getSubtotal();
+        }
+        request.setAttribute("cartTotal", total);
+
+        // Forward to the cart page
+        request.getRequestDispatcher("/views/cart.jsp").forward(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String action = request.getParameter("action");
+
+        HttpSession session = request.getSession();
+        List<Product> cart = (List<Product>) session.getAttribute("cart");
+
+        if (cart == null) {
+            cart = new ArrayList<>();
+            session.setAttribute("cart", cart);
+        }
+
+        if ("add".equals(action)) {
+            int productId = Integer.parseInt(request.getParameter("productId"));
+            String productName = request.getParameter("productName");
+            double productPrice = Double.parseDouble(request.getParameter("productPrice"));
+
+            boolean found = false;
+            for (Product product : cart) {
+                if (product.getId() == productId) {
+                    product.incrementQuantity();
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                Product newProduct = new Product(productId, productName, productPrice);
+                cart.add(newProduct);
+            }
+
+            session.setAttribute("cart", cart);
+            response.sendRedirect(request.getContextPath() + "/cart");
+
+        } else if ("update".equals(action)) {
+            String[] productIds = request.getParameterValues("productId");
+            String[] quantities = request.getParameterValues("quantity");
+
+            if (productIds != null && quantities != null && productIds.length == quantities.length) {
+                for (int i = 0; i < productIds.length; i++) {
+                    int id = Integer.parseInt(productIds[i]);
+                    int quantity = Integer.parseInt(quantities[i]);
+
+                    for (Product product : cart) {
+                        if (product.getId() == id) {
+                            product.setQuantity(quantity);
+                            break;
+                        }
+                    }
+                }
+
+                // Remove products with quantity 0
+                cart.removeIf(product -> product.getQuantity() <= 0);
+                session.setAttribute("cart", cart);
+            }
+
+            response.sendRedirect(request.getContextPath() + "/cart");
+
+        } else if ("remove".equals(action)) {
+            int productId = Integer.parseInt(request.getParameter("productId"));
+
+            Iterator<Product> iterator = cart.iterator();
+            while (iterator.hasNext()) {
+                Product product = iterator.next();
+                if (product.getId() == productId) {
+                    iterator.remove();
+                    break;
+                }
+            }
+
+            session.setAttribute("cart", cart);
+            response.sendRedirect(request.getContextPath() + "/cart");
+
+        } else if ("clear".equals(action)) {
+            cart.clear();
+            session.setAttribute("cart", cart);
+            response.sendRedirect(request.getContextPath() + "/cart");
+
+        } else if ("checkout".equals(action)) {
+            cart.clear();
+            session.setAttribute("cart", cart);
+            session.setAttribute("checkoutSuccess", true);
+            response.sendRedirect(request.getContextPath() + "/checkout-success.jsp");
+        }
+    }
+}
+
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.university.controller;
+
+/**
+ *
+ * @author hung
+ */
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+import java.io.IOException;
+
+@WebServlet("/checkout-success")
+public class CheckoutSuccessServlet extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Get current theme and language from cookies
+        Cookie[] cookies = request.getCookies();
+        String theme = "light";
+        String language = "en";
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("theme".equals(cookie.getName())) {
+                    theme = cookie.getValue();
+                } else if ("language".equals(cookie.getName())) {
+                    language = cookie.getValue();
+                }
+            }
+        }
+
+        request.setAttribute("theme", theme);
+        request.setAttribute("language", language);
+
+        // Check if the checkout was successful
+        HttpSession session = request.getSession();
+        Boolean checkoutSuccess = (Boolean) session.getAttribute("checkoutSuccess");
+
+        if (checkoutSuccess == null || !checkoutSuccess) {
+            // If not, redirect to the home page
+            response.sendRedirect(request.getContextPath() + "/");
+            return;
+        }
+
+        // Reset the checkout success flag
+        session.removeAttribute("checkoutSuccess");
+
+        // Set thank you message based on language
+        String thankYouMessage;
+        switch (language) {
+            case "fr":
+                thankYouMessage = "Merci pour votre commande!";
+                break;
+            case "es":
+                thankYouMessage = "¡Gracias por su pedido!";
+                break;
+            case "vi":
+                thankYouMessage = "Cảm ơn bạn đã đặt hàng!";
+                break;
+            default:
+                thankYouMessage = "Thank you for your order!";
+                break;
+        }
+
+        request.setAttribute("thankYouMessage", thankYouMessage);
+
+        // Forward to the success page
+        request.getRequestDispatcher("/views/checkout-success.jsp").forward(request, response);
+    }
+}
+
+package com.university.controller;
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+
+/**
+ *
+ * @author hung
+ */
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+@WebServlet("/")
+public class HomeServlet extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // Read existing cookies (if any)
+        Cookie[] cookies = request.getCookies();
+        String theme = "light";     // Default theme
+        String language = "en";     // Default language
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("theme".equals(cookie.getName())) {
+                    theme = cookie.getValue();
+                } else if ("language".equals(cookie.getName())) {
+                    language = cookie.getValue();
+                }
+            }
+        }
+
+        // Set attributes for the page
+        request.setAttribute("theme", theme);
+        request.setAttribute("language", language);
+
+        // Set welcome message based on language
+        String welcomeMessage;
+        switch (language) {
+            case "fr":
+                welcomeMessage = "Bienvenue à notre magasin en ligne!";
+                break;
+            case "es":
+                welcomeMessage = "¡Bienvenido a nuestra tienda en línea!";
+                break;
+            case "vi":
+                welcomeMessage = "Chào mừng đến với cửa hàng trực tuyến của chúng tôi!";
+                break;
+            default:
+                welcomeMessage = "Welcome to our online store!";
+        }
+
+        request.setAttribute("welcomeMessage", welcomeMessage);
+
+        // Forward to the home page
+        request.getRequestDispatcher("/views/home.jsp").forward(request, response);
+    }
+}
+
+package com.university.controller;
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+
+/**
+ *
+ * @author hung
+ */
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+@WebServlet("/preferences")
+public class UserPreferencesServlet extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // Read existing cookies (if any)
+        Cookie[] cookies = request.getCookies();
+        String theme = "light";     // Default theme
+        String language = "en";     // Default language
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("theme".equals(cookie.getName())) {
+                    theme = cookie.getValue();
+                } else if ("language".equals(cookie.getName())) {
+                    language = cookie.getValue();
+                }
+            }
+        }
+
+        // Set attributes to display current preferences
+        request.setAttribute("currentTheme", theme);
+        request.setAttribute("currentLanguage", language);
+
+        // Forward to the preferences page
+        request.getRequestDispatcher("/views/preferences.jsp").forward(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // Get user's selected preferences
+        String theme = request.getParameter("theme");
+        String language = request.getParameter("language");
+
+        // Create cookie for theme
+        Cookie themeCookie = new Cookie("theme", theme);
+        themeCookie.setMaxAge(60 * 60 * 24 * 30); // 30 days
+        themeCookie.setPath("/");
+        response.addCookie(themeCookie);
+
+        // Create cookie for language
+        Cookie languageCookie = new Cookie("language", language);
+        languageCookie.setMaxAge(60 * 60 * 24 * 30); // 30 days
+        languageCookie.setPath("/");
+        response.addCookie(languageCookie);
+
+        // Redirect back to the preferences page
+        response.sendRedirect(request.getContextPath() + "/preferences?updated=true");
+    }
+}
+
+package com.university.controller;
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+
+/**
+ *
+ * @author hung
+ */
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+@WebServlet("/preferences")
+public class UserPreferencesServlet extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // Read existing cookies (if any)
+        Cookie[] cookies = request.getCookies();
+        String theme = "light";     // Default theme
+        String language = "en";     // Default language
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("theme".equals(cookie.getName())) {
+                    theme = cookie.getValue();
+                } else if ("language".equals(cookie.getName())) {
+                    language = cookie.getValue();
+                }
+            }
+        }
+
+        // Set attributes to display current preferences
+        request.setAttribute("currentTheme", theme);
+        request.setAttribute("currentLanguage", language);
+
+        // Forward to the preferences page
+        request.getRequestDispatcher("/views/preferences.jsp").forward(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // Get user's selected preferences
+        String theme = request.getParameter("theme");
+        String language = request.getParameter("language");
+
+        // Create cookie for theme
+        Cookie themeCookie = new Cookie("theme", theme);
+        themeCookie.setMaxAge(60 * 60 * 24 * 30); // 30 days
+        themeCookie.setPath("/");
+        response.addCookie(themeCookie);
+
+        // Create cookie for language
+        Cookie languageCookie = new Cookie("language", language);
+        languageCookie.setMaxAge(60 * 60 * 24 * 30); // 30 days
+        languageCookie.setPath("/");
+        response.addCookie(languageCookie);
+
+        // Redirect back to the preferences page
+        response.sendRedirect(request.getContextPath() + "/preferences?updated=true");
+    }
+}
+

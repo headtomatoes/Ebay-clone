@@ -16,5 +16,6 @@ public interface OrderService {
 
     // New method to get all orders for a customer
     List<OrderResponseDTO> getAllOrdersForCustomer(Long userId);
-    
+
+    OrderResponseDTO getOrderById(Long orderId, Long userId);
 }

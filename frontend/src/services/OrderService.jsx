@@ -63,11 +63,35 @@ const cancelOrder = async (orderId) => {
     }
 };
 
+const getOrderById = async (orderId) => {
+    if (!orderId) {
+        // It's good practice to throw an error or return a specific value if orderId is missing.
+        // The OrderDetailPage already checks for !orderId before calling.
+        console.error("Order ID is required to fetch order details.");
+        throw new Error("Order ID is required.");
+    }
+    try {
+        // Corrected to use axios, BASE_URL, and include authentication headers
+        const response = await axios.get(`${BASE_URL}/${orderId}`, { headers: getAuthHeaders() });
+        return response.data;
+    } catch (error) {
+        // Log the detailed error from Axios if available
+        const errorMessage = error.response?.data?.message || error.response?.data || (error.isAxiosError ? error.message : 'An unknown error occurred');
+        console.error(`Error fetching order details for order ${orderId}:`, errorMessage, error.response || error);
+        // Re-throw a more specific error message or the error object
+        throw new Error(`Failed to load order details for order ${orderId}. Backend error: ${errorMessage}`);
+    }
+};
+
+
+
+
 // Export the functions to be used in other parts of the application
 export default {
     getAllOrders,
     createOrderFromCart, // This will be used by CheckoutPage
     createOrderFromCartId, // Keep if you have a use case for creating orders from specific cart items
     cancelOrder,
+    getOrderById,
 };
 
