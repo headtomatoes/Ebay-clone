@@ -21,9 +21,10 @@
    3.9: Create a product
    3.10: delete product
    3.11: create auction
-   3.12: 
+   3.12: update product
+   3.13: view bid on auction
 
-   ----------- SELLER USE CASE -------------
+   ----------- ADMIN USE CASE -------------
    
 4. Schema Diagram: --> done
 5. Package (MVC model) and class Diagrams:
