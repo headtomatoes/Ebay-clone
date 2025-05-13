@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/backend/ebay_clone.iml" filepath="$PROJECT_DIR$/backend/ebay_clone.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/project-test.iml" filepath="$PROJECT_DIR$/.idea/project-test.iml" />
     </modules>
   </component>
 </project>
