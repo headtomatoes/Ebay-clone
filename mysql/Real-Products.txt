@@ -1,0 +1,52 @@
+--ACTIVE PRODUCTS
+
+INSERT INTO products (seller_id, category_id, name, description, price, stock_quantity, image_url, status) VALUES
+(1, 1, 'Wireless Noise Cancelling Headphones', 'Over-ear Bluetooth headphones with ANC for immersive listening during travel or work.', 129.99, 45, 'https://images.unsplash.com/photo-1693841114567-0565c3f64edf?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8V2lyZWxlc3MlMjBOb2lzZSUyMENhbmNlbGluZyUyMEhlYWRwaG9uZXN8ZW58MHx8MHx8fDA%3D', 'ACTIVE'),
+
+(2, 1, 'Smartwatch Pro X', 'Advanced smartwatch with fitness tracking, heart rate monitor, and waterproof design.', 199.00, 30, 'https://images.unsplash.com/photo-1654208398202-1edef1cf23b5?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8U21hcnR3YXRjaCUyMFBybyUyMFgnfGVufDB8fDB8fHww', 'ACTIVE'),
+
+(3, 2, 'Eco Yoga Mat', 'Non-slip, eco-friendly yoga mat perfect for all types of yoga and pilates sessions.', 45.50, 60, 'https://images.unsplash.com/photo-1661308411865-4fce7576bef8?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8RWNvJTIwWW9nYSUyME1hdHxlbnwwfHwwfHx8MA%3D%3D', 'ACTIVE'),
+
+(4, 1, 'Adjustable Laptop Stand', 'Ergonomic aluminum laptop stand suitable for all sizes with height adjustment and cooling support.', 35.99, 80, 'https://images.unsplash.com/photo-1623177578400-52c7f7113539?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8QWRqdXN0YWJsZSUyMExhcHRvcCUyMFN0YW5kfGVufDB8fDB8fHww', 'ACTIVE'),
+
+(5, 2, 'Portable Bluetooth Speaker', 'Compact wireless speaker with deep bass, waterproof design, and 12-hour playtime.', 59.99, 70, 'https://images.unsplash.com/photo-1674303324806-7018a739ed11?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8UG9ydGFibGUlMjBCbHVldG9vdGglMjBTcGVha2VyJ3xlbnwwfHwwfHx8MA%3D%3D', 'ACTIVE'),
+
+(6, 2, 'Insulated Water Bottle 1L', 'Stainless steel bottle with double-wall insulation to keep drinks cold for 24h or hot for 12h.', 28.75, 120, 'https://plus.unsplash.com/premium_photo-1681284939219-acfc2faa7eb8?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8SW5zdWxhdGVkJTIwV2F0ZXIlMjBCb3R0bGUlMjAxTHxlbnwwfHwwfHx8MA%3D%3D', 'ACTIVE'),
+
+(7, 3, 'Anti-Theft Travel Backpack', 'Smart backpack with USB charging port, hidden zippers, and padded compartments for laptops and gadgets.', 49.95, 90, 'https://images.unsplash.com/photo-1681334921874-5bafe8acf433?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8J0FudGklMjB0aGVmdCUyMFRyYXZlbCUyMEJhY2twYWNrfGVufDB8fDB8fHww', 'ACTIVE'),
+
+(8, 4, 'UV Protection Sunglasses', 'Stylish sunglasses with polarized lenses for UV400 protection and glare reduction.', 39.99, 75, 'https://images.unsplash.com/photo-1708799366365-a24608103bed?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8VVYlMjBQcm90ZWN0aW9uJTIwU3VuZ2xhc3Nlc3xlbnwwfHwwfHx8MA%3D%3D', 'ACTIVE'),
+
+(9, 1, 'Gaming Mouse RGB Pro', 'High-precision wired gaming mouse with RGB lighting and customizable buttons.', 34.00, 100, 'https://images.unsplash.com/photo-1615734986403-ff1bf12d14ff?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8R2FtaW5nJTIwTW91c2UlMjBSR0IlMjBQcm98ZW58MHx8MHx8fDA%3D', 'ACTIVE'),
+
+(10, 1, 'Electric Toothbrush X100', 'Rechargeable toothbrush with 3 cleaning modes, pressure sensor, and travel case.', 59.99, 65, 'https://images.unsplash.com/photo-1593010997571-7ebe6c593d8e?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8RWxlY3RyaWMlMjBUb290aGJydXNoJTIwWDEwMHxlbnwwfHwwfHx8MA%3D%3D', 'ACTIVE');
+
+--INACTIVE PRODUTCS
+INSERT INTO products (seller_id, category_id, name, description, price, stock_quantity, image_url, status) VALUES
+(11, 5, 'Mini Power Bank 10000mAh', 'Compact power bank with dual USB output and fast charging support. Perfect for travel and daily use.', 22.90, 50, 'https://plus.unsplash.com/premium_photo-1675242132223-9aa7268fbbc7?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8TWluaSUyMFBvd2VyJTIwQmFuayUyMDEwMDAwbUFofGVufDB8fDB8fHww', 'INACTIVE'),
+
+(12, 6, 'Smart Thermostat Wi-Fi Enabled', 'Programmable smart thermostat with mobile app control and energy-saving features.', 129.00, 20, 'https://plus.unsplash.com/premium_photo-1729566422299-9468109db9cb?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8U21hcnQlMjBUaGVybW9zdGF0JTIwV2klMjBGaXxlbnwwfHwwfHx8MA%3D%3D', 'INACTIVE'),
+
+(13, 1, 'RGB Mechanical Keyboard', 'Backlit mechanical keyboard with programmable keys and hot-swappable switches.', 74.99, 35, 'https://images.unsplash.com/photo-1649899913123-90bb33c8a66a?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8UkdCJTIwTWVjaGFuaWNhbCUyMEtleWJvYXJkfGVufDB8fDB8fHww', 'INACTIVE'),
+
+(14, 1, 'Wireless Charging Pad', 'Fast wireless charger for smartphones and earbuds, sleek design with LED indicator.', 29.95, 40, 'https://images.unsplash.com/photo-1617975316514-69cd7e16c2a4?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8V2lyZWxlc3MlMjBDaGFyZ2luZ3xlbnwwfHwwfHx8MA%3D%3D', 'INACTIVE'),
+
+(15, 4, 'Indoor Smart Camera 1080p', 'Wi-Fi indoor security camera with night vision, motion detection, and two-way audio.', 49.99, 25, 'https://plus.unsplash.com/premium_photo-1725767834338-810d439c8307?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8SW5kb29yJTIwU21hcnQlMjBDYW1lcmF8ZW58MHx8MHx8fDA%3D', 'INACTIVE');
+
+
+--SOLD-OUT PRODUCTS
+INSERT INTO products (seller_id, category_id, name, description, price, stock_quantity, image_url, status) VALUES
+(16, 3, '4K Drone with HD Camera', 'High-performance drone with 4K UHD camera, GPS, and real-time video transmission.', 249.99, 0, 'https://plus.unsplash.com/premium_photo-1714618849685-89cad85746b1?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8RHJvbmUlMjB3aXRoJTIwSEQlMjBDYW1lcmF8ZW58MHx8MHx8fDA%3D', 'SOLD_OUT'),
+(17, 3, 'Action Camera 4K Waterproof', 'Compact waterproof action camera supporting 4K video recording and slow motion.', 109.95, 0, 'https://images.unsplash.com/photo-1690176483702-7ee397871388?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8QWN0aW9uJTIwQ2FtZXJhJTIwNEt8ZW58MHx8MHx8fDA%3D', 'SOLD_OUT'),
+(18, 1, 'Smart LED Light Bulb - WiFi', 'Color-changing smart bulb compatible with Alexa and Google Assistant.', 19.99, 0, 'https://images.unsplash.com/photo-1632418930736-8b9a55dfd2b4?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8U21hcnQlMjBMaWdodCUyMEJ1bGIlMjBDb2xvciUyMFdpRml8ZW58MHx8MHx8fDA%3D', 'SOLD_OUT'),
+(19, 1, 'Kettle 1.7L Electric Fast Boil', 'Efficient stainless steel electric kettle with auto shut-off and boil-dry protection.', 34.50, 0, 'https://images.unsplash.com/photo-1559761340-1e6a341f0b51?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8RWxlY3RyaWMlMjBLZXR0bGUlMjAxLjdMfGVufDB8fDB8fHww', 'SOLD_OUT'),
+(20, 2, 'HEPA Air Purifier Compact', 'Portable air purifier with HEPA filter and quiet operation, ideal for bedrooms.', 89.00, 0, 'https://images.unsplash.com/photo-1510048126839-229279473365?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8SEVQQSUyMEFpciUyMFB1cmlmaWVyfGVufDB8fDB8fHww', 'SOLD_OUT');
+
+
+--DRAFT PRODUCTS
+INSERT INTO products (seller_id, category_id, name, description, price, stock_quantity, image_url, status) VALUES
+(6, 6, 'LED Desk Lamp with USB', 'Modern desk lamp with touch control, dimmable light, and USB charging port.', 24.99, 10, 'https://plus.unsplash.com/premium_photo-1681412205381-c0e9681bcbb8?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8TEVEJTIwRGVzayUyMExhbXAlMjB3aXRoJTIwVVNCfGVufDB8fDB8fHww', 'DRAFT'),
+(7, 1, 'Bluetooth Sleep Headband', 'Comfortable headband with built-in speakers for music or meditation at night.', 19.90, 18, 'https://plus.unsplash.com/premium_photo-1726822827143-80612836a323?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Qmx1ZXRvb3RoJTIwU2xlZXAlMjBIZWFkYmFuZHxlbnwwfHwwfHx8MA%3D%3D', 'DRAFT'),
+(1, 2, 'Foam Roller for Recovery', 'Textured foam roller ideal for muscle recovery and post-workout stretching.', 21.75, 14, 'https://images.unsplash.com/photo-1591741535585-9c4f52b3f13f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Rm9hbSUyMFJvbGxlcnxlbnwwfHwwfHx8MA%3D%3D', 'DRAFT'),
+(2, 3, 'Magnetic Phone Car Mount', 'Universal magnetic mount that attaches securely to your dashboard.', 16.99, 25, 'https://plus.unsplash.com/premium_photo-1737114947910-de4c8aa3c0e2?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8TWFnbmV0aWMlMjBQaG9uZSUyMENhciUyME1vdW50fGVufDB8fDB8fHww', 'DRAFT'),
+(3, 4, 'Reusable Grocery Bag Set', 'Eco-friendly set of 5 reusable and foldable grocery bags with reinforced stitching.', 12.99, 50, 'https://images.unsplash.com/photo-1614695639449-b305bfe37142?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8UmV1c2FibGUlMjBHcm9jZXJ5JTIwQmFnJTIwU2V0fGVufDB8fDB8fHww', 'DRAFT');
