@@ -44,30 +44,96 @@ export default function ProductForm({ onSubmit, initialData }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <input name="name" onChange={handleChange} value={form.name} placeholder="Name" className="border p-2 w-full" />
-      <input name="description" onChange={handleChange} value={form.description} placeholder="Description" className="border p-2 w-full" />
-      <input name="price" onChange={handleChange} value={form.price} type="number" placeholder="Price" className="border p-2 w-full" />
-      <input name="stock" onChange={handleChange} value={form.stock} type="number" placeholder="Stock Quantity" className="border p-2 w-full" />
-      <input name="imageUrl" onChange={handleChange} value={form.imageUrl} placeholder="Image URL" className="border p-2 w-full" />
-       <select
+      {/* Name */}
+      <div className="flex items-center gap-4">
+        <label className="w-32 font-medium">Name</label>
+        <input
+          name="name"
+          onChange={handleChange}
+          value={form.name}
+          placeholder="Name"
+          className="border p-2 flex-1 rounded"
+        />
+      </div>
+
+      {/* Description */}
+      <div className="flex items-start gap-4">
+        <label className="w-32 font-medium pt-2">Description</label>
+        <textarea
+          name="description"
+          onChange={handleChange}
+          value={form.description}
+          placeholder="Description"
+          rows="2"
+          className="border p-2 flex-1 rounded"
+        />
+      </div>
+
+      {/* Price */}
+      <div className="flex items-center gap-4">
+        <label className="w-32 font-medium">Price ($)</label>
+        <input
+          name="price"
+          onChange={handleChange}
+          value={form.price}
+          type="number"
+          className="border p-2 flex-1 rounded"
+        />
+      </div>
+
+      {/* Stock */}
+      <div className="flex items-center gap-4">
+        <label className="w-32 font-medium">Stock</label>
+        <input
+          name="stock"
+          onChange={handleChange}
+          value={form.stock}
+          type="number"
+          className="border p-2 flex-1 rounded"
+        />
+      </div>
+
+      {/* Image URL */}
+      <div className="flex items-center gap-4">
+        <label className="w-32 font-medium">Image URL</label>
+        <input
+          name="imageUrl"
+          onChange={handleChange}
+          value={form.imageUrl}
+          placeholder="Image URL"
+          className="border p-2 flex-1 rounded"
+        />
+      </div>
+
+      {/* Category */}
+      <div className="flex items-center gap-4">
+        <label className="w-32 font-medium">Category</label>
+        <select
           name="categoryId"
           onChange={handleChange}
           value={form.categoryId}
-          className="border p-2 w-full"
-       >
-            <option value="">Select Category</option>
-            <option value="1">Electronics</option>
-            <option value="2">Books</option>
-            <option value="3">Clothing</option>
-            <option value="4">Home & Kitchen</option>
-            <option value="5">Sports</option>
-            <option value="6">Toys</option>
-            <option value="7">Beauty</option>
-            <option value="8">Automotive</option>
-            <option value="9">Garden</option>
-            <option value="10">Music</option>
-       </select>
-      <button type="submit" className="bg-blue-600 text-white px-4 py-2">Submit</button>
+          className="border p-2 flex-1 rounded"
+        >
+          <option value="">Select Category</option>
+          <option value="1">Electronics</option>
+          <option value="2">Books</option>
+          <option value="3">Clothing</option>
+          <option value="4">Home & Kitchen</option>
+          <option value="5">Sports</option>
+          <option value="6">Toys</option>
+          <option value="7">Beauty</option>
+          <option value="8">Automotive</option>
+          <option value="9">Garden</option>
+          <option value="10">Music</option>
+        </select>
+      </div>
+
+      {/* Submit button */}
+      <div className="text-center">
+        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-full">
+          Submit
+        </button>
+      </div>
     </form>
   );
 }
