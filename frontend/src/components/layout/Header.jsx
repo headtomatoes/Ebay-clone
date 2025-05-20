@@ -141,24 +141,32 @@ export default function Header() {
         {/* Secondary nav */}
         <div className="border-t px-6 py-2 bg-white">
           <nav className="flex flex-wrap gap-x-6 text-sm text-black font-medium justify-center">
-            <Link to="/products" className="hover:text-blue-600">Products</Link>
+            <Link
+              to="/products"
+              className="hover:text-blue-600 hover:-translate-y-0.5 transition-all duration-150 ease-in-out"
+            >
+              Products
+            </Link>
+
             {categories.slice(0, 12).map((cat) => (
               <Link
                 key={cat.id}
                 to={`/categories/${cat.name}`}
-                className="hover:text-blue-600"
+                className="hover:text-blue-600 hover:-translate-y-0.5 transition-all duration-150 ease-in-out"
               >
                 {cat.name}
               </Link>
             ))}
+
             <Link
               to="/categories"
-              className="text-black-600 font-semibold hover:underline"
+              className="text-black font-semibold hover:text-blue-600 hover:-translate-y-0.5 transition-all duration-150 ease-in-out"
             >
               All Categories
             </Link>
           </nav>
         </div>
+
     </header>
   );
 }

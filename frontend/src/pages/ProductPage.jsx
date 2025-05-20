@@ -80,8 +80,8 @@ export default function ProductPage() {
         {currentProducts.map(product => (
           <div
             key={product.productId}
-            className="border rounded-lg overflow-hidden shadow hover:shadow-lg transition bg-white flex flex-col"
-          >
+            className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-transform duration-200 bg-white flex flex-col"
+            >
             {/* Product image */}
             <img
               src={product.imageUrl}
@@ -115,10 +115,10 @@ export default function ProductPage() {
                 <span className="text-xs ml-2">{productRatings[product.productId] || '0.0'} / 5</span>
               </div>
 
+              {/* Status tags */}
               {product.status === 'ACTIVE' && (
                 <span className="text-green-500 text-xs font-semibold mt-1">Available</span>
               )}
-
               {product.status === 'SOLD_OUT' && (
                 <span className="text-red-500 text-xs font-semibold mt-1">Sold Out</span>
               )}
@@ -133,7 +133,11 @@ export default function ProductPage() {
           <button
             key={index + 1}
             onClick={() => handlePageChange(index + 1)}
-            className={`px-4 py-2 border rounded ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-white text-blue-500 hover:bg-blue-100'}`}
+            className={`px-4 py-2 border rounded ${
+              currentPage === index + 1
+                ? 'bg-blue-500 text-white'
+                : 'bg-white text-blue-500 hover:bg-blue-100'
+            }`}
           >
             {index + 1}
           </button>
