@@ -1,3 +1,5 @@
+// spellchecker:disable;
+
 1. Use case Diagram: ---> Almost done
 
 2. Activity Diagrams:
@@ -6,22 +8,23 @@
    2.3: process when customer bid an auction, until they win or lose
 
 3. Sequence Diagram:
-   3.1: User register a new account (HUNG)
-   3.2: Login into the Egay (include login by gg account) (HUNG)
+   3.1: User register a new account (HUNG) - done
+   3.2: Login into the Egay (include login by gg account) (HUNG) - done
 
    ----------- CUSTOMER USE CASE -------------
-   3.3: Search product (Trung)
-   3.4: Add products to cart (LNA)
-   3.5: Checkout cart and place order (HUNG)
+   3.3: Search product (Trung) - done
+   3.4: Add products to cart (LNA) - done
+   3.5: Checkout cart and place order (HUNG) - done
    3.6: Payment Process (LE)
-   3.7: Bid the auctions (LE)
-   3.8: Review and rating a product (LNA)
+   3.7: Bid the auctions (LE) 
+   3.8: Review and rating a product (LNA) - done
+   3.15: delete Order for pending_Payment (HUNG) - done
 
    ----------- SELLER USE CASE -------------
-   3.9: Create a product (Trung)
-   3.10: delete product (Trung)
-   3.11: create auction  (LE)
-   3.12: update product (Trung)
+   3.9: Create a product (Trung) - done   
+   3.10: delete product (Trung) - done
+   3.11: create auction  (LE) - 
+   3.12: update product (Trung) - done
    3.13: view bid on auction (LE)
    3.14:
 
