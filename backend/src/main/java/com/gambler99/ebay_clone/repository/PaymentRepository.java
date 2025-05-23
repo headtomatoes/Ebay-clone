@@ -15,5 +15,11 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     // find payment by transaction id maybe null
     Optional<Payment> findByTransactionId(String transactionId);
 
+    // find payment by order, payment gateway, and status
+    Optional<Payment> findByOrderAndPaymentGatewayAndStatus(
+            com.gambler99.ebay_clone.entity.Order order,
+            Payment.PaymentGateway paymentGateway,
+            Payment.PaymentStatus status);
+
     // additional methods can be added here as needed
 }
