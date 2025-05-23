@@ -20,8 +20,8 @@ import java.math.BigDecimal;
 @Slf4j
 public class StripeService {
 
-    // Note: Stripe.apiKey is typically set globally once, e.g., in PaymentService @PostConstruct
-    // or a dedicated Stripe configuration class. No need for @Value here if set elsewhere.
+    @Value("${stripe.currency:usd}")
+    private String defaultCurrency;
 
     /**
      * Creates a Stripe PaymentIntent for the given order using the Stripe SDK.
@@ -38,8 +38,8 @@ public class StripeService {
             // Stripe expects amounts in the smallest currency unit (e.g., cents for USD).
             long amountInCents = order.getTotalAmount().multiply(new BigDecimal("100")).longValueExact();
 
-            // Define currency (should ideally come from order or configuration)
-            String currency = "usd"; // Example: US Dollar
+            // Use the configured currency
+            String currency = defaultCurrency;
 
             PaymentIntentCreateParams params =
                     PaymentIntentCreateParams.builder()

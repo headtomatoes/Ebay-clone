@@ -47,7 +47,8 @@ public class PaymentService {
     private static final String ROLE_ADMIN = "ROLE_ADMIN";
     private static final String EVENT_TYPE_PAYMENT_INTENT_SUCCEEDED = "payment_intent.succeeded";
     private static final String EVENT_TYPE_PAYMENT_INTENT_FAILED = "payment_intent.payment_failed";
-    // Add other event types as constants if needed, e.g., payment_intent.canceled
+    private static final String EVENT_TYPE_PAYMENT_INTENT_CANCELED = "payment_intent.canceled";
+    private static final String EVENT_TYPE_CHARGE_REFUNDED = "charge.refunded";
 
     // Define valid COD status transitions
     private static final Map<Payment.PaymentStatus, Set<Payment.PaymentStatus>> VALID_COD_TRANSITIONS = new HashMap<>();
@@ -113,8 +114,42 @@ public class PaymentService {
             throw new IllegalStateException("Order " + orderId + " is not in PENDING_PAYMENT status. Current status: " + order.getStatus());
         }
 
-        // TODO: Optional: Check if a PENDING payment already exists for this order and gateway.
-        // If so, and it's Stripe, you might re-use the PaymentIntent if still valid to avoid duplicate PaymentIntents.
+        // Check if a PENDING payment already exists for this order and gateway
+        Optional<Payment> existingPayment = paymentRepository.findByOrderAndPaymentGatewayAndStatus(
+                order, dto.paymentGateway(), Payment.PaymentStatus.PENDING);
+
+        if (existingPayment.isPresent()) {
+            Payment payment = existingPayment.get();
+            log.info("Found existing PENDING payment ID {} for order {} with gateway {}. Reusing it.", 
+                    payment.getPaymentId(), orderId, dto.paymentGateway());
+
+            // For Stripe, we need to get a fresh client secret if the existing one is too old
+            if (dto.paymentGateway() == Payment.PaymentGateway.STRIPE) {
+                try {
+                    // Retrieve the PaymentIntent from Stripe to check its status
+                    PaymentIntent paymentIntent = PaymentIntent.retrieve(payment.getTransactionId());
+
+                    // If the PaymentIntent is still valid (not canceled, succeeded, etc.), reuse it
+                    if ("requires_payment_method".equals(paymentIntent.getStatus()) || 
+                        "requires_confirmation".equals(paymentIntent.getStatus()) ||
+                        "requires_action".equals(paymentIntent.getStatus())) {
+
+                        log.info("Reusing existing Stripe PaymentIntent {} for order {}", 
+                                payment.getTransactionId(), orderId);
+                        return mapToPaymentResponseDTO(payment, paymentIntent.getClientSecret());
+                    } else {
+                        log.info("Existing Stripe PaymentIntent {} for order {} has status {}. Creating a new one.", 
+                                payment.getTransactionId(), orderId, paymentIntent.getStatus());
+                    }
+                } catch (Exception e) {
+                    log.warn("Error retrieving existing Stripe PaymentIntent {}. Creating a new one. Error: {}", 
+                            payment.getTransactionId(), e.getMessage());
+                }
+            } else {
+                // For non-Stripe payments like COD, just reuse the existing payment
+                return mapToPaymentResponseDTO(payment, null);
+            }
+        }
 
         String transactionId;
         String clientSecret = null; // Specific to Stripe
@@ -216,11 +251,19 @@ public class PaymentService {
                     throw new PaymentProcessingException("Unexpected object type for '" + event.getType() + "'.");
                 }
                 break;
-            // TODO: Handle other relevant event types (e.g., 'payment_intent.canceled', 'charge.refunded')
-            // case "payment_intent.canceled":
-            //    PaymentIntent paymentIntentCanceled = (PaymentIntent) stripeObject;
-            //    handlePaymentIntentCanceled(paymentIntentCanceled);
-            //    break;
+            case EVENT_TYPE_PAYMENT_INTENT_CANCELED:
+                if (stripeObject instanceof PaymentIntent paymentIntentCanceled) {
+                    log.info("⚠️ Processing PaymentIntent Canceled. ID: {}", paymentIntentCanceled.getId());
+                    handlePaymentIntentCanceled(paymentIntentCanceled);
+                } else {
+                    log.error("⚠️ Expected PaymentIntent for event type '{}', but got: {}", event.getType(), stripeObject.getClass().getName());
+                    throw new PaymentProcessingException("Unexpected object type for '" + event.getType() + "'.");
+                }
+                break;
+            case EVENT_TYPE_CHARGE_REFUNDED:
+                log.info("💰 Processing Charge Refunded event. ID: {}", event.getId());
+                handleChargeRefunded(event);
+                break;
             default:
                 log.warn("↩️ Unhandled Stripe event type: {}", event.getType());
         }
@@ -350,6 +393,121 @@ public class PaymentService {
             // Payment was not PENDING, SUCCESS, or FAILED.
             log.warn("PaymentIntent {} failed, but local Payment ID {} status was {} (not PENDING). Investigate.",
                     paymentIntent.getId(), payment.getPaymentId(), payment.getStatus());
+        }
+    }
+
+    /**
+     * Handles a canceled payment intent from Stripe.
+     * Updates payment status to FAILED. Ensures idempotency.
+     * @param paymentIntent The canceled PaymentIntent object from Stripe.
+     */
+    private void handlePaymentIntentCanceled(PaymentIntent paymentIntent) {
+        Optional<Payment> paymentOpt = paymentRepository.findByTransactionId(paymentIntent.getId());
+
+        if (paymentOpt.isEmpty()) {
+            log.warn("Payment record not found for canceled Stripe PaymentIntent ID: {}. This might be okay if payment initiation failed early.", paymentIntent.getId());
+            return;
+        }
+
+        Payment payment = paymentOpt.get();
+
+        // Idempotency: Check if already processed as FAILED
+        if (payment.getStatus() == Payment.PaymentStatus.FAILED) {
+            log.info("PaymentIntent {} already processed as FAILED. Payment ID: {}", paymentIntent.getId(), payment.getPaymentId());
+            return;
+        }
+
+        // If it was SUCCESS, a canceled event is problematic and needs investigation.
+        if (payment.getStatus() == Payment.PaymentStatus.SUCCESS) {
+            log.error("CRITICAL: PaymentIntent {} canceled, but local Payment ID {} was already SUCCESS. Investigate.", paymentIntent.getId(), payment.getPaymentId());
+            return;
+        }
+
+        if (payment.getStatus() == Payment.PaymentStatus.PENDING) {
+            payment.setStatus(Payment.PaymentStatus.FAILED);
+            payment.setPaymentDate(LocalDateTime.now());
+
+            Order order = payment.getOrder();
+            if (order != null) {
+                // Order status for canceled Stripe payment typically remains PENDING_PAYMENT,
+                // allowing the user to try again with a different method.
+                if (order.getStatus() == Order.OrderStatus.PENDING_PAYMENT) {
+                    log.info("Order ID {} remains in PENDING_PAYMENT for canceled PaymentIntent ID {}", order.getOrderId(), paymentIntent.getId());
+                } else {
+                    log.warn("Order ID {} status was {} (not PENDING_PAYMENT) when processing canceled PaymentIntent ID {}. Order status unchanged.",
+                            order.getOrderId(), order.getStatus(), paymentIntent.getId());
+                }
+            } else {
+                log.error("Order not found for payment ID: {} during canceled PaymentIntent processing. PI_ID: {}", payment.getPaymentId(), paymentIntent.getId());
+            }
+            paymentRepository.save(payment);
+            log.info("Payment ID {} status updated to FAILED for PaymentIntent ID {}", payment.getPaymentId(), paymentIntent.getId());
+        } else {
+            log.warn("PaymentIntent {} canceled, but local Payment ID {} status was {} (not PENDING). Investigate.",
+                    paymentIntent.getId(), payment.getPaymentId(), payment.getStatus());
+        }
+    }
+
+    /**
+     * Handles a refunded charge from Stripe.
+     * Updates payment status to REFUNDED. Ensures idempotency.
+     * @param event The Stripe event containing the refunded charge.
+     */
+    private void handleChargeRefunded(Event event) {
+        // For charge.refunded events, we need to extract the payment_intent from the charge
+        // This requires additional parsing of the event data
+        try {
+            // Get the event data object
+            Optional<StripeObject> stripeObjectOpt = event.getDataObjectDeserializer().getObject();
+            if (stripeObjectOpt.isEmpty()) {
+                log.error("Failed to deserialize charge.refunded event data for event ID: {}", event.getId());
+                return;
+            }
+
+            // Cast to com.stripe.model.Charge
+            com.stripe.model.Charge charge = (com.stripe.model.Charge) stripeObjectOpt.get();
+
+            // Get the payment intent ID
+            String paymentIntentId = charge.getPaymentIntent();
+            if (paymentIntentId == null) {
+                log.error("Missing payment_intent in charge.refunded event data for event ID: {}", event.getId());
+                return;
+            }
+
+            // Now we have the payment_intent ID, we can find our payment record
+            Optional<Payment> paymentOpt = paymentRepository.findByTransactionId(paymentIntentId);
+            if (paymentOpt.isEmpty()) {
+                log.warn("Payment record not found for refunded charge with PaymentIntent ID: {}.", paymentIntentId);
+                return;
+            }
+
+            Payment payment = paymentOpt.get();
+
+            // Idempotency: Check if already processed as REFUNDED
+            if (payment.getStatus() == Payment.PaymentStatus.REFUNDED) {
+                log.info("Charge already processed as REFUNDED for PaymentIntent {}. Payment ID: {}", paymentIntentId, payment.getPaymentId());
+                return;
+            }
+
+            // Update payment status to REFUNDED
+            payment.setStatus(Payment.PaymentStatus.REFUNDED);
+            payment.setPaymentDate(LocalDateTime.now());
+
+            Order order = payment.getOrder();
+            if (order != null) {
+                // Update order status to CANCELLED (since there's no REFUNDED status)
+                order.setStatus(Order.OrderStatus.CANCELLED);
+                orderRepository.save(order);
+                log.info("Order ID {} status updated to CANCELLED for refunded charge with PaymentIntent ID {}", order.getOrderId(), paymentIntentId);
+            } else {
+                log.error("Order not found for payment ID: {} during refunded charge processing. PI_ID: {}", payment.getPaymentId(), paymentIntentId);
+            }
+
+            paymentRepository.save(payment);
+            log.info("Payment ID {} status updated to REFUNDED for PaymentIntent ID {}", payment.getPaymentId(), paymentIntentId);
+        } catch (Exception e) {
+            log.error("Error processing charge.refunded event ID: {}", event.getId(), e);
+            throw new PaymentProcessingException("Error processing charge.refunded event: " + e.getMessage());
         }
     }
 
