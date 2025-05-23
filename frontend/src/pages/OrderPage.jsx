@@ -30,6 +30,19 @@ const OrderPage = () => {
         fetchOrders();
     }, []);
 
+    const handleBuyNow = async (orderId) => {
+        try {
+            const response = await orderService.createOrderFromCartId(orderId);
+            if (response && response.orderId) {
+                navigate(`/checkout?orderId=${response.orderId}`);
+            } else {
+                setError("Failed to create order from cart.");
+            }
+        } catch (err) {
+            setError(`Failed to create order: ${err.message || 'Unknown error'}`);
+            console.error("Error creating order:", err);
+        }
+    }
     const handleCancelOrder = async (orderId) => {
         if (window.confirm(`Are you sure you want to cancel order ${orderId}?`)) {
             try {

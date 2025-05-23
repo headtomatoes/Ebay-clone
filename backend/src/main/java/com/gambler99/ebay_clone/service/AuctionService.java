@@ -132,7 +132,6 @@ public class AuctionService {
     }
 
     //Updates auction status from SCHEDULED to ACTIVE when start time is reached. Should be called by a scheduler at regular intervals.
-
     @Transactional
     @Scheduled(fixedRate = 60000) // Run every minute
     public void updateAuctionStatuses() {
@@ -151,7 +150,6 @@ public class AuctionService {
 
 
     // Validates if an auction is active and available for bidding.
-
     @Transactional(readOnly = true)
     public Auction validateAuctionForBidding(Long auctionId) throws BadRequestException {
         Auction auction = auctionRepository.findById(auctionId)

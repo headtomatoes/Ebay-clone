@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -186,6 +187,44 @@ public class OrderServiceImpl implements OrderService {
         return mapToResponseDTO(order);
     }
 
+    // auction products into order
+    @Override
+    public OrderResponseDTO createOrderFromAuctionItems(Long userId, Long auctionProductId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new OrderException("User not found with ID: " + userId));
+
+        Optional<Product> product = productRepository.findById(auctionProductId);
+        if (product.isEmpty()) {
+            throw new OrderException("Product not found with ID: " + auctionProductId);
+        }
+        if (product.get().getStockQuantity() <= 0) {
+            throw new OrderException("Product is out of stock: " + product.get().getName());
+        }
+        Order order = Order.builder()
+                .customer(user)
+                .orderDate(LocalDateTime.now())
+                .status(Order.OrderStatus.PENDING_PAYMENT)
+                .shippingAddressSnapshot(user.getAddress())
+                .billingAddressSnapshot(user.getAddress())
+                .build();
+
+        OrderItem orderItem = OrderItem.builder()
+                .order(order)
+                .product(product.get())
+                .quantity(1) // Assuming quantity is 1 for auction items
+                .priceAtPurchase(product.get().getPrice())
+                .build();
+
+        order.getOrderItems().add(orderItem);
+        order.calculateTotalAmount();
+        // Update stock quantity
+        product.get().setStockQuantity(product.get().getStockQuantity() - 1);
+        productRepository.save(product.get());
+        // Save order
+        Order savedOrder = orderRepository.save(order);
+        // Return the response DTO
+        return mapToResponseDTO(savedOrder);
+    }
     private OrderResponseDTO mapToResponseDTO(Order order) {
         return OrderResponseDTO.builder()
                 .orderId(order.getOrderId())

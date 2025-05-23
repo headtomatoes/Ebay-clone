@@ -18,4 +18,7 @@ public interface OrderService {
     List<OrderResponseDTO> getAllOrdersForCustomer(Long userId);
 
     OrderResponseDTO getOrderById(Long orderId, Long userId);
+
+    // auction products into order
+    OrderResponseDTO createOrderFromAuctionItems(Long userId, Long auctionProductId);
 }

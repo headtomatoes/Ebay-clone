@@ -87,7 +87,8 @@
         }
 
         if (!product || !product.productId) return;
-
+        //add to cart first
+        handleAddToCart();
         navigate('/checkout', {
           state: {
             mode: 'buynow',
