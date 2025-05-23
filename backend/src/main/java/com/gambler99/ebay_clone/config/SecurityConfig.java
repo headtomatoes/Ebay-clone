@@ -115,7 +115,6 @@ public class SecurityConfig {
                         auth
                                 .requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/api/public/**").permitAll()
-                                .requestMatchers("/api/reviews/product/public/**").permitAll()//handle reviews
                                 .requestMatchers("/ws/**").permitAll()
                                 .requestMatchers("/error").permitAll()
 

@@ -54,7 +54,7 @@ public class ReviewController {
 
     //Retrieve all reviews for a specific product.
 
-    @GetMapping("/product/public/{productId}")
+    @GetMapping("public/product/{productId}")
     public ResponseEntity<List<ReviewDTO>> getReviewsByProduct(@PathVariable Long productId) {
         List<ReviewDTO> reviews = reviewService.getReviewsByProduct(productId);
         return ResponseEntity.ok(reviews);
@@ -62,7 +62,7 @@ public class ReviewController {
 
 
     //Get the average rating for a specific product.
-    @GetMapping("/product/public/{productId}/average-rating")
+    @GetMapping("public/product/{productId}/average-rating")
     public ResponseEntity<Double> getAverageRating(@PathVariable Long productId) {
         Double average = reviewService.getAverageRating(productId);
 
