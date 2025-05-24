@@ -11,16 +11,8 @@ export default function HomePage() {
 
   return (
     <>
-
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-semibold">Welcome to our store!</h1>
-        </div>
-      </div>
-
       <MainBanner />
       <PopularCategories />
-
     </>
   );
 }
