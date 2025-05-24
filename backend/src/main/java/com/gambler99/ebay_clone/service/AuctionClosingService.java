@@ -21,6 +21,7 @@ public class AuctionClosingService {
     private final AuctionRepository auctionRepository;
     private final BidRepository bidRepository;
     private final EmailService emailService;
+    private final OrderServiceImpl orderService;
 
     // You can set this property in application.properties: frontend.base-url=http://localhost:5173
     @Value("${frontend.base-url:http://localhost:5173}")
@@ -47,6 +48,7 @@ public class AuctionClosingService {
                     // Winning bid is below the reserve price
                     auction.setStatus(Auction.AuctionStatus.ENDED_NO_RESERVE);
                 }
+                orderService.createOrderFromAuctionItems(winningBidOpt.get().getBidder().getUserId(), auction.getAuctionId());
                 auctionRepository.save(auction);
 
                 // Send winner email with auction URL

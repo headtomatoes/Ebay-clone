@@ -48,11 +48,11 @@ export default function PopularCategories() {
             key={idx}
             className="flex flex-col items-center hover:scale-105 transition-transform"
           >
-            <div className="w-[130px] h-[130px] bg-gray-100 rounded-full flex items-center justify-center shadow-sm">
+            <div className="w-[130px] h-[130px] rounded-full overflow-hidden shadow-sm">
               <img
                 src={item.img}
                 alt={item.label}
-                className="max-w-[80%] max-h-[80%] object-contain"
+                className="w-full h-full object-cover"
               />
             </div>
             <span className="mt-4 text-[16px] font-medium text-center text-gray-900">
@@ -72,9 +72,9 @@ export default function PopularCategories() {
             Enjoy reliability, secure deliveries and hassle-free returns.
           </p>
         </div>
-        <button className="bg-black text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors">
-          Start now
-        </button>
+{/*         <button className="bg-black text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors"> */}
+{/*           Start now */}
+{/*         </button> */}
       </div>
     </section>
   );

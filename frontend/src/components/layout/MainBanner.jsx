@@ -84,7 +84,7 @@ export default function MainBanner() {
   };
 
   return (
-    <section className="w-full h-[420px] overflow-hidden relative ">
+    <section className="w-full h-[360px] overflow-hidden relative ">
       {/* Slide container */}
       <div
         className="flex transition-transform duration-700 ease-in-out h-full"
