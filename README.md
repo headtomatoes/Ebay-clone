@@ -86,6 +86,23 @@ ebay_clone/
 
 ## Getting Started
 
+A quick look at the user interface built with React and Tailwind CSS:
+
+### Homepage
+![Homepage](https://i.postimg.cc/mZpsCQjb/homepage.jpg)
+
+### Product Page
+![Product Page](https://i.postimg.cc/yYmfhKX7/productpage.jpg)
+
+### Bidding Page
+![Bidding](https://i.postimg.cc/sf02sBMN/image.png)
+
+### Seller Dashboard
+![Seller](https://i.postimg.cc/Y944kpqg/image.png)
+
+### Shopping Cart Page
+![Checkout](https://i.postimg.cc/NMtVv0xC/image.png)
+
 ### Prerequisites
 - Node.js and npm (v14+ recommended)
 - Maven (for Java backend)
@@ -127,3 +144,5 @@ ebay_clone/
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+
