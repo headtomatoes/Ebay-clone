@@ -27,7 +27,7 @@ public class AuctionClosingService {
     @Value("${frontend.base-url:http://localhost:5173}")
     private String frontendBaseUrl;
 
-    @Scheduled(fixedRate = 30000) // Check every 30 seconds if any auctions need to be closed
+    @Scheduled(fixedRate = 5000) // Check every 30 seconds if any auctions need to be closed
     @Transactional
     public void closeEndedAuctions() {
         LocalDateTime now = LocalDateTime.now();
@@ -48,7 +48,7 @@ public class AuctionClosingService {
                     // Winning bid is below the reserve price
                     auction.setStatus(Auction.AuctionStatus.ENDED_NO_RESERVE);
                 }
-                orderService.createOrderFromAuctionItems(winningBidOpt.get().getBidder().getUserId(), auction.getAuctionId());
+                orderService.createOrderFromAuctionItems(winningBidOpt.get().getBidder().getUserId(), auction.getAuctionId(), winningBidOpt.get().getBidAmount());
                 auctionRepository.save(auction);
 
                 // Send winner email with auction URL

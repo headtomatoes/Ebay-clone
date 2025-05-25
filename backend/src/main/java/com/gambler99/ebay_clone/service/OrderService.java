@@ -5,6 +5,7 @@ import com.gambler99.ebay_clone.dto.OrderResponseDTO;
 import com.gambler99.ebay_clone.entity.Order;
 
 // import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface OrderService {
@@ -20,5 +21,5 @@ public interface OrderService {
     OrderResponseDTO getOrderById(Long orderId, Long userId);
 
     // auction products into order
-    OrderResponseDTO createOrderFromAuctionItems(Long userId, Long auctionProductId);
+    OrderResponseDTO createOrderFromAuctionItems(Long userId, Long auctionProductId, BigDecimal winningBidPrice);
 }
