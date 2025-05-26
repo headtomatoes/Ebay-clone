@@ -133,7 +133,7 @@ public class AuctionService {
 
     //Updates auction status from SCHEDULED to ACTIVE when start time is reached. Should be called by a scheduler at regular intervals.
     @Transactional
-    @Scheduled(fixedRate = 60000) // Run every minute
+    @Scheduled(fixedRate = 5000) // Run every minute
     public void updateAuctionStatuses() {
         LocalDateTime now = LocalDateTime.now();
 
