@@ -19,7 +19,7 @@ export default function OAuth2Redirect() {
       login(token, { userId, username, email, roles });
       navigate("/", { replace: true });
     } else {
-      navigate("/login", { state: { message: "Google login failed." } });
+      navigate("/", { state: { message: "Google login failed." } });
     }
   }, [login, navigate]);
 
