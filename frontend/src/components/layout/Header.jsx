@@ -68,7 +68,12 @@ export default function Header() {
 
         <div className="flex items-center gap-4 text-sm text-gray-800">
 {/*           <a href="#" className="hover:underline">Ship to</a> */}
-
+        {isAuthenticated && (
+                    <Link to="/account/edit" className="hover:underline">
+                      Edit Account
+                    </Link>
+                  )}
+                  
           {user?.roles?.includes('ROLE_SELLER') && (
             <Link to="/seller" className="hover:underline">Sell</Link>
           )}

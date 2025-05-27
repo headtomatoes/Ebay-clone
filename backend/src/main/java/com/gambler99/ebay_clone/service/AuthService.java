@@ -8,6 +8,7 @@ import com.gambler99.ebay_clone.entity.Role;
 import com.gambler99.ebay_clone.entity.User;
 import com.gambler99.ebay_clone.exception.EmailAlreadyExistsException;
 import com.gambler99.ebay_clone.exception.RoleNotFoundException;
+import com.gambler99.ebay_clone.exception.UserNameNotFoundException;
 import com.gambler99.ebay_clone.exception.UsernameAlreadyExistsException;
 import com.gambler99.ebay_clone.repository.RoleRepository;
 import com.gambler99.ebay_clone.repository.UserRepository;
@@ -135,4 +136,12 @@ public class AuthService {
         );
     }
 
+    // reset password to 123456 if the user forgets it
+    @Transactional
+    public void resetPasswordToDefault(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNameNotFoundException(username));
+        user.setPasswordHash(passwordEncoder.encode("123456"));
+        userRepository.save(user);
+    }
 }
