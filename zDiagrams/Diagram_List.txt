@@ -15,20 +15,21 @@
    3.3: Search product (Trung) - done
    3.4: Add products to cart (LNA) - done
    3.5: Checkout cart and place order (HUNG) - done
-   3.6: Payment Process (LE)
-   3.7: Bid the auctions (LE) 
+   3.6: Payment Process (LE) - done
+   3.7: Bid the auctions (LE) - done
    3.8: Review and rating a product (LNA) - done
    3.15: delete Order for pending_Payment (HUNG) - done
-
+   3.16: automatically create an order if win an auction (HUNG) - done
    ----------- SELLER USE CASE -------------
    3.9: Create a product (Trung) - done   
    3.10: delete product (Trung) - done
-   3.11: create auction  (LE) - 
+   3.11: create auction  (LE) - done
    3.12: update product (Trung) - done
-   3.13: view bid on auction (LE)
-   3.14:
+   3.13: view bid on auction (LE) - done
 
    ----------- ADMIN USE CASE -------------
    
 4. Schema Diagram: --> done
-5. Package (MVC model) and class Diagrams:
+
+5. Package (MVC model)
+6. class Diagrams
