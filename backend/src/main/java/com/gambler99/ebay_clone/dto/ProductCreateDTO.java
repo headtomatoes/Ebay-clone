@@ -27,7 +27,7 @@ public record ProductCreateDTO (
     Integer stock,
 
     @NotNull(message = "Image URL is required")
-    @Pattern(regexp = "^(http|https)://.*\\.(jpg|jpeg|png|gif)$", message = "Image URL must be a valid image URL")
+    // @Pattern(regexp = "^(http|https)://.*\\.(jpg|jpeg|png|gif)$", message = "Image URL must be a valid image URL")
     @Size(max = 255, message = "Image URL must be less than 255 characters")
     String imageUrl
     // Add any other fields you need for product creation
