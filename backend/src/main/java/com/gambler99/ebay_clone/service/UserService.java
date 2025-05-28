@@ -2,6 +2,7 @@ package com.gambler99.ebay_clone.service;
 
 import com.gambler99.ebay_clone.entity.User;
 import com.gambler99.ebay_clone.exception.IncorrectPasswordException;
+import com.gambler99.ebay_clone.exception.UserNameNotFoundException;
 import com.gambler99.ebay_clone.entity.Role;
 import com.gambler99.ebay_clone.repository.UserRepository;
 import com.gambler99.ebay_clone.repository.RoleRepository;
@@ -58,7 +59,7 @@ public class UserService {
 
     public UserProfileDTO getProfile(String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNameNotFoundException(username));
         UserProfileDTO dto = new UserProfileDTO();
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
@@ -69,7 +70,7 @@ public class UserService {
 
     public UserProfileDTO updateProfile(String username, UpdateUserProfileDTO updateDto) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNameNotFoundException(username));
         user.setEmail(updateDto.email());
         user.setAddress(updateDto.address());
         user.setPhoneNumber(updateDto.phoneNumber());
@@ -79,7 +80,7 @@ public class UserService {
 
     public void changePassword(String username, ChangePasswordDTO dto) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNameNotFoundException(username));
         if (!passwordEncoder.matches(dto.getOldPassword(), user.getPasswordHash())) {
             throw new IncorrectPasswordException("Old password is incorrect");
         }
