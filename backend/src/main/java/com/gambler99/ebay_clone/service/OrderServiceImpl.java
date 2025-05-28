@@ -189,34 +189,35 @@ public class OrderServiceImpl implements OrderService {
 
     // auction products into order
     @Override
-    public OrderResponseDTO createOrderFromAuctionItems(Long userId, Long auctionProductId) {
+    public OrderResponseDTO createOrderFromAuctionItems(Long userId, Long auctionId, BigDecimal winningBidPrice) { // productId dc dang len auction nhung ma code dang auctionId
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new OrderException("User not found with ID: " + userId));
 
-        Optional<Product> product = productRepository.findById(auctionProductId);
+        Product auctionProduct = productRepository.findById(auctionId)
+                .orElseThrow(() -> new OrderException("Auction product not found with ID: " + auctionId));
+        Optional<Product> product = productRepository.findById(auctionProduct.getProductId());
         if (product.isEmpty()) {
-            throw new OrderException("Product not found with ID: " + auctionProductId);
+            throw new OrderException("Product not found with ID: " + auctionProduct.getProductId());
         }
         if (product.get().getStockQuantity() <= 0) {
             throw new OrderException("Product is out of stock: " + product.get().getName());
         }
-        Order order = Order.builder()
-                .customer(user)
-                .orderDate(LocalDateTime.now())
-                .status(Order.OrderStatus.PENDING_PAYMENT)
-                .shippingAddressSnapshot(user.getAddress())
-                .billingAddressSnapshot(user.getAddress())
-                .build();
+        Order order = new Order();
+        order.setCustomer(user);
+        order.setOrderDate(LocalDateTime.now());
+        order.setStatus(Order.OrderStatus.PENDING_PAYMENT);
 
         OrderItem orderItem = OrderItem.builder()
                 .order(order)
                 .product(product.get())
                 .quantity(1) // Assuming quantity is 1 for auction items
-                .priceAtPurchase(product.get().getPrice())
+                .priceAtPurchase(winningBidPrice) // Use the winning bid price
                 .build();
 
-        order.getOrderItems().add(orderItem);
+        order.getOrderItems().add(orderItem); // null point ẽxception
         order.calculateTotalAmount();
+        order.setShippingAddressSnapshot(user.getAddress());
+        order.setBillingAddressSnapshot(user.getAddress());
         // Update stock quantity
         product.get().setStockQuantity(product.get().getStockQuantity() - 1);
         productRepository.save(product.get());
