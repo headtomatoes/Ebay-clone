@@ -168,4 +168,10 @@ public class AuthController {
         JwtResponseDTO jwtResponse = authService.authenticateUser(loginRequestDTO);
         return ResponseEntity.ok(jwtResponse);
     }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestParam String username) {
+        authService.resetPasswordToDefault(username);
+        return ResponseEntity.ok(new MessageResponseDTO("Password has been reset to 123456. Please log in and change your password."));
+    }
 }

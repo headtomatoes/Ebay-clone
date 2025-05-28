@@ -19,6 +19,7 @@ import AuctionDetailPage from './pages/AuctionDetailPage';
 import AddProductPage from './pages/AddProductPage';
 import UpdateProductPage from './pages/UpdateProductPage';
 import SellerPage from './pages/SellerPage';
+import EditAccountPage from './pages/EditAccountPage';
 
 // Toast notification
 import { ToastContainer } from 'react-toastify';
@@ -91,6 +92,7 @@ function App() {
                 <Route path="/order" element={<OrderPage />} />
                 <Route path="/orders/:orderId" element={<OrderDetailPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
+                <Route path="/account/edit" element={<EditAccountPage />} />
               </Route>
 
               <Route path="*" element={<div>Page not found</div>} />
