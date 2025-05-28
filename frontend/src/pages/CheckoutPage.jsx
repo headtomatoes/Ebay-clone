@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import OrderService from '../services/OrderService';
 import CartService from '../services/CartService';
 import PaymentService from '../services/PaymentService';
 import { useAuth } from '../contexts/AuthContext';
 import StripeCheckoutForm from '../components/payments/StripeCheckoutForm';
 import CODCheckoutForm from '../components/payments/CODCheckoutForm';
-import { useLocation } from 'react-router-dom';
 
+// Define the checkout process steps
 const CHECKOUT_STEPS = {
     REVIEW_ORDER: 'REVIEW_ORDER',
     SELECT_PAYMENT: 'SELECT_PAYMENT',
@@ -17,7 +17,11 @@ const CHECKOUT_STEPS = {
 
 const CheckoutPage = () => {
     const navigate = useNavigate();
-    const { user , token} = useAuth();
+    const location = useLocation();
+    const { user, token } = useAuth();
+
+    // Get the passed orderId from navigation state
+    const passedOrderId = location.state?.orderId;
 
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -31,6 +35,33 @@ const CheckoutPage = () => {
     const [paymentInitiationResponse, setPaymentInitiationResponse] = useState(null);
     const [paymentProcessingMessage, setPaymentProcessingMessage] = useState('');
 
+    // Fetch order info if orderId was passed (Pay Now from OrderPage)
+    useEffect(() => {
+        const initializeCheckout = async () => {
+            if (user && passedOrderId) {
+                setIsLoading(true);
+                try {
+                    const order = await OrderService.getOrderById(passedOrderId);
+                    if (order.status === 'PENDING_PAYMENT') {
+                        setCreatedOrder(order);
+                        setCartTotal(order.totalAmount);
+                        setCheckoutStep(CHECKOUT_STEPS.SELECT_PAYMENT);
+                    } else {
+                        setError("This order cannot be paid. It may already be completed or canceled.");
+                    }
+                } catch (err) {
+                    console.error("Failed to load order:", err);
+                    setError("Failed to load order. Please try again.");
+                } finally {
+                    setIsLoading(false);
+                }
+            }
+        };
+
+        initializeCheckout();
+    }, [user, passedOrderId]);
+
+    // If no orderId passed, fallback to normal cart-based flow
     useEffect(() => {
         const fetchCartDetails = async () => {
             setIsLoading(true);
@@ -72,13 +103,14 @@ const CheckoutPage = () => {
             }
         };
 
-        if (user) {
+        if (user && !passedOrderId) {
             fetchCartDetails();
-        } else {
+        } else if (!user) {
             navigate('/login');
         }
-    }, [user, navigate, checkoutStep]);
+    }, [user, navigate, checkoutStep, passedOrderId]);
 
+    // Create order from cart and go to payment step
     const handlePlaceOrderAndProceedToPayment = async () => {
         if (cartItemCount === 0) {
             setError("Cannot place an order with an empty cart.");
@@ -94,7 +126,6 @@ const CheckoutPage = () => {
             setCartTotal(order.totalAmount);
             setCheckoutStep(CHECKOUT_STEPS.SELECT_PAYMENT);
             setPaymentProcessingMessage('');
-
         } catch (err) {
             console.error('Error placing order:', err);
             setError(`Failed to place order: ${err.message || 'An unknown error occurred.'}`);
@@ -104,6 +135,7 @@ const CheckoutPage = () => {
         }
     };
 
+    // Select and initiate payment gateway (Stripe or COD)
     const handlePaymentGatewaySelection = async (gateway) => {
         if (!createdOrder) {
             setError("Order not created yet. Please try placing the order again.");
@@ -116,11 +148,11 @@ const CheckoutPage = () => {
 
         try {
             console.log("User object in handlePaymentGatewaySelection:", user);
-            if (!user || !token) { // Check the 'token' variable destructured from useAuth()
-                console.error("Auth token missing. User:", user, "Token:", token); // Good for debugging
+            if (!user || !token) {
+                console.error("Auth token missing. User:", user, "Token:", token);
                 throw new Error("User authentication token is missing.");
             }
-            const paymentResponse = await PaymentService.initiatePayment(createdOrder.orderId, gateway, token); // Pass the 'token' variable
+            const paymentResponse = await PaymentService.initiatePayment(createdOrder.orderId, gateway, token);
             setPaymentInitiationResponse(paymentResponse);
             setCheckoutStep(CHECKOUT_STEPS.PROCESS_PAYMENT);
             setPaymentProcessingMessage('');
@@ -133,13 +165,14 @@ const CheckoutPage = () => {
         }
     };
 
-
+    // Handle successful Stripe payment
     const handleStripePaymentSuccess = (stripePaymentIntent) => {
         setPaymentProcessingMessage(`Stripe payment successful! Transaction ID: ${stripePaymentIntent.id}. Finalizing order...`);
         setCheckoutStep(CHECKOUT_STEPS.CONFIRMATION);
         setError('');
     };
 
+    // Handle Stripe error
     const handleStripePaymentError = (errorMessage) => {
         setError(`Stripe Payment Failed: ${errorMessage}. Please try a different payment method or contact support.`);
         setPaymentProcessingMessage('');
@@ -147,6 +180,7 @@ const CheckoutPage = () => {
         setPaymentInitiationResponse(null);
     };
 
+    // Handle COD success
     const handleCODSuccess = () => {
         setPaymentProcessingMessage("Cash On Delivery order confirmed!");
         setCheckoutStep(CHECKOUT_STEPS.CONFIRMATION);
@@ -157,6 +191,7 @@ const CheckoutPage = () => {
         navigate('/order');
     };
 
+    // If user is not logged in
     if (!user && !isLoading) {
         return <div className="p-4 text-center">Redirecting to login...</div>;
     }
@@ -174,7 +209,8 @@ const CheckoutPage = () => {
                     {paymentProcessingMessage}
                 </div>
             )}
-            {/* Display error only if it's not the "cart is empty" message during review step when cart is actually empty */}
+
+            {/* Show error */}
             {error && !(checkoutStep === CHECKOUT_STEPS.REVIEW_ORDER && cartItemCount === 0 && error.includes("Your cart is empty")) && (
                 <div className="p-3 mb-4 text-red-700 bg-red-100 border border-red-400 rounded-md">
                     Error: {error}
@@ -198,7 +234,6 @@ const CheckoutPage = () => {
                         </>
                     ) : (
                         <div className="text-center">
-                            {/* Show the "cart is empty" message from error state, or a default one if error is different */}
                             <p className="text-lg mb-4">
                                 {error && error.includes("Your cart is empty") ? error : "Your cart is currently empty."}
                             </p>
@@ -210,6 +245,7 @@ const CheckoutPage = () => {
                 </div>
             )}
 
+            {/* Select Payment */}
             {checkoutStep === CHECKOUT_STEPS.SELECT_PAYMENT && createdOrder && (
                 <div className="bg-white shadow-lg rounded-lg p-6">
                     <h2 className="text-2xl font-semibold mb-2 text-gray-700">Order Placed (ID: {createdOrder.orderId})</h2>
@@ -235,6 +271,7 @@ const CheckoutPage = () => {
                 </div>
             )}
 
+            {/* Process Payment */}
             {checkoutStep === CHECKOUT_STEPS.PROCESS_PAYMENT && paymentInitiationResponse && createdOrder && (
                 <div>
                     {selectedPaymentGateway === 'STRIPE' && (
@@ -258,7 +295,8 @@ const CheckoutPage = () => {
                 </div>
             )}
 
-            {checkoutStep === CHECKOUT_STEPS.CONFIRMATION && createdOrder &&(
+            {/* Confirmation */}
+            {checkoutStep === CHECKOUT_STEPS.CONFIRMATION && createdOrder && (
                 <div className="bg-white shadow-lg rounded-lg p-6 text-center">
                     <svg className="w-16 h-16 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <h2 className="text-2xl font-semibold mb-3 text-gray-800">Thank You! Your Order is Confirmed!</h2>
