@@ -233,7 +233,8 @@ public class OrderServiceImpl implements OrderService {
         // Return the response DTO
         return mapToResponseDTO(savedOrder);
     }
-    
+
+    // Ensure this method is present and correctly named
     private OrderResponseDTO mapToResponseDTO(Order order) {
         return OrderResponseDTO.builder()
                 .orderId(order.getOrderId())
