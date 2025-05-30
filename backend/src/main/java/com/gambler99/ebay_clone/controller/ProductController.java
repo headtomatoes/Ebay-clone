@@ -2,7 +2,9 @@ package com.gambler99.ebay_clone.controller;
 
 import com.gambler99.ebay_clone.dto.ProductCreateDTO;
 import com.gambler99.ebay_clone.dto.ProductDetailDTO;
+import com.gambler99.ebay_clone.dto.ProductStatusChangeDTO;
 import com.gambler99.ebay_clone.dto.ProductSummaryDTO;
+import com.gambler99.ebay_clone.entity.Product;
 import com.gambler99.ebay_clone.security.UserDetailsImpl;
 import com.gambler99.ebay_clone.service.ProductService;
 import jakarta.validation.Valid;
@@ -69,10 +71,10 @@ public class ProductController {
 
     // --- READ (All/Filtered) ---
     @GetMapping
-    public ResponseEntity<List<ProductSummaryDTO>> getAllActiveProducts(
+    public ResponseEntity<List<ProductSummaryDTO>> getAllLegitProducts(
             @RequestParam(required = false) Long categoryId // Optional category filter
     ) {
-        List<ProductSummaryDTO> products = productService.getAllActiveProducts(categoryId);
+        List<ProductSummaryDTO> products = productService.getAllProductsExceptDraftAndInactive(categoryId);
         return ResponseEntity.ok(products); // Return 200 OK
     }
 
@@ -90,6 +92,18 @@ public class ProductController {
         // Delegate update logic AND authorization check (is this user the owner?) to the service
         ProductDetailDTO updatedProduct = productService.updateProduct(id, updateDTO, sellerDetails);
         return ResponseEntity.ok(updatedProduct); // Return 200 OK with updated product
+    }
+
+    @PutMapping("/{id}/{status}")
+    @PreAuthorize("hasRole('SELLER')") // Ensure only sellers can attempt activation
+    public ResponseEntity<ProductDetailDTO> changeProductStatus(
+            @PathVariable Long id,
+            @PathVariable Product.ProductStatus status,
+            @AuthenticationPrincipal UserDetailsImpl sellerDetails)
+    {
+        // Delegate activation logic AND authorization check (is this user the owner?) to the service
+        ProductDetailDTO activatedProduct = productService.changeProductStatus(id,status,sellerDetails);
+        return ResponseEntity.ok(activatedProduct); // Return 200 OK with activated product
     }
 
     // --- DELETE ---

@@ -51,7 +51,10 @@ public class AuctionService {
         if (!product.getSeller().getUserId().equals(sellerDetails.getUserId())){
             throw new BadRequestException("You are not the owner of this product to create an auction");
         }
-
+        // check if the product is inactive or sold out
+        if (product.getStatus() != Product.ProductStatus.ACTIVE) {
+            throw new BadRequestException("Product must be in ACTIVE status to create an auction");
+        }
         // check if the product is already in an auction
         boolean isScheduledAuction = auctionRepository.existsByProductAndStatus(
                 product,

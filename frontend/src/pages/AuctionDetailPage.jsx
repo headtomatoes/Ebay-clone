@@ -176,7 +176,6 @@ export default function AuctionDetailPage() {
 
   // Get status badge class
   const getStatusBadgeClass = (status) => {
-    // ... (keep existing function)
     switch (status) {
       case 'ACTIVE':
         return 'bg-green-100 text-green-800';
@@ -315,8 +314,8 @@ export default function AuctionDetailPage() {
               <span
                   className={`text-sm px-3 py-1 rounded-full ${getStatusBadgeClass(auction.status)}`}
               >
-              {auction.status}
-            </span>
+                {auction.status}
+              </span>
             </div>
 
             {auction.status === 'ACTIVE' && (

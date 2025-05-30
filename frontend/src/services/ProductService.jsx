@@ -90,6 +90,18 @@ const getSellerProducts = async () => {
   }
 };
 
+// change the status of a product
+const changeProductStatus = async (productId, status) => {
+  setAuthHeader();
+  try {
+    const response = await productApi.put(`/${productId}/status`, { status });
+    return response.data;
+  } catch (error) {
+    console.error('Change Product Status Error:', error.response?.data || error.message);
+    throw error.response?.data || { message: error.message };
+  }
+
+}
 
 
 // Search products

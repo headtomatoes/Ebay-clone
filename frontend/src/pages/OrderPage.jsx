@@ -52,7 +52,7 @@ const OrderPage = () => {
         if (window.confirm(`Are you sure you want to cancel order ${orderId}?`)) {
             try {
                 await orderService.cancelOrder(orderId); // Call cancel API
-                fetchOrders(); // Refresh the order list
+                await fetchOrders(); // Refresh the order list
             } catch (err) {
                 setError(`Failed to cancel order ${orderId}: ${err.message || 'Unknown error'}`);
                 console.error("Error cancelling order:", err);

@@ -84,6 +84,22 @@ export default function ProductPage() {
     setCurrentPage(pageNumber);
   };
 
+  // Get status badge class
+  const getStatusBadgeClass = (status) => {
+    switch (status) {
+      case 'ACTIVE':
+        return 'bg-green-100 text-green-800';
+      case 'SOLD_OUT':
+        return 'bg-red-100 text-blue-800';
+      case 'INACTIVE':
+        return 'bg-yellow-100 text-purple-800';
+      case 'DRAFT':
+        return 'bg-gray-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto p-6">
       {/* Page title */}
@@ -130,6 +146,15 @@ export default function ProductPage() {
               </Link>
 
               <p className="text-blue-600 font-bold">${product.price.toFixed(2)}</p>
+              {/* Status tags */}
+              <div className="flex items-center mt-2">
+                <span
+                    className={`text-sm px-3 py-1 rounded-full width: \`140px\` ${getStatusBadgeClass(product.status)}`}
+                >
+                  {product.status}
+                </span>
+              </div>
+
               <p className="text-xs text-gray-500 mt-1">{product.categoryName}</p>
 
               {/* Display average rating */}
@@ -144,14 +169,6 @@ export default function ProductPage() {
                 </div>
                 <span className="text-xs ml-2">{productRatings[product.productId] || '0.0'} / 5</span>
               </div>
-
-              {/* Status tags */}
-              {product.status === 'ACTIVE' && (
-                <span className="text-green-500 text-xs font-semibold mt-1">Available</span>
-              )}
-              {product.status === 'SOLD_OUT' && (
-                <span className="text-red-500 text-xs font-semibold mt-1">Sold Out</span>
-              )}
             </div>
           </div>
         ))}

@@ -46,6 +46,22 @@ const SellerPage = () => {
   if (loading) return <div className="p-6">Loading your products...</div>;
   if (error) return <div className="p-6 text-red-500">{error}</div>;
 
+  // Get status badge class
+  const getStatusBadgeClass = (status) => {
+    switch (status) {
+      case 'ACTIVE':
+        return 'bg-green-100 text-green-800';
+      case 'SOLD_OUT':
+        return 'bg-red-100 text-blue-800';
+      case 'INACTIVE':
+        return 'bg-yellow-100 text-purple-800';
+      case 'DRAFT':
+        return 'bg-gray-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
   return (
     <div className="p-6">
       {/* Welcome message */}
@@ -81,9 +97,16 @@ const SellerPage = () => {
               {/* Product Info */}
               <h3 className="font-bold text-lg mb-2">{product.name}</h3>
               <p className="text-gray-700 mb-2">${parseFloat(product.price).toFixed(2)}</p>
-
+              {/* Status tags */}
+              <div className="flex items-center mt-2">
+                  <span
+                      className={`text-sm px-3 py-1 rounded-full ${getStatusBadgeClass(product.status)}`}
+                  >
+                    {product.status}
+                  </span>
+              </div>
               {/* Action Buttons */}
-              <div className="grid grid-cols-3 gap-2 mt-4">
+              <div className="grid grid-cols-4 gap-2 mt-4">
                 <Link
                   to={`/seller/products/update/${product.productId}`}
                   className="bg-gray-200 text-gray-800 text-sm font-semibold text-center py-2 rounded-md hover:bg-gray-300 transition-colors duration-200"
@@ -102,6 +125,12 @@ const SellerPage = () => {
                 >
                   Auction
                 </Link>
+                <button
+                    onClick={() => handleSetStatus(product.productId)}
+                    className="bg-green-600 text-white text-sm font-semibold text-center py-2 rounded-md hover:bg-green-700 transition-colors duration-200"
+                >
+                  Set Status
+                </button>
               </div>
             </div>
           ))}
