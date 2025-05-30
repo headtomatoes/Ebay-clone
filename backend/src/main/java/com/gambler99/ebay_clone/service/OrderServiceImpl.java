@@ -142,15 +142,18 @@ public class OrderServiceImpl implements OrderService {
     public void deleteOrder(Long orderId, Long userId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderException("Order not found with ID: " + orderId));
-
+        // Check if the order belongs to the customer
         if (!order.getCustomer().getUserId().equals(userId)) {
             throw new OrderException("Unauthorized action for user ID: " + userId);
         }
-
+        // Check if the order is in PENDING_PAYMENT status
         if (order.getStatus() != Order.OrderStatus.PENDING_PAYMENT) {
             throw new OrderException("Cannot delete order unless it is in PENDING_PAYMENT status.");
         }
-
+        // check if order is from auction then prevent deletion
+        if (order.isAuctionOrder()) {
+            throw new OrderException("Cannot delete order containing auction items.");
+        }
         // Restore stock quantities
         for (OrderItem orderItem : order.getOrderItems()) {
             Product product = orderItem.getProduct();
@@ -206,6 +209,7 @@ public class OrderServiceImpl implements OrderService {
         order.setCustomer(user);
         order.setOrderDate(LocalDateTime.now());
         order.setStatus(Order.OrderStatus.PENDING_PAYMENT);
+        order.setAuctionOrder(true); // Mark this order as an auction order
 
         OrderItem orderItem = OrderItem.builder()
                 .order(order)

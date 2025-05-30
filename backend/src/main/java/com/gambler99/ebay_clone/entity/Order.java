@@ -43,8 +43,12 @@ public class Order {
 
     @Column(name = "shipping_address_snapshot", nullable = false)
     private String shippingAddressSnapshot;
-    @Column(name = "billing_address_snapshot", nullable = false) 
+
+    @Column(name = "billing_address_snapshot", nullable = false)
     private String billingAddressSnapshot; 
+
+    @Column(name = "auction_order", nullable = false)
+    private boolean auctionOrder = false;
 
     public void calculateTotalAmount() {
         this.totalAmount = orderItems.stream()
