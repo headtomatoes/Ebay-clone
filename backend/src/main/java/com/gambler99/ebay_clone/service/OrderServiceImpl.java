@@ -22,13 +22,16 @@ public class OrderServiceImpl implements OrderService {
     private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final AuctionRepository auctionRepository;
 
     public OrderServiceImpl(OrderRepository orderRepository, CartItemRepository cartItemRepository,
-                            ProductRepository productRepository, UserRepository userRepository) {
+                            ProductRepository productRepository, UserRepository userRepository,
+                            AuctionRepository auctionRepository) {
         this.orderRepository = orderRepository;
         this.cartItemRepository = cartItemRepository;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
+        this.auctionRepository = auctionRepository;
     }
 
     @Override
@@ -192,15 +195,15 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponseDTO createOrderFromAuctionItems(Long userId, Long auctionId, BigDecimal winningBidPrice) { // productId dc dang len auction nhung ma code dang auctionId
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new OrderException("User not found with ID: " + userId));
-
-        Product auctionProduct = productRepository.findById(auctionId)
-                .orElseThrow(() -> new OrderException("Auction product not found with ID: " + auctionId));
-        Optional<Product> product = productRepository.findById(auctionProduct.getProductId());
-        if (product.isEmpty()) {
-            throw new OrderException("Product not found with ID: " + auctionProduct.getProductId());
+        
+        Auction auction = auctionRepository.findById(auctionId)
+                .orElseThrow(() -> new OrderException("Auction not found with ID: " + auctionId));
+        Product product = auction.getProduct();
+        if (product == null) {
+            throw new OrderException("Auction product not found with ID: " + auctionId);
         }
-        if (product.get().getStockQuantity() <= 0) {
-            throw new OrderException("Product is out of stock: " + product.get().getName());
+        if (product.getStockQuantity() <= 0) {
+            throw new OrderException("Product is out of stock: " + product.getName());
         }
         Order order = new Order();
         order.setCustomer(user);
@@ -209,23 +212,24 @@ public class OrderServiceImpl implements OrderService {
 
         OrderItem orderItem = OrderItem.builder()
                 .order(order)
-                .product(product.get())
+                .product(product)
                 .quantity(1) // Assuming quantity is 1 for auction items
                 .priceAtPurchase(winningBidPrice) // Use the winning bid price
                 .build();
 
-        order.getOrderItems().add(orderItem); // null point ẽxception
+        order.getOrderItems().add(orderItem); // null point exception
         order.calculateTotalAmount();
         order.setShippingAddressSnapshot(user.getAddress());
         order.setBillingAddressSnapshot(user.getAddress());
         // Update stock quantity
-        product.get().setStockQuantity(product.get().getStockQuantity() - 1);
-        productRepository.save(product.get());
+        product.setStockQuantity(product.getStockQuantity() - 1);
+        productRepository.save(product);
         // Save order
         Order savedOrder = orderRepository.save(order);
         // Return the response DTO
         return mapToResponseDTO(savedOrder);
     }
+    
     private OrderResponseDTO mapToResponseDTO(Order order) {
         return OrderResponseDTO.builder()
                 .orderId(order.getOrderId())
