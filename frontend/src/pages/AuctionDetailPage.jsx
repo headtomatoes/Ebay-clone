@@ -1,4 +1,3 @@
-<llm-snippet-file>src/pages/AuctionDetailPage.js</llm-snippet-file>
 import React, { useEffect, useState, useRef } from 'react'; // Added useRef
 import { useParams, Link } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -9,7 +8,7 @@ import AuctionService from '../services/AuctionService';
 import ProductService from '../services/ProductService';
 import BidHistory from '../components/auction/BidHistory';
 
-// Base URL for the WebSocket endpoint - adjust if your backend runs elsewhere
+// Base URL for the WebSocket endpoint
 const SOCKET_URL = 'http://localhost:8082/ws'; // Uses the proxy setup by Vite usually
 
 export default function AuctionDetailPage() {
@@ -62,7 +61,7 @@ export default function AuctionDetailPage() {
 
     const client = new Client({
       webSocketFactory: () => new SockJS(SOCKET_URL), // Use SockJS for transport
-      debug: (str) => { // Uncomment for connection debugging
+      debug: (str) => {
         console.log('STOMP Debug:', str);
       },
       reconnectDelay: 5000, // Try to reconnect every 5 seconds
@@ -113,7 +112,7 @@ export default function AuctionDetailPage() {
 
     client.onDisconnect = () => {
       console.log('STOMP: Disconnected');
-      // Optional: Add logic if you need to know when it's explicitly disconnected
+      // Optional: Add logic if we need to know when it's explicitly disconnected
     };
 
     // Activate the client

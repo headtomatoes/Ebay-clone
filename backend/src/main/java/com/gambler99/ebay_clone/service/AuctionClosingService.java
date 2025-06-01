@@ -27,13 +27,15 @@ public class AuctionClosingService {
     @Value("${frontend.base-url:http://localhost:5173}")
     private String frontendBaseUrl;
 
-    @Scheduled(fixedRate = 5000) // Check every 30 seconds if any auctions need to be closed
+    @Scheduled(fixedRate = 5000)
     @Transactional
     public void closeEndedAuctions() {
         LocalDateTime now = LocalDateTime.now();
         // Find auctions ready to be closed
-        List<Auction> auctionsToClose = auctionRepository.findByStatusAndEndTimeBefore(Auction.AuctionStatus.ACTIVE, now);
+        List<Auction> auctionsToClose = auctionRepository.
+                findByStatusAndEndTimeBefore(Auction.AuctionStatus.ACTIVE, now);
 
+        // Logic to set auction status and notify winners
         for (Auction auction : auctionsToClose) {
             // Find the highest bid for this auction
             Optional<Bid> winningBidOpt = bidRepository.findTopByAuctionOrderByBidAmountDesc(auction);

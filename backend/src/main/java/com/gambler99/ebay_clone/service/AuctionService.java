@@ -36,8 +36,10 @@ public class AuctionService {
 
     // Create an auction
     @Transactional
-    public AuctionResponseDTO createAuction(CreateAuctionRequestDTO dto, UserDetailsImpl sellerDetails) throws BadRequestException {
-        // Find the seller by userId || subject to change
+    public AuctionResponseDTO createAuction
+    (CreateAuctionRequestDTO dto, UserDetailsImpl sellerDetails)
+            throws BadRequestException {
+        // Find the seller by userId
         User seller = userRepository.findById(sellerDetails.getUserId())
                 .orElseThrow(()
                 -> new RuntimeException("Seller not found with ID: " + sellerDetails.getUserId()));

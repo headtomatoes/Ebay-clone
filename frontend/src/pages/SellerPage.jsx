@@ -126,7 +126,7 @@ const SellerPage = () => {
                   Auction
                 </Link>
                 <button
-                    onClick={() => handleSetStatus(product.productId)}
+                    onClick={() => ProductService.changeProductStatus(product.productId, product.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE')}
                     className="bg-green-600 text-white text-sm font-semibold text-center py-2 rounded-md hover:bg-green-700 transition-colors duration-200"
                 >
                   Set Status
