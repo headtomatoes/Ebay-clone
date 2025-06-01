@@ -2,7 +2,13 @@
     "java.compile.nullAnalysis.mode": "automatic",
     "cSpell.words": [
         "dotenv",
-        "mcfc"
+        "DTOs",
+        "Egay",
+        "initdb",
+        "mcfc",
+        "springboot",
+        "springframework",
+        "Watchlist"
     ],
     "java.configuration.updateBuildConfiguration": "automatic"
 }

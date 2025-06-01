@@ -6,6 +6,8 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 
 
@@ -39,6 +41,10 @@ public class Product {
     @ToString.Exclude
     private Category category;
 
+    // one to many with orderItems
+    // @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    // @Builder.Default
+    // private Set<OrderItem> orderItems = new HashSet<>();
 
     @Column(name = "name", nullable = false, length = 255)
     private String name;

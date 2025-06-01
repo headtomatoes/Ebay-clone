@@ -15,6 +15,7 @@ import com.gambler99.ebay_clone.security.UserDetailsImpl;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,18 +85,19 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProductSummaryDTO> getAllProducts(Long categoryId /* accept null */){
+    public List<ProductSummaryDTO> getAllProductsExceptDraftAndInactive(Long categoryId /* accept null */){
         // If categoryId is null, fetch all products
         // If categoryId is not null, fetch products by category
+        List<Product.ProductStatus> excludedStatuses = List.of(Product.ProductStatus.DRAFT, Product.ProductStatus.INACTIVE);
         List<Product> products;
         if (categoryId == null) {
-            products = productRepository.findAll();
+            // Fetch all products except those with status DRAFT or INACTIVE
+            products = productRepository.findByStatusNotIn(excludedStatuses);
         } else {
+            // Fetch products by category and status not in DRAFT or INACTIVE
             Category category = categoryRepository.findById(categoryId)
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            "Category not found with ID: "
-                                    + categoryId));
-            products = productRepository.findByCategory(category);
+                    .orElseThrow(() -> new ResourceNotFoundException("Category not found with ID: " + categoryId));
+            products = productRepository.findByCategoryAndStatusNotIn(category, excludedStatuses);
         }
 
         // Map each Product entity to ProductSummaryDTO
@@ -133,9 +135,6 @@ public class ProductService {
         // Note: createdAt is usually not updated. updatedAt should be handled automatically by JPA auditing if configured (@LastModifiedDate).
 
         // 5. Save the updated product (optional but good practice for clarity)
-        // Because the 'product' entity is managed within the @Transactional context,
-        // Hibernate will automatically detect changes and flush them to the DB on commit.
-        // However, explicitly calling save can sometimes be clearer or needed for certain cascade operations.
         Product updatedProduct = productRepository.save(product);
 
         // 6. Map the updated product to DTO and return
@@ -155,7 +154,6 @@ public class ProductService {
 
         // 3. Delete the product
         productRepository.delete(product);
-        // Alternatively: productRepository.deleteById(productId); - less safe as it doesn't guarantee ownership check happened first.
     }
 
     @Transactional(readOnly = true)
@@ -172,6 +170,32 @@ public class ProductService {
                 .map(this::mapToProductSummaryDTO)
                 .collect(Collectors.toList());
     }
+
+    // change the product from DRAFT to ACTIVE
+    @Transactional
+    public ProductDetailDTO changeProductStatus(Long productId, Product.ProductStatus status,UserDetailsImpl sellerDetails) {
+        // 1. Find the existing product
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
+        // 2. Authorization Check: Verify the user activating is the seller
+        if (!Objects.equals(product.getSeller().getUserId(), sellerDetails.getUserId())) {
+            throw new AccessDeniedException("User is not authorized to activate this product.");
+        }
+        // 3. Change the product status to the given status except
+        // ACTIVE to DRAFT
+        // the product is already in the given status
+        // SOLD OUT to ACTIVE if the product is the stock not refill yet
+        if (product.getStatus() != status) {
+            product.setStatus(status);
+        } else {
+            throw new IllegalStateException("Product is already in the given one.");
+        }
+        // 4. Save the updated product
+        Product updatedProduct = productRepository.save(product);
+        // 5. Map the updated product to DTO and return
+        return mapToProductDetailDTO(updatedProduct);
+    }
+
     // Helper method for mapping method
     // This method is used to mapping Product entity into ProductDetailDTO
     private ProductDetailDTO mapToProductDetailDTO(Product product) {
@@ -183,6 +207,7 @@ public class ProductService {
                 product.getStockQuantity(),
                 product.getCreatedAt(),
                 product.getUpdatedAt(),
+                product.getStatus(),
                 product.getCategory() != null ? product.getCategory().getName() : null, // Handle potential nulls
                 product.getSeller() != null ? product.getSeller().getUsername() : null, // Handle potential nulls
                 product.getImageUrl()
@@ -195,7 +220,8 @@ public class ProductService {
                 product.getProductId(),
                 product.getName(),
                 product.getPrice(),
-                product.getCategory() != null ? product.getCategory().getName() : null, // Handle potential nulls
+                product.getCategory() != null ? product.getCategory().getName() : null,
+                product.getStatus(),// Handle potential nulls
                 product.getImageUrl() //update
         );
     }

@@ -5,6 +5,7 @@ import com.gambler99.ebay_clone.entity.User;
 import com.gambler99.ebay_clone.entity.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
@@ -26,4 +27,21 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
      * Finds all products that have a specific name (case-insensitive).*/
     List<Product> findTop10ByNameContainingIgnoreCase(String name);
 
+    /**
+     * Finds all products that have a specific name (case-insensitive) and belong to a specific category.*/
+    List<Product> findTop10ByNameContainingIgnoreCaseAndCategory(String name, Category category);
+
+    /**
+     * Finds all products that have a specific name (case-insensitive) and are sold by a specific user (seller).*/
+    List<Product> findTop10ByNameContainingIgnoreCaseAndSeller(String name, User seller);
+
+    /**
+     * Finds all products that have active status*/
+    List<Product> findByStatusAndCategory(Product.ProductStatus status, Category category);
+
+    // Finds all products that not have one of some statuses in a collection
+    List<Product> findByStatusNotIn(Collection<Product.ProductStatus> status);
+
+    // Finds all products that not have some status in a collection and belong to a specific category
+    List<Product> findByCategoryAndStatusNotIn(Category category, Collection<Product.ProductStatus> status);
 }

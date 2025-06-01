@@ -36,8 +36,10 @@ public class AuctionService {
 
     // Create an auction
     @Transactional
-    public AuctionResponseDTO createAuction(CreateAuctionRequestDTO dto, UserDetailsImpl sellerDetails) throws BadRequestException {
-        // Find the seller by userId || subject to change
+    public AuctionResponseDTO createAuction
+    (CreateAuctionRequestDTO dto, UserDetailsImpl sellerDetails)
+            throws BadRequestException {
+        // Find the seller by userId
         User seller = userRepository.findById(sellerDetails.getUserId())
                 .orElseThrow(()
                 -> new RuntimeException("Seller not found with ID: " + sellerDetails.getUserId()));
@@ -51,7 +53,10 @@ public class AuctionService {
         if (!product.getSeller().getUserId().equals(sellerDetails.getUserId())){
             throw new BadRequestException("You are not the owner of this product to create an auction");
         }
-
+        // check if the product is inactive or sold out
+        if (product.getStatus() != Product.ProductStatus.ACTIVE) {
+            throw new BadRequestException("Product must be in ACTIVE status to create an auction");
+        }
         // check if the product is already in an auction
         boolean isScheduledAuction = auctionRepository.existsByProductAndStatus(
                 product,
@@ -132,9 +137,8 @@ public class AuctionService {
     }
 
     //Updates auction status from SCHEDULED to ACTIVE when start time is reached. Should be called by a scheduler at regular intervals.
-
     @Transactional
-    @Scheduled(fixedRate = 60000) // Run every minute
+    @Scheduled(fixedRate = 5000) // Run every minute
     public void updateAuctionStatuses() {
         LocalDateTime now = LocalDateTime.now();
 
@@ -151,7 +155,6 @@ public class AuctionService {
 
 
     // Validates if an auction is active and available for bidding.
-
     @Transactional(readOnly = true)
     public Auction validateAuctionForBidding(Long auctionId) throws BadRequestException {
         Auction auction = auctionRepository.findById(auctionId)

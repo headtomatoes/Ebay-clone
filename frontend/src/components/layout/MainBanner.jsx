@@ -1,78 +1,162 @@
 import React, { useState, useEffect } from 'react';
-import banner1 from '../../assets/images/ex_mainbanner1.jpg';
-import banner2 from '../../assets/images/ex_mainbanner2.jpg';
+import { useNavigate } from 'react-router-dom';
 
-const images = [banner1, banner2];
+// Slides data
+const slides = [
+  {
+    bgColor: 'bg-[#6A5ACD]',
+    textColor: 'text-black',
+    title: "Whatever you're into, it's here",
+    subtitle: "Turn a wrench, get a tech upgrade, and find everything you love.",
+    buttonLabel: "Explore now",
+    layout: 'split',
+    categories: [
+      {
+        name: 'Electronics', // navigate to /categories/Electronics
+        icon: 'https://i.postimg.cc/VvjWb7Vb/device.webp',
+      },
+      {
+        name: 'Electronics',
+        label: '',
+        icon: 'https://i.postimg.cc/N0S0Rd1b/headphone.jpg',
+      },
+    ],
+  },
+  {
+    bgColor: 'bg-[#F9B5C6]',
+    textColor: 'text-white',
+    title: 'Deals you don\'t want to miss',
+    subtitle: 'Limited-time offers across all categories.',
+    buttonLabel: 'Explore now',
+    layout: 'split', // changed from 'centered'
+    categories: [
+      {
+        name: 'Toys',
+        label: 'Toys',
+        icon: 'https://i.postimg.cc/fb6y7pCL/toys.webp',
+      },
+      {
+        name: 'Beauty',
+        label: 'Beauty',
+        icon: 'https://i.postimg.cc/3wP6KF8V/beauty.jpg',
+      },
+    ],
+  },
+  {
+    bgImage: 'https://i.postimg.cc/zDTp9Ryt/ex-login.jpg',
+    layout: 'image-left',
+    textColor: 'text-white',
+    title: 'Get your order or your money back',
+    subtitle: "Shop confidently with eBay Money Back Guarantee.",
+    buttonLabel: 'Learn more',
+  }
+];
 
 export default function MainBanner() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      nextSlide();
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+   const [isPaused, setIsPaused] = useState(false);
 
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
-  };
+    // Auto slide every 6 seconds unless paused
+    useEffect(() => {
+      if (isPaused) return;
+      const interval = setInterval(() => {
+        nextSlide();
+      }, 6000);
+      return () => clearInterval(interval);
+    }, [isPaused]);
 
   const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % images.length);
+    setCurrentIndex((prev) => (prev + 1) % slides.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
   const goToSlide = (index) => {
     setCurrentIndex(index);
   };
 
-  return (
-    <section className="w-full h-[350px] bg-white relative overflow-hidden">
-      {/* Banner Image */}
-      <img
-        src={images[currentIndex]}
-        alt="Banner"
-        className="w-full h-full object-cover transition-all duration-700"
-      />
+  const handleCategoryClick = (categoryName) => {
+    navigate(`/categories/${categoryName}`);
+  };
 
-      {/* Overlay Content */}
-      <div className="absolute inset-0 flex items-center px-12 bg-black/30">
-        <div className="text-white max-w-md">
-          <h2 className="text-3xl font-bold mb-3">Returns made simple</h2>
-          <p className="text-sm mb-4">
-            Not happy with your purchase? It’s easy to start a return.
-          </p>
-          <button className="bg-white text-black px-5 py-2 rounded hover:bg-gray-200 text-sm font-semibold">
-            Learn more
-          </button>
-        </div>
+  return (
+    <section className="w-full h-[360px] overflow-hidden relative ">
+      {/* Slide container */}
+      <div
+        className="flex transition-transform duration-700 ease-in-out h-full"
+        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+      >
+        {slides.map((slide, index) => (
+          <div
+            key={index}
+            className={`min-w-full h-full px-16 py-8 flex ${
+              slide.layout === 'split'
+                ? 'justify-between items-center'
+                : 'flex-col justify-center items-center text-center'
+            } ${slide.bgColor || ''} ${slide.textColor || ''}`}
+            style={{
+              backgroundImage: slide.bgImage ? `url(${slide.bgImage})` : undefined,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          >
+            {/* Left content (text & button) */}
+            <div className={slide.layout === 'split' ? 'max-w-lg' : 'max-w-xl'}>
+              <h2 className="text-4xl font-bold leading-snug mb-4">{slide.title}</h2>
+              <p className="text-base mb-6">{slide.subtitle}</p>
+              <button
+                className="bg-black text-white px-6 py-3 text-lg rounded-full hover:bg-gray-800 transition"
+                onClick={() => navigate('/products')}
+              >
+                {slide.buttonLabel}
+              </button>
+            </div>
+
+            {/* Right content (category icons) */}
+            {slide.categories?.length > 0 && (
+              <div
+                className={`${
+                  slide.layout === 'split'
+                    ? 'flex gap-10 items-center'
+                    : 'flex mt-8 gap-12 ml-40'
+                }`}
+              >
+                {slide.categories.map((cat, idx) => (
+                  <div
+                    key={idx}
+                    className="text-center cursor-pointer"
+                    onClick={() => handleCategoryClick(cat.name)}
+                  >
+                    <img
+                      src={cat.icon}
+                      alt={cat.label}
+                      className="w-40 h-40 rounded-full object-cover shadow"
+                    />
+                    <p className="font-semibold text-lg">{cat.label}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
       </div>
 
-      {/* Prev Button */}
-      <button
-        onClick={prevSlide}
-        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 text-black px-2 py-1 rounded-full hover:bg-white"
-      >
-        ◀
-      </button>
-
-      {/* Next Button */}
-      <button
-        onClick={nextSlide}
-        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/70 text-black px-2 py-1 rounded-full hover:bg-white"
-      >
-        ▶
-      </button>
-
-      {/* Dots */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-        {images.map((_, idx) => (
+      {/* Dot navigation */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+        {slides.map((_, idx) => (
           <button
             key={idx}
-            className={`w-3 h-3 rounded-full ${
-              currentIndex === idx ? 'bg-white' : 'bg-white/50'
-            }`}
             onClick={() => goToSlide(idx)}
+            className={`w-[8px] h-[8px] rounded-full border ${
+              currentIndex === idx
+                ? 'bg-white border-white'
+                : 'bg-transparent border-white/70'
+            }`}
+            style={{ padding: 0 }}
           ></button>
         ))}
       </div>

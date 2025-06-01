@@ -9,7 +9,8 @@ export default function RegisterForm() {
     username: '',
     email: '',
     password: '',
-    confirmPassword: '' // Added for confirmation check
+    address: '', // Added address field
+    confirmPassword: '' // Added for confirmation check 
   });
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState(''); // State for backend errors
@@ -45,6 +46,9 @@ export default function RegisterForm() {
       newErrors.confirmPassword = 'Password confirmation is required';
     } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
+    } 
+     if (!formData.address.trim()) {
+      newErrors.address = 'Address is required';
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -63,7 +67,8 @@ export default function RegisterForm() {
       const userData = {
         username: formData.username,
         email: formData.email,
-        password: formData.password
+        password: formData.password,
+         address: formData.address // Send address to backend
         // Add roles if your DTO supports it, otherwise backend assigns default
       };
 
@@ -72,7 +77,7 @@ export default function RegisterForm() {
 
       // Registration successful! Redirect to login page with a success message.
       // The success message can be displayed on the LoginForm component.
-      navigate('/signin', {
+      navigate('/login', {
         state: { message: response.message || 'Registration successful! Please log in.' }
       });
 
@@ -109,14 +114,14 @@ export default function RegisterForm() {
 // {/*         </button> */}
 // {/*       </form> */}
 
-       <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-10 p-6 shadow rounded bg-white">
-             <h2 className="text-2xl font-bold mb-6 text-center">Create your account</h2>
+       <form onSubmit={handleSubmit} className="border border-gray-300 rounded-xl max-w-md mx-auto mt-10 p-6 shadow bg-white">
+{/*              <h2 className="text-2xl font-bold mb-6 text-center">Create your account</h2> */}
 
              {apiError && (
                <p className="text-red-500 text-center mb-4">{apiError}</p>
              )}
 
-             {['username', 'email', 'password', 'confirmPassword'].map((field) => (
+             {['username', 'email', 'address', 'password', 'confirmPassword'].map((field) => (
                <div key={field} className="mb-4">
                  <label className="block text-sm font-medium mb-1 capitalize" htmlFor={field}>
                    {field === 'confirmPassword' ? 'Confirm Password' : field}
@@ -127,7 +132,9 @@ export default function RegisterForm() {
                    id={field}
                    value={formData[field]}
                    onChange={handleChange}
-                   placeholder={`Enter your ${field === 'confirmPassword' ? 'password again' : field}`}
+                   placeholder={`Enter your ${field === 'confirmPassword' ? 'password again' : field === 'address'
+                ? 'address'
+                : field}`}
                    className="w-full border rounded px-3 py-2"
                  />
                  {errors[field] && <p className="text-red-500 text-sm mt-1">{errors[field]}</p>}
@@ -137,7 +144,7 @@ export default function RegisterForm() {
              <button
                type="submit"
                disabled={loading}
-               className={`w-full bg-blue-600 text-white py-2 rounded ${loading ? 'opacity-60' : ''}`}
+               className={`w-full bg-blue-600 text-white py-2 rounded-full ${loading ? 'opacity-60' : ''}`}
              >
                {loading ? 'Signing Up...' : 'Sign Up'}
              </button>

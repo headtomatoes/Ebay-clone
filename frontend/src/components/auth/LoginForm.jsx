@@ -1,149 +1,167 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-// Import the REAL login function from your service
-import {loginUser, setAuthToken} from '../../services/AuthService'
+import { loginUser, setAuthToken } from '../../services/AuthService';
+import axios from 'axios';
 
 export default function LoginForm({ successMessage }) {
-    const [formData, setFormData] = useState({ username: '', password: '' });
-    const [errors, setErrors] = useState({});
-    const [apiError, setApiError] = useState(''); // State for backend errors
-    const [loading, setLoading] = useState(false); // Loading state
-    const { login } = useAuth();
-    const navigate = useNavigate();
+  const [formData, setFormData] = useState({ username: '', password: '' });
+  const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-        if (errors[e.target.name]) {
-            setErrors({ ...errors, [e.target.name]: '' });
-        } // Clear validation error on change
-        setApiError(''); // Clear API error on change
-    };
+  // Password reset state
+  const [showReset, setShowReset] = useState(false);
+  const [resetUsername, setResetUsername] = useState('');
+  const [resetMsg, setResetMsg] = useState('');
 
-    const validate = () => {
-        // Your existing validation logic...
-        const newErrors = {};
-        if (!formData.username.trim()) newErrors.username = 'Username is required';
-        if (!formData.password.trim()) newErrors.password = 'Password is required';
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    setResetMsg('');
 
-    // *** UPDATED handleSubmit ***
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setApiError(''); // Clear previous API errors
-        if (!validate()) return;
+    if (!resetUsername.trim()) {
+      setResetMsg('Please enter your username.');
+      return;
+    }
 
-        setLoading(true); // Set loading true
+    try {
+      await axios.post('http://localhost:8082/api/auth/reset-password', null, {
+        params: { username: resetUsername }
+      });
+      setResetMsg('Password reset! Please try logging in with "123456".');
+    } catch (err) {
+      if (err.response?.status === 404 || err.response?.status === 400) {
+        setResetMsg('Username not found. Please check your username and try again.');
+      } else {
+        setResetMsg(err.response?.data?.message || 'Reset failed. Please try again.');
+      }
+    }
+  };
 
-        try {
-            // Call the REAL backend service
-            const response = await loginUser(formData); // Send {username, password}
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
 
-            // Extract data from the actual backend response
-            // Ensure your backend returns these fields in JwtResponseDTO
-            //const { accessToken, id, username, email, roles } = response;
-            const { token, id, username, email, roles } = response;
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
 
-            // Set token for future axios requests IMMEDIATELY after getting it
-            //setAuthToken(accessToken);
+    setApiError('');
+  };
 
-            // Set token for future requests (optional but good practice)
-            //setAuthToken(accessToken); // If your authService requires it
-            setAuthToken(token);
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.username.trim()) newErrors.username = 'Username is required';
+    if (!formData.password.trim()) newErrors.password = 'Password is required';
 
-            // Update AuthContext state
-            login(token, { id, username, email, roles });
-            //login(accessToken, { id, username, email, roles });
-            console.log('Login API response:', response);
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setApiError('');
+    if (!validate()) return;
 
-            // Redirect to home page after successful login
-            navigate('/');
+    setLoading(true);
 
-        } catch (err) {
-            console.error('Login failed:', err);
-            // Display error message from backend response or a generic one
-            setApiError(err.message || 'Login failed. Please check your credentials.');
-        } finally {
-            setLoading(false); // Set loading false
-        }
-    };
+    try {
+      const response = await loginUser(formData);
+      const { token, id, username, email, roles } = response;
 
-    return (
-        // Add display for apiError
-        // Add disabled state to button based on loading
-//         <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
-//             {apiError && (
-//                 <p style={{ color: 'red', marginBottom: '15px', textAlign: 'center' }}>{apiError}</p>
-//             )}
-//             {['username', 'password'].map((field) => (
-//                 <div key={field} style={{ marginBottom: '15px' }}>
-//                     {/* ... label and input ... */}
-//                     {errors[field] && (
-//                         <p style={{ color: 'red', marginTop: '5px' }}>{errors[field]}</p>
-//                     )}
-//                 </div>
-//             ))}
-//             <button
-//                 type="submit"
-//                 disabled={loading} // Disable button while loading
-//                 style={{ /* ... styles ... */ opacity: loading ? 0.6 : 1 }}
-//             >
-//                 {loading ? 'Logging in...' : 'Login'}
-//             </button>
-//         </form>
-        <form onSubmit={handleSubmit} style={{ maxWidth: '400px', margin: '40px auto', padding: '30px', border: '1px solid #ccc', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-          <h2 style={{ textAlign: 'center', marginBottom: '25px', fontWeight: 'bold' }}>Sign in to your account</h2>
+      setAuthToken(token);
+      login(token, { id, username, email, roles });
+      navigate('/');
+    } catch (err) {
+      setApiError(err.message || 'Login failed. Please check your credentials.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-          {apiError && (
-            <p style={{ color: 'red', marginBottom: '15px', textAlign: 'center' }}>{apiError}</p>
-          )}
+  return (
+    <>
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-5"
+      >
+        {apiError && (
+          <p className="text-red-500 mb-3 text-center">{apiError}</p>
+        )}
 
-          {['username', 'password'].map((field) => (
-            <div key={field} style={{ marginBottom: '20px' }}>
-              <label htmlFor={field} style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-                {field === 'username' ? 'Username' : 'Password'}
-              </label>
-              <input
-                type={field === 'password' ? 'password' : 'text'}
-                name={field}
-                id={field}
-                value={formData[field]}
-                onChange={handleChange}
-                placeholder={`Enter your ${field}`}
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  borderRadius: '4px',
-                  border: '1px solid #ccc',
-                  fontSize: '16px'
-                }}
-              />
-              {errors[field] && (
-                <p style={{ color: 'red', marginTop: '5px' }}>{errors[field]}</p>
-              )}
-            </div>
-          ))}
+        {['username', 'password'].map((field) => (
+          <div key={field}>
+            <label
+              htmlFor={field}
+              className="block mb-1 font-semibold"
+            >
+              {field === 'username' ? 'Username' : 'Password'}
+            </label>
+            <input
+              type={field === 'password' ? 'password' : 'text'}
+              name={field}
+              id={field}
+              value={formData[field]}
+              onChange={handleChange}
+              placeholder={`Enter your ${field}`}
+              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            {errors[field] && (
+              <p className="text-red-500 text-sm mt-1">{errors[field]}</p>
+            )}
+          </div>
+        ))}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className={`w-full py-2 rounded-lg bg-blue-600 text-white font-semibold ${loading ? 'opacity-60' : ''}`}
+        >
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
+
+        <div className="text-center mt-2">
+          <button
+            type="button"
+            className="text-blue-600 hover:underline text-sm"
+            onClick={() => setShowReset(!showReset)}
+          >
+            Forgot password?
+          </button>
+        </div>
+      </form>
+
+      {showReset && (
+        <form
+          onSubmit={handleResetPassword}
+          className="mt-6 p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-3"
+        >
+          <label htmlFor="resetUsername" className="block mb-1 font-semibold">
+            Enter your username to reset password:
+          </label>
+          <input
+            id="resetUsername"
+            value={resetUsername}
+            onChange={(e) => setResetUsername(e.target.value)}
+            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
           <button
             type="submit"
-            disabled={loading}
-            style={{
-              width: '100%',
-              padding: '12px',
-              backgroundColor: '#3665f3',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '4px',
-              fontSize: '16px',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.6 : 1
-            }}
+            className="w-full py-2 rounded-lg bg-blue-600 text-white font-semibold"
           >
-            {loading ? 'Logging in...' : 'Login'}
+            Reset Password
           </button>
-
+          {resetMsg && (
+            <p
+              className={`mt-2 text-center ${resetMsg.startsWith('Password reset') ? 'text-green-600' : 'text-red-500'}`}
+            >
+              {resetMsg}
+            </p>
+          )}
         </form>
-    );
+      )}
+    </>
+  );
 }

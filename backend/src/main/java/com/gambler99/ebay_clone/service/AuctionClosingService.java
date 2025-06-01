@@ -5,6 +5,7 @@ import com.gambler99.ebay_clone.entity.Bid;
 import com.gambler99.ebay_clone.repository.AuctionRepository;
 import com.gambler99.ebay_clone.repository.BidRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,14 +20,22 @@ public class AuctionClosingService {
 
     private final AuctionRepository auctionRepository;
     private final BidRepository bidRepository;
+    private final EmailService emailService;
+    private final OrderServiceImpl orderService;
 
-    @Scheduled(fixedRate = 30000) // Check every 60 seconds see if any auctions need to be closed
+    // You can set this property in application.properties: frontend.base-url=http://localhost:5173
+    @Value("${frontend.base-url:http://localhost:5173}")
+    private String frontendBaseUrl;
+
+    @Scheduled(fixedRate = 5000)
     @Transactional
     public void closeEndedAuctions() {
         LocalDateTime now = LocalDateTime.now();
         // Find auctions ready to be closed
-        List<Auction> auctionsToClose = auctionRepository.findByStatusAndEndTimeBefore(Auction.AuctionStatus.ACTIVE, now);
+        List<Auction> auctionsToClose = auctionRepository.
+                findByStatusAndEndTimeBefore(Auction.AuctionStatus.ACTIVE, now);
 
+        // Logic to set auction status and notify winners
         for (Auction auction : auctionsToClose) {
             // Find the highest bid for this auction
             Optional<Bid> winningBidOpt = bidRepository.findTopByAuctionOrderByBidAmountDesc(auction);
@@ -41,13 +50,21 @@ public class AuctionClosingService {
                     // Winning bid is below the reserve price
                     auction.setStatus(Auction.AuctionStatus.ENDED_NO_RESERVE);
                 }
+                orderService.createOrderFromAuctionItems(winningBidOpt.get().getBidder().getUserId(), auction.getAuctionId(), winningBidOpt.get().getBidAmount());
+                auctionRepository.save(auction);
+
+                // Send winner email with auction URL
+                String auctionUrl = frontendBaseUrl + "/auctions/" + auction.getAuctionId();
+                emailService.sendAuctionWinEmail(
+                    winningBidOpt.get().getBidder().getEmail(),
+                    auction.getProduct().getName(),
+                    auctionUrl
+                );
             } else {
                 // No bids placed
                 auction.setStatus(Auction.AuctionStatus.ENDED_NO_BIDS);
+                auctionRepository.save(auction);
             }
-            auctionRepository.save(auction); // Save changes within the loop/transaction
-            // ADD LATER: Trigger notification/event later
-
         }
     }
 }

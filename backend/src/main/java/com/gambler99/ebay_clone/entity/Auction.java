@@ -96,6 +96,7 @@ public class Auction {
     // 1 auction can have many bids
     @OneToMany(mappedBy = "auction", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @OrderBy("bidTime DESC")
+    @Builder.Default
     private List<Bid> bids = new ArrayList<>();
 
     @Override

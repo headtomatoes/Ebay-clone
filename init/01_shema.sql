@@ -210,18 +210,4 @@ CREATE TABLE bids (
     INDEX idx_bid_time (bid_time)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --- Placeholder Data (Example) ---
--- INSERT INTO roles (role_name) VALUES ('ADMIN'), ('SELLER'), ('BUYER');
-
--- INSERT INTO users (username, password_hash, email, address) VALUES ('admin', 'hashed_password_admin', 'admin@example.com', '123 Admin St, Control City, AC 10001');
--- INSERT INTO users (username, password_hash, email, address) VALUES ('seller1', 'hashed_password_seller', 'seller@example.com', '456 Market Pl, Vendor Town, VT 20002');
--- INSERT INTO users (username, password_hash, email, address) VALUES ('buyer1', 'hashed_password_buyer', 'buyer@example.com', '789 Consumer Ave, Purchase Place, PP 30003');
--- -- Assign roles...
--- INSERT INTO user_roles (user_id, role_id) VALUES (1, 1), (1, 2), (1, 3); -- Admin has all roles
--- INSERT INTO user_roles (user_id, role_id) VALUES (2, 2); -- seller1 is SELLER
--- INSERT INTO user_roles (user_id, role_id) VALUES (3, 3); -- buyer1 is BUYER
-
--- UPDATE roles SET role_name = 'ROLE_ADMIN' WHERE role_name = 'ADMIN';
--- UPDATE roles SET role_name = 'ROLE_BUYER' WHERE role_name = 'BUYER';
--- UPDATE roles SET role_name = 'ROLE_SELLER' WHERE role_name = 'SELLER';
-
+ALTER TABLE orders ADD COLUMN auction_order BOOLEAN NOT NULL DEFAULT FALSE;

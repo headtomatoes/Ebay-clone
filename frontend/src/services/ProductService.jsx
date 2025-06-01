@@ -77,14 +77,6 @@ const deleteProduct = async (productId) => {
   }
 };
 
-// Search products
-const searchProducts = async (url) => {
-  const fullUrl = `http://localhost:8082${url}`;
-  const res = await fetch(fullUrl);
-  if (!res.ok) throw new Error('Failed to search');
-  return await res.json();
-};
-
 // Get products created by a specific seller
 const getSellerProducts = async () => {
   setAuthHeader();
@@ -98,6 +90,18 @@ const getSellerProducts = async () => {
   }
 };
 
+// change the status of a product
+const changeProductStatus = async (productId, status) => {
+  setAuthHeader();
+  try {
+    const response = await productApi.put(`/${productId}/${status}`, { productId,status });
+    return response.data;
+  } catch (error) {
+    console.error('Change Product Status Error:', error.response?.data || error.message);
+    throw error.response?.data || { message: error.message };
+  }
+
+}
 
 
 // Search products
@@ -107,6 +111,7 @@ const searchProducts = async (url) => {
   if (!res.ok) throw new Error('Failed to search');
   return await res.json();
 };
+
 // Export all service functions
 export default {
   getAllProducts,
@@ -116,4 +121,5 @@ export default {
   deleteProduct,
   searchProducts,
   getSellerProducts,
+  changeProductStatus,
 };

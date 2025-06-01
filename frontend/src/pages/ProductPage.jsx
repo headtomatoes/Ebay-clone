@@ -2,23 +2,51 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ProductService from '../services/ProductService';
 import { useAuth } from '../contexts/AuthContext';
+import ReviewService from '../services/ReviewService';
 
 export default function ProductPage() {
-  const { user } = useAuth(); //get logged in user
+  const { user } = useAuth(); // Get logged in user
 
   // States for products, loading status, error messages, and pagination
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 20;  //Display 20 products per page
+  const productsPerPage = 20;  // Display 20 products per page
+  const [productRatings, setProductRatings] = useState({}); // State to store average ratings for each product
+
+  const [sortOption, setSortOption] = useState('');
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const data = await ProductService.getAllProducts();
-        console.log("Products loaded:", data);
         setProducts(data);
+
+        const ratings = {};
+
+        // Use Promise.all to wait for all average ratings
+        await Promise.all(
+          data.map(async (product) => {
+            try {
+              // Fetch average rating from API
+              const avgRating = await ReviewService.getAverageRating(product.productId);
+              console.log(`Product ${product.productId} - Average Rating:`, avgRating);
+
+              // Handle invalid ratings
+              if (avgRating !== null && avgRating !== undefined) {
+                ratings[product.productId] = Number(avgRating).toFixed(1);
+              } else {
+                ratings[product.productId] = '0.0'; // Default to 0 if no rating found
+              }
+            } catch (err) {
+              console.error(`Error fetching rating for product ${product.productId}`, err);
+              ratings[product.productId] = '0.0'; // Default to 0 in case of error
+            }
+          })
+        );
+
+        setProductRatings(ratings);
       } catch (err) {
         console.error('Error fetching products:', err);
         setError('Failed to load products.');
@@ -26,34 +54,79 @@ export default function ProductPage() {
         setLoading(false);
       }
     };
+
     fetchProducts();
   }, []);
 
   if (loading) return <p className="text-center mt-10">Loading products...</p>;
   if (error) return <p className="text-center text-red-500 mt-10">{error}</p>;
 
+  const sortProducts = (option, productsToSort) => {
+    const sorted = [...productsToSort];
+    if (option === 'price-asc') {
+      return sorted.sort((a, b) => a.price - b.price);
+    } else if (option === 'price-desc') {
+      return sorted.sort((a, b) => b.price - a.price);
+    }
+    return sorted;
+  };
+
   // Pagination logic
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+
+  const sortedProducts = sortProducts(sortOption, products); // 💬 Áp dụng sắp xếp trước khi phân trang
+  const currentProducts = sortedProducts.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(products.length / productsPerPage);
 
-  //Handle changing pages
+  // Handle changing pages
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
+  };
+
+  // Get status badge class
+  const getStatusBadgeClass = (status) => {
+    switch (status) {
+      case 'ACTIVE':
+        return 'bg-green-100 text-green-800';
+      case 'SOLD_OUT':
+        return 'bg-red-100 text-blue-800';
+      case 'INACTIVE':
+        return 'bg-yellow-100 text-purple-800';
+      case 'DRAFT':
+        return 'bg-gray-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
   };
 
   return (
     <div className="max-w-7xl mx-auto p-6">
       {/* Page title */}
-      <h1 className="text-3xl font-bold mb-6 text-left">All Products</h1>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+        <h1 className="text-3xl font-bold text-left">All Products</h1>
+
+        {/* Dropdown sorting */}
+        <div className="flex items-center mt-4 md:mt-0">
+          <label className="text-sm font-medium mr-2">Sort by:</label>
+          <select
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value)}
+            className="border border-gray-300 rounded px-3 py-1 text-sm"
+          >
+            <option value="">Default</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+          </select>
+        </div>
+      </div>
 
       {/* Product grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {currentProducts.map(product => (
           <div
             key={product.productId}
-            className="border rounded-lg overflow-hidden shadow hover:shadow-lg transition bg-white flex flex-col"
+            className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-1 transition-transform duration-200 bg-white flex flex-col"
           >
             {/* Product image */}
             <img
@@ -73,12 +146,29 @@ export default function ProductPage() {
               </Link>
 
               <p className="text-blue-600 font-bold">${product.price.toFixed(2)}</p>
+              {/* Status tags */}
+              <div className="flex items-center mt-2">
+                <span
+                    className={`text-sm px-3 py-1 rounded-full width: \`140px\` ${getStatusBadgeClass(product.status)}`}
+                >
+                  {product.status}
+                </span>
+              </div>
+
               <p className="text-xs text-gray-500 mt-1">{product.categoryName}</p>
 
-              {product.status === 'SOLD_OUT' && (
-                <span className="text-red-500 text-xs font-semibold mt-1">Sold Out</span>
-              )}
-
+              {/* Display average rating */}
+              <div className="flex items-center mt-2">
+                <div className="w-24 h-2 bg-gray-200 rounded">
+                  <div
+                    className="h-full bg-yellow-400 rounded"
+                    style={{
+                      width: `${(parseFloat(productRatings[product.productId] || 0) / 5) * 100}%`
+                    }}
+                  ></div>
+                </div>
+                <span className="text-xs ml-2">{productRatings[product.productId] || '0.0'} / 5</span>
+              </div>
             </div>
           </div>
         ))}

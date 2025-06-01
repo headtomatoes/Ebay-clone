@@ -89,13 +89,6 @@ public class User {
         return getUserId() != null && Objects.equals(getUserId(), user.getUserId());
     }
 
-//    @Override
-//    public int hashCode() {
-//        return userId != null ? Objects.hash(userId) : getClass().hashCode();
-//
-//
-//    }
-
     @Override
     public int hashCode() {
         // Consistent with equals(): use username for hashCode

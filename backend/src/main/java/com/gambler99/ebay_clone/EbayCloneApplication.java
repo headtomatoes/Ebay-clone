@@ -12,5 +12,5 @@ public class EbayCloneApplication {
 		
 		SpringApplication.run(EbayCloneApplication.class, args);
 	}
-
+	
 }

@@ -33,7 +33,8 @@ public class BidService {
 
     // place a bid
     @Transactional
-    public BidResponseDTO placeBid(long auctionId, PlaceBidRequestDTO dto, UserDetailsImpl bidderDetails) {
+    public BidResponseDTO placeBid
+    (long auctionId, PlaceBidRequestDTO dto, UserDetailsImpl bidderDetails) {
 
         log.info("Attempting to place bid for auction ID: {} by user ID: {}", auctionId, bidderDetails.getUserId());
 
@@ -120,8 +121,9 @@ public class BidService {
             messagingTemplate.convertAndSend(destination, bidResponseDTO);
         } catch (Exception e) {
             // Log WebSocket errors but don't fail the transaction
-            log.error("Failed to broadcast bid via WebSocket for auction ID {}: {}", auctionId, e.getMessage(), e);
-            // Depending on requirements, you might want to handle this differently (e.g., queueing)
+            log.error("Failed to broadcast bid via WebSocket for auction ID {}: {}"
+                    , auctionId, e.getMessage(), e);
+            // Depending on requirements, we can to handle this differently (e.g., queueing)
         }
 
         // map the bid to a response DTO
