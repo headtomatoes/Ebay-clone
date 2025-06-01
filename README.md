@@ -1,14 +1,17 @@
 
-# [Ebay-clone]
+# Ebay-clone
 
-**Course:** [WEB APPLICATION DEVELOPMENT IT093IU]
-**University:** [VIET NAM NATIONAL UNIVERSITY – HO CHI MINH CITY INTERNATIONAL UNIVERSITY]
-**Term:** [Spring 2025]
+**Course:** WEB APPLICATION DEVELOPMENT IT093IU
+
+**University:** VIET NAM NATIONAL UNIVERSITY – HO CHI MINH CITY INTERNATIONAL UNIVERSITY
+
+**Term:** Spring 2025
+
 **Team Members :**
-*   [Đàm Nguyễn Trọng Lễ] - [ITITIU22240] - ([Leader - Full-stack])
-*   [Nguyễn Quốc Trung] - [ITITIU22171] - ([Frontend Developer])
-*   [Lê Hưng] - [ITCSIU22271] - ([Backend Developer (Database focus)])
-*   [Lê Nhật Anh] - [ITCSIU22254] - ([Backend Developer])
+*   Đàm Nguyễn Trọng Lễ - ITITIU22240 - (Leader - Full-stack)
+*   Nguyễn Quốc Trung - ITITIU22171 - (Frontend Developer)
+*   Lê Hưng - ITCSIU22271 - (Backend Developer (Database focus)])
+*   Lê Nhật Anh - ITCSIU22254 - (Backend Developer)
 
 ---
 
@@ -58,12 +61,16 @@ This project is an **e-commerce and auction platform**, inspired by eBay, desig
 **Live Demo Link :** [For now just Local host only]
 
 ### Homepage
-![[Pasted image 20250602040644.png]]
+
+![Pasted image 20250602040644](https://github.com/user-attachments/assets/e55b6731-f12e-4ece-8d56-553eb89251b5)
+
 ### Product Page
 
-![[Pasted image 20250602040702.png]]
+![Pasted image 20250602040702](https://github.com/user-attachments/assets/3928941b-b5ad-470f-b44d-e08d9fea49c9)
+
 ### Bidding Page
-![[Pasted image 20250602040716.png]]
+![Pasted image 20250602040716](https://github.com/user-attachments/assets/a0be2026-af6b-45ea-96b5-1b77b8fef4fb)
+
 
 ---
 
