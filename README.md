@@ -7,7 +7,7 @@
 
 **Term:** Spring 2025
 
-**Team Members :**
+**Team 99% Gambler Members :**
 *   Đàm Nguyễn Trọng Lễ - ITITIU22240 - (Leader - Full-stack)
 *   Nguyễn Quốc Trung - ITITIU22171 - (Frontend Developer)
 *   Lê Hưng - ITCSIU22271 - (Backend Developer (Database focus)])
@@ -260,7 +260,7 @@ Ebay-clone/
 │   ├── src/  
 │   │   ├── main/  
 │   │   │   ├── java/  
-│   │   │   │   └── com/yourcompany/yourproject/  
+│   │   │   │   └── com/99_gambler/ebay_clone/  
 │   │   │   │       ├── controller/  
 │   │   │   │       ├── service/  
 │   │   │   │       ├── repository/  
