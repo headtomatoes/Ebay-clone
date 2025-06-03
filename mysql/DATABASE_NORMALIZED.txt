@@ -1,4 +1,312 @@
----70 ACTIVE PRODUCTS---
+-- spellchecker:disable
+
+-- Drop & Create Database
+DROP DATABASE IF EXISTS Ebay_clone_db;
+CREATE DATABASE Ebay_clone_db
+    DEFAULT CHARACTER SET utf8mb4
+    DEFAULT COLLATE utf8mb4_unicode_ci;
+USE Ebay_clone_db;
+
+-- Define Tables (Order matters due to Foreign Keys)
+
+-- Users Table
+CREATE TABLE users ( 
+    user_id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NULL, -- Nullable for external auth like Google
+    email VARCHAR(100) UNIQUE NOT NULL,
+    google_id VARCHAR(100) UNIQUE NULL, -- Unique identifier from Google
+    address VARCHAR(500) NULL, -- Simplified single address field
+    phone_number VARCHAR(20) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_email (email),
+    INDEX idx_google_id (google_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Roles Table
+CREATE TABLE roles (
+    role_id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    role_name VARCHAR(50) UNIQUE NOT NULL -- e.g., 'ADMIN', 'SELLER', 'BUYER'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- User-Roles Mapping Table (Many-to-Many)
+CREATE TABLE user_roles (
+    user_id BIGINT UNSIGNED NOT NULL,
+    role_id BIGINT UNSIGNED NOT NULL,
+    PRIMARY KEY (user_id, role_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Categories Table
+CREATE TABLE categories (
+    category_id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    parent_category_id BIGINT UNSIGNED NULL,
+    name VARCHAR(100) UNIQUE NOT NULL,
+    description TEXT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (parent_category_id) REFERENCES categories(category_id) ON DELETE SET NULL,
+    INDEX idx_name (name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Products Table
+CREATE TABLE products (
+    product_id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    seller_id BIGINT UNSIGNED NOT NULL,
+    category_id BIGINT UNSIGNED NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT NULL,
+    price DECIMAL(12, 2) NULL,
+    stock_quantity INT UNSIGNED NOT NULL DEFAULT 0,
+    image_url TEXT NULL,
+    status ENUM('ACTIVE', 'INACTIVE', 'SOLD_OUT', 'DRAFT') DEFAULT 'DRAFT',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (seller_id) REFERENCES users(user_id) ON DELETE RESTRICT,
+    FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE RESTRICT,
+    INDEX idx_seller_id (seller_id),
+    INDEX idx_category_id (category_id),
+    INDEX idx_status (status),
+    INDEX idx_name (name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Cart Items Table (User's Shopping Cart)
+CREATE TABLE cart_items (
+    cart_item_id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT UNSIGNED NOT NULL,
+    product_id BIGINT UNSIGNED NOT NULL,
+    quantity INT UNSIGNED NOT NULL CHECK (quantity > 0),
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (user_id, product_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
+    INDEX idx_user_id (user_id),
+    INDEX idx_product_id (product_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Orders Table
+CREATE TABLE orders (
+    order_id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    customer_id BIGINT UNSIGNED NOT NULL,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('PENDING_PAYMENT', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED', 'RETURNED') DEFAULT 'PENDING_PAYMENT',
+    total_amount DECIMAL(12, 2) NOT NULL DEFAULT 0,
+    shipping_address_snapshot TEXT NULL, -- Store the address JSON/text as it was at time of order
+    billing_address_snapshot TEXT NULL,  -- Store the address JSON/text as it was at time of order
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES users(user_id) ON DELETE RESTRICT,
+    INDEX idx_customer_id (customer_id),
+    INDEX idx_status (status),
+    INDEX idx_order_date (order_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Order Items Table (Products within an Order)
+CREATE TABLE order_items (
+    order_item_id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    order_id BIGINT UNSIGNED NOT NULL,
+    product_id BIGINT UNSIGNED NOT NULL,
+    quantity INT UNSIGNED NOT NULL CHECK (quantity > 0),
+    price_at_purchase DECIMAL(12, 2) NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE RESTRICT,
+    INDEX idx_order_id (order_id),
+    INDEX idx_product_id (product_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Payments Table
+CREATE TABLE payments (
+    payment_id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    order_id BIGINT UNSIGNED NOT NULL,
+    payment_gateway ENUM('STRIPE', 'PAYPAL', 'COD', 'BANK_TRANSFER', 'OTHER') NOT NULL,
+    transaction_id VARCHAR(255) NULL UNIQUE,
+    amount DECIMAL(12, 2) NOT NULL,
+    status ENUM('PENDING', 'SUCCESS', 'FAILED', 'REFUNDED') NOT NULL DEFAULT 'PENDING',
+    payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE RESTRICT,
+    INDEX idx_order_id (order_id),
+    INDEX idx_status (status),
+    INDEX idx_transaction_id (transaction_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Shipping Table
+CREATE TABLE shipping (
+    shipping_id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    order_id BIGINT UNSIGNED NOT NULL,
+    shipping_address_snapshot TEXT NOT NULL, -- Store destination address text for this specific shipment
+    shipping_provider VARCHAR(100) NULL,
+    tracking_number VARCHAR(100) NULL,
+    shipping_cost DECIMAL(10, 2) DEFAULT 0.00,
+    status ENUM('PENDING', 'LABEL_CREATED', 'SHIPPED', 'IN_TRANSIT', 'DELIVERED', 'FAILED', 'RETURNED') DEFAULT 'PENDING',
+    shipped_date TIMESTAMP NULL,
+    estimated_delivery_date TIMESTAMP NULL,
+    actual_delivery_date TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
+    INDEX idx_order_id (order_id),
+    INDEX idx_status (status),
+    INDEX idx_tracking_number (tracking_number)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Reviews Table
+CREATE TABLE reviews (
+    review_id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    product_id BIGINT UNSIGNED NOT NULL,
+    user_id BIGINT UNSIGNED NOT NULL,
+    order_id BIGINT UNSIGNED NULL,
+    rating INT UNSIGNED NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    comment TEXT NULL,
+    review_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE (product_id, user_id, order_id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE SET NULL,
+    INDEX idx_product_id (product_id),
+    INDEX idx_user_id (user_id),
+    INDEX idx_order_id (order_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Auctions Table
+CREATE TABLE auctions (
+    auction_id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    product_id BIGINT UNSIGNED NOT NULL UNIQUE,
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+    starting_price DECIMAL(12, 2) NOT NULL,
+    current_price DECIMAL(12, 2) NULL,
+    reserve_price DECIMAL(12, 2) NULL,
+    bid_increment DECIMAL(10, 2) DEFAULT 1.00,
+    winner_id BIGINT UNSIGNED NULL,
+    status ENUM('SCHEDULED', 'ACTIVE', 'ENDED_MET_RESERVE', 'ENDED_NO_RESERVE', 'ENDED_NO_BIDS', 'CANCELLED') DEFAULT 'SCHEDULED',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CHECK (end_time > start_time),
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
+    FOREIGN KEY (winner_id) REFERENCES users(user_id) ON DELETE SET NULL,
+    INDEX idx_product_id (product_id),
+    INDEX idx_winner_id (winner_id),
+    INDEX idx_status (status),
+    INDEX idx_end_time (end_time)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Bids Table
+CREATE TABLE bids (
+    bid_id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    auction_id BIGINT UNSIGNED NOT NULL,
+    bidder_id BIGINT UNSIGNED NOT NULL,
+    bid_amount DECIMAL(12, 2) NOT NULL,
+    bid_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_winning_bid BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (auction_id) REFERENCES auctions(auction_id) ON DELETE CASCADE,
+    FOREIGN KEY (bidder_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    INDEX idx_auction_id (auction_id),
+    INDEX idx_bidder_id (bidder_id),
+    INDEX idx_auction_bid_amount (auction_id, bid_amount DESC),
+    INDEX idx_bid_time (bid_time)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE orders ADD COLUMN auction_order BOOLEAN NOT NULL DEFAULT FALSE;
+
+USE Ebay_clone_db;
+
+
+-- INSERT DATA FOR USERS:
+
+-- Users (ID starts from 1 due to AUTO_INCREMENT)
+INSERT INTO users (username, password_hash, email, address, phone_number)
+VALUES 
+-- Admin
+-- ('admin_user', 'hashed_admin_pass', 'admin@example.com', '100 Admin Lane, Control City', '1000000000'),
+('admin_user', '$2a$10$uKt59.nhaWSrLxOKDPBadOVDa7MzO876b4UtPRF3HhZNoVpr0lddS', 'admin@example.com', '100 Admin Lane, Control City', '1000000000'),
+-- Sellers
+-- ('seller_1', 'hashed_pass', 'seller1@example.com', '1 Seller Way, Sellertown', '1000000001'),
+-- ('seller_2', 'hashed_pass', 'seller2@example.com', '2 Seller Way, Sellertown', '1000000002'),
+-- ('seller_3', 'hashed_pass', 'seller3@example.com', '3 Seller Way, Sellertown', '1000000003'),
+-- ('seller_4', 'hashed_pass', 'seller4@example.com', '4 Seller Way, Sellertown', '1000000004'),
+-- -- Buyers
+-- ('buyer_1', 'hashed_pass', 'buyer1@example.com', '1 Buyer Rd, Buyerville', '1000000011'),
+-- ('buyer_2', 'hashed_pass', 'buyer2@example.com', '2 Buyer Rd, Buyerville', '1000000012'),
+-- ('buyer_3', 'hashed_pass', 'buyer3@example.com', '3 Buyer Rd, Buyerville', '1000000013'),
+-- ('buyer_4', 'hashed_pass', 'buyer4@example.com', '4 Buyer Rd, Buyerville', '1000000014'),
+-- ('buyer_5', 'hashed_pass', 'buyer5@example.com', '5 Buyer Rd, Buyerville', '1000000015'),
+-- ('buyer_6', 'hashed_pass', 'buyer6@example.com', '6 Buyer Rd, Buyerville', '1000000016'),
+-- ('buyer_7', 'hashed_pass', 'buyer7@example.com', '7 Buyer Rd, Buyerville', '1000000017'),
+-- ('buyer_8', 'hashed_pass', 'buyer8@example.com', '8 Buyer Rd, Buyerville', '1000000018'),
+-- ('buyer_9', 'hashed_pass', 'buyer9@example.com', '9 Buyer Rd, Buyerville', '1000000019'),
+-- ('buyer_10', 'hashed_pass', 'buyer10@example.com', '10 Buyer Rd, Buyerville', '1000000020'),
+-- ('buyer_11', 'hashed_pass', 'buyer11@example.com', '11 Buyer Rd, Buyerville', '1000000021'),
+-- ('buyer_12', 'hashed_pass', 'buyer12@example.com', '12 Buyer Rd, Buyerville', '1000000022'),
+-- ('buyer_13', 'hashed_pass', 'buyer13@example.com', '13 Buyer Rd, Buyerville', '1000000023'),
+-- ('buyer_14', 'hashed_pass', 'buyer14@example.com', '14 Buyer Rd, Buyerville', '1000000024'),
+-- ('buyer_15', 'hashed_pass', 'buyer15@example.com', '15 Buyer Rd, Buyerville', '1000000025');
+
+-- seller
+('seller_1', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'seller1@example.com', '1 Seller Way, Sellertown', '1000000001'),
+('seller_2', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'seller2@example.com', '2 Seller Way, Sellertown', '1000000002'),
+('seller_3', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'seller3@example.com', '3 Seller Way, Sellertown', '1000000003'),
+('seller_4', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'seller4@example.com', '4 Seller Way, Sellertown', '1000000004'),
+-- Buyers
+('buyer_1', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer1@example.com', '1 Buyer Rd, Buyerville', '1000000011'),
+('buyer_2', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer2@example.com', '2 Buyer Rd, Buyerville', '1000000012'),
+('buyer_3', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer3@example.com', '3 Buyer Rd, Buyerville', '1000000013'),
+('buyer_4', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer4@example.com', '4 Buyer Rd, Buyerville', '1000000014'),
+('buyer_5', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer5@example.com', '5 Buyer Rd, Buyerville', '1000000015'),
+('buyer_6', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer6@example.com', '6 Buyer Rd, Buyerville', '1000000016'),
+('buyer_7', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer7@example.com', '7 Buyer Rd, Buyerville', '1000000017'),
+('buyer_8', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer8@example.com', '8 Buyer Rd, Buyerville', '1000000018'),
+('buyer_9', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer9@example.com', '9 Buyer Rd, Buyerville', '1000000019'),
+('buyer_10', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer10@example.com', '10 Buyer Rd, Buyerville', '1000000020'),
+('buyer_11', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer11@example.com', '11 Buyer Rd, Buyerville', '1000000021'),
+('buyer_12', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer12@example.com', '12 Buyer Rd, Buyerville', '1000000022'),
+('buyer_13', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer13@example.com', '13 Buyer Rd, Buyerville', '1000000023'),
+('buyer_14', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer14@example.com', '14 Buyer Rd, Buyerville', '1000000024'),
+('buyer_15', '$2a$10$SZBOAySceIgqvfOU2CDWJ.7ArK/Y/tj3u/kxUYKVE.r05Xum7Dug6', 'buyer15@example.com', '15 Buyer Rd, Buyerville', '1000000025');
+
+
+-- INSERT ROLE TABLE:
+INSERT INTO roles (role_name) VALUES ('ROLE_ADMIN'), ('ROLE_SELLER'), ('ROLE_BUYER');
+
+-- ASSIGN ROLES FOR USER:
+-- Admin gets all roles
+INSERT INTO user_roles (user_id, role_id) VALUES 
+(1, 1), (1, 2), (1, 3);
+
+-- Sellers
+INSERT INTO user_roles (user_id, role_id) VALUES 
+(2, 2), (3, 2), (4, 2), (5, 2);
+
+-- Buyers
+-- Get ROLE_BUYER ID dynamically and assign it
+INSERT INTO user_roles (user_id, role_id)
+SELECT user_id, (SELECT role_id FROM roles WHERE role_name = 'ROLE_BUYER')
+FROM users WHERE user_id >= 6;
+
+
+
+
+-- INSERT CATEGORIES
+
+INSERT INTO categories (name, description)
+VALUES 
+('Electronics', 'Gadgets and devices'),
+('Books', 'Books and literature'),
+('Clothing', 'Men and women clothing'),
+('Home & Kitchen', 'Appliances and kitchenware'),
+('Sports', 'Sports gear and equipment'),
+('Toys', 'Toys for all ages'),
+('Beauty', 'Beauty products and skincare'),
+('Automotive', 'Car accessories'),
+('Garden', 'Gardening tools and plants'),
+('Music', 'Musical instruments and CDs');
+
+-- -70 ACTIVE PRODUCTS---
 
 INSERT INTO products (seller_id, category_id, name, description, price, stock_quantity, image_url, status) VALUES
 (1, 1, 'Wireless Noise Cancelling Headphones', 'Over-ear Bluetooth headphones with ANC for immersive listening during travel or work.', 129.99, 45, 'https://images.unsplash.com/photo-1693841114567-0565c3f64edf?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8V2lyZWxlc3MlMjBOb2lzZSUyMENhbmNlbGluZyUyMEhlYWRwaG9uZXN8ZW58MHx8MHx8fDA%3D', 'ACTIVE'),
@@ -106,7 +414,7 @@ INSERT INTO products (seller_id, category_id, name, description, price, stock_qu
 (4, 3, 'Multifunctional Charging Dock', 'All-in-one dock for phone, smartwatch, and earbuds.', 59.99, 0, 'https://media.istockphoto.com/id/1955757829/photo/wireless-charging-in-the-form-of-a-phone-stand.webp?a=1&b=1&s=612x612&w=0&k=20&c=4RFjLUEX-GkvjdQL1w08L3Zh0OQO7fatzsc9hpJqrcQ=', 'SOLD_OUT');
 
 
----DRAFT PRODUCTS---
+-- -DRAFT PRODUCTS---
 INSERT INTO products (seller_id, category_id, name, description, price, stock_quantity, image_url, status) VALUES
 (6, 6, 'LED Desk Lamp with USB', 'Modern desk lamp with touch control, dimmable light, and USB charging port.', 24.99, 10, 'https://plus.unsplash.com/premium_photo-1681412205381-c0e9681bcbb8?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8TEVEJTIwRGVzayUyMExhbXAlMjB3aXRoJTIwVVNCfGVufDB8fDB8fHww', 'DRAFT'),
 (7, 1, 'Bluetooth Sleep Headband', 'Comfortable headband with built-in speakers for music or meditation at night.', 19.90, 18, 'https://plus.unsplash.com/premium_photo-1726822827143-80612836a323?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Qmx1ZXRvb3RoJTIwU2xlZXAlMjBIZWFkYmFuZHxlbnwwfHwwfHx8MA%3D%3D', 'DRAFT'),
