@@ -26,8 +26,9 @@ public interface AuctionRepository extends JpaRepository<Auction, Long> {
     // check for closing service
     //SELECT * FROM auction
     //WHERE status = ? AND end_time < ?
-    @Lock(LockModeType.PESSIMISTIC_WRITE) // Use when conflicts are expected and critical
-    List<Auction> findByStatusAndEndTimeBefore(Auction.AuctionStatus auctionStatus, LocalDateTime endTime);
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    List<Auction> findByStatusAndEndTimeBefore
+    (Auction.AuctionStatus auctionStatus, LocalDateTime endTime);
 
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)

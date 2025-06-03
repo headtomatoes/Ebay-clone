@@ -94,7 +94,7 @@ const getSellerProducts = async () => {
 const changeProductStatus = async (productId, status) => {
   setAuthHeader();
   try {
-    const response = await productApi.put(`/${productId}/status`, { status });
+    const response = await productApi.put(`/${productId}/${status}`, { productId,status });
     return response.data;
   } catch (error) {
     console.error('Change Product Status Error:', error.response?.data || error.message);
@@ -121,4 +121,5 @@ export default {
   deleteProduct,
   searchProducts,
   getSellerProducts,
+  changeProductStatus,
 };
