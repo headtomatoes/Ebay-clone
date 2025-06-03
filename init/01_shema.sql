@@ -211,3 +211,28 @@ CREATE TABLE bids (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ALTER TABLE orders ADD COLUMN auction_order BOOLEAN NOT NULL DEFAULT FALSE;
+
+-- Trigger for product
+DELIMITER $$
+
+CREATE TRIGGER before_products_update
+BEFORE UPDATE ON products
+FOR EACH ROW
+BEGIN
+  IF NEW.stock_quantity = 0 THEN
+    SET NEW.status = 'SOLD_OUT';
+  ELSEIF NEW.status = 'SOLD_OUT' AND NEW.stock_quantity > 0 THEN
+    SET NEW.status = 'ACTIVE'; -- Optional logic
+  END IF;
+END$$
+
+CREATE TRIGGER before_products_insert
+BEFORE INSERT ON products
+FOR EACH ROW
+BEGIN
+  IF NEW.stock_quantity = 0 THEN
+    SET NEW.status = 'SOLD_OUT';
+  END IF;
+END$$
+
+DELIMITER ;

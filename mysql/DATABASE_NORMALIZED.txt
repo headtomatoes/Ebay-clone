@@ -214,8 +214,32 @@ CREATE TABLE bids (
 
 ALTER TABLE orders ADD COLUMN auction_order BOOLEAN NOT NULL DEFAULT FALSE;
 
-USE Ebay_clone_db;
+-- Trigger for product
+DELIMITER $$
 
+CREATE TRIGGER before_products_update
+BEFORE UPDATE ON products
+FOR EACH ROW
+BEGIN
+  IF NEW.stock_quantity = 0 THEN
+    SET NEW.status = 'SOLD_OUT';
+  ELSEIF NEW.status = 'SOLD_OUT' AND NEW.stock_quantity > 0 THEN
+    SET NEW.status = 'ACTIVE'; -- Optional logic
+  END IF;
+END$$
+
+CREATE TRIGGER before_products_insert
+BEFORE INSERT ON products
+FOR EACH ROW
+BEGIN
+  IF NEW.stock_quantity = 0 THEN
+    SET NEW.status = 'SOLD_OUT';
+  END IF;
+END$$
+
+DELIMITER ;
+
+USE Ebay_clone_db;
 
 -- INSERT DATA FOR USERS:
 
